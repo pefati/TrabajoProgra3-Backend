@@ -32,7 +32,7 @@ public class VueloService {
      * CachePut: Actualiza la base de datos MySQL e INMEDIATAMENTE actualiza/inserta el valor en Redis.
      * De esta forma, garantizamos que los datos nunca estén "viejos" (desincronizados).
      */
-    @CachePut(value = "vuelos", key = "#result.id")
+    @CachePut(value = "vuelos", key = "#result.vuelo_id")
     public Vuelo crearOActualizarVuelo(Vuelo vuelo) {
         System.out.println("Guardando vuelo");
         return vueloRepository.save(vuelo);

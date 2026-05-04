@@ -1,9 +1,9 @@
 package com.example.aereopuerto.model;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -14,27 +14,29 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 
-public class Cliente implements Serializable {
+
+public class Reserva implements Serializable {
 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @Column(nullable = false)
-    private String nombre;
+    private Cliente cliente;
     @Column(nullable = false)
-    private String apellido;
+    private Vuelo vuelo;
     @Column(nullable = false)
-    private String email;
+    private float valor;
     @Column(nullable = false)
-    private String telefono;
+    private int cantidad_Pasajes;
     @Column(nullable = false)
-    private Date fecha_nacimiento;
+    private ClasesVuelo clasesVuelo;
+    @Column(nullable = false)
+    private EstadoReserva estadoReserva;
     @Column(nullable = false, unique = true)
-    private String DNI_pasaporte;
+    private String numero_ticket;
     @Column(nullable = false)
-    private Sexo sexo;
+    private Date fecha_reserva;
 
 }

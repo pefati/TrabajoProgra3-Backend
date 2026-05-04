@@ -26,55 +26,44 @@ public class Vuelo implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long vuelo_id;
-    @Column(nullable = false, unique = true)
-
     @ManyToOne
-    @JoinColumn(name = "aeropuerto_id")
+    @JoinColumn(name = "aeropuerto_origen_id", nullable = false)
     private Aeropuerto aeropuerto_origen;
-    @Column(nullable = false)
-
     @ManyToOne
-    @JoinColumn(name = "aeropuerto_id")
+    @JoinColumn(name = "aeropuerto_destino_id", nullable = false)
     private Aeropuerto aeropuerto_destino;
-    @Column(nullable = false)
-
     @ManyToOne
-    @JoinColumn(name = "avion_id")
+    @JoinColumn(name = "avion_id", nullable = false)
     private Avion avion_id;
-    @Column(nullable = false)
-
     @ManyToOne
-    @JoinColumn(name = "pista_id")
+    @JoinColumn(name = "pista_id", nullable = false)
     private Pista pista_id;
     @Column(nullable = false)
-
     private Date fecha_salida;
-    @Column(nullable = false)
 
     private Date fecha_salida_real;
 
-    private Date fecha_llegada;
     @Column(nullable = false)
+    private Date fecha_llegada;
 
     private Date fecha_llegada_real;
 
-    private Time hora_salida;
     @Column(nullable = false)
+    private Time hora_salida;
 
     private Time hora_salida_real;
 
-    private Time hora_llegada;
     @Column(nullable = false)
+    private Time hora_llegada;
 
     private Time hora_llegada_real;
 
-    private estadoVuelo estado;
     @Column(nullable = false)
+    private estadoVuelo estado;
 
     @ManyToOne
-    @JoinColumn(name = "puerta_embarque_id")
-    private Puerta_embarque puerta_embarque_id;
-    @Column(nullable = false)
+    @JoinColumn(name = "puerta_embarque_id", nullable = false)
+    private PuertaEmbarque puerta_embarque_id;
 
     private boolean escala;
 

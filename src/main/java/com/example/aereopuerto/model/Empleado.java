@@ -3,7 +3,6 @@ package com.example.aereopuerto.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -14,21 +13,20 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 
-public class Asignacion implements Serializable {
+
+public class Empleado implements Serializable {
 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
-    private Vuelo vuelo;
-    @Column(nullable = false)
-    private Empleado empleado;
-    @Column(nullable = false)
-    private RolEmpleado rolEmpleado;
 
-
-
+    @Column(nullable = false)
+    private Date fecha_nacimiento;
+    @Column(nullable = false)
+    private String nombre;
+    @Column(nullable = false)
+    private String apelido;
 
 
 }

@@ -30,7 +30,7 @@ public class VueloController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<Vuelo> obtenerVuelo(@PathVariable Long id) {
-        // En la consola veras si va a MySQL o lo saca directamente de Redis
+        // En la consola verás si va a MySQL o lo saca directamente de Redis
         Vuelo vuelo = vueloService.obtenerVueloPorId(id);
         return ResponseEntity.ok(vuelo);
     }
@@ -46,7 +46,7 @@ public class VueloController {
     @ApiResponse(responseCode = "201", description = "Vuelo creado exitosamente")
     @PostMapping
     public ResponseEntity<Vuelo> crearVuelo(@RequestBody Vuelo vuelo) {
-        // Al crear, se debe limpiar la cache general de la lista
+        // Al crear, se debe limpiar la caché general de la lista
         vueloService.invalidarListaDeVuelos();
         Vuelo nuevoVuelo = vueloService.crearOActualizarVuelo(vuelo);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoVuelo);
@@ -59,7 +59,7 @@ public class VueloController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<Vuelo> actualizarVuelo(@PathVariable Long id, @RequestBody Vuelo vuelo) {
-        vuelo.setId(id);
+        vuelo.setVuelo_id(id);
         vueloService.invalidarListaDeVuelos();
         Vuelo actualizado = vueloService.crearOActualizarVuelo(vuelo);
         return ResponseEntity.ok(actualizado);
