@@ -35,7 +35,7 @@ public class Avion implements Serializable {
     @ManyToOne
     @JoinColumn(name = "aerolinea_id")
     @Column (nullable = false)
-    private Aerolinea aerolinea_id;
+    private Aereolinea aerolinea_id;
 
     @Column (nullable = false)
     private estadoAvion estado;
