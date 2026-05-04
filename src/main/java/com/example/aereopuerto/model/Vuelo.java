@@ -1,18 +1,13 @@
 package com.example.aereopuerto.model;
 
-import jakarta.persistence.*;
-import lombok.*;
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
 import java.io.Serializable;
-import java.sql.Time;
 import java.time.LocalDateTime;
-import java.util.Date;
 
-@Setter
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
 public class Vuelo implements Serializable {
 
@@ -25,48 +20,92 @@ public class Vuelo implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long vuelo_id;
-    @ManyToOne
-    @JoinColumn(name = "aeropuerto_origen_id", nullable = false)
-    private Aeropuerto aeropuerto_origen;
-    @ManyToOne
-    @JoinColumn(name = "aeropuerto_destino_id", nullable = false)
-    private Aeropuerto aeropuerto_destino;
-    @ManyToOne
-    @JoinColumn(name = "avion_id", nullable = false)
-    private Avion avion_id;
-    @ManyToOne
-    @JoinColumn(name = "pista_id", nullable = false)
-    private Pista pista_id;
+    private Long id;
+
+    @Column(nullable = false, unique = true)
+    private String numeroVuelo;
     @Column(nullable = false)
-    private Date fecha_salida;
 
-    private Date fecha_salida_real;
-
+    private String origen;
     @Column(nullable = false)
-    private Date fecha_llegada;
 
-    private Date fecha_llegada_real;
-
+    private String destino;
     @Column(nullable = false)
-    private Time hora_salida;
 
-    private Time hora_salida_real;
-
+    private String aerolinea;
     @Column(nullable = false)
-    private Time hora_llegada;
 
-    private Time hora_llegada_real;
-
+    private LocalDateTime fechaSalida;
     @Column(nullable = false)
-    private estadoVuelo estado;
 
-    @ManyToOne
-    @JoinColumn(name = "puerta_embarque_id", nullable = false)
-    private PuertaEmbarque puerta_embarque_id;
+    private String estado; //cambiar a enum;
 
-    private boolean escala;
+    public Vuelo() {
+    }
+
+    public Vuelo(String numeroVuelo, String origen, String destino, String aerolinea, LocalDateTime fechaSalida, String estado) {
+        this.numeroVuelo = numeroVuelo;
+        this.origen = origen;
+        this.destino = destino;
+        this.aerolinea = aerolinea;
+        this.fechaSalida = fechaSalida;
+        this.estado = estado;
+    }
 
 
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNumeroVuelo() {
+        return numeroVuelo;
+    }
+
+    public void setNumeroVuelo(String numeroVuelo) {
+        this.numeroVuelo = numeroVuelo;
+    }
+
+    public String getOrigen() {
+        return origen;
+    }
+
+    public void setOrigen(String origen) {
+        this.origen = origen;
+    }
+
+    public String getDestino() {
+        return destino;
+    }
+
+    public void setDestino(String destino) {
+        this.destino = destino;
+    }
+
+    public String getAerolinea() {
+        return aerolinea;
+    }
+
+    public void setAerolinea(String aerolinea) {
+        this.aerolinea = aerolinea;
+    }
+
+    public LocalDateTime getFechaSalida() {
+        return fechaSalida;
+    }
+
+    public void setFechaSalida(LocalDateTime fechaSalida) {
+        this.fechaSalida = fechaSalida;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
 }
