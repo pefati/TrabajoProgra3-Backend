@@ -3,13 +3,15 @@ package com.example.aereopuerto.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
-public class Aerolinea {
+public class Aerolinea implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
