@@ -1,13 +1,18 @@
 package com.example.aereopuerto.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import java.io.Serializable;
-import java.time.LocalDateTime;
+import jakarta.persistence.*;
+import lombok.*;
 
+import java.io.Serializable;
+import java.sql.Time;
+import java.time.LocalDateTime;
+import java.util.Date;
+
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 public class Vuelo implements Serializable {
 
@@ -20,92 +25,59 @@ public class Vuelo implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    private Long vuelo_id;
     @Column(nullable = false, unique = true)
-    private String numeroVuelo;
+
+    @ManyToOne
+    @JoinColumn(name = "aeropuerto_id")
+    private Aeropuerto aeropuerto_origen;
     @Column(nullable = false)
 
-    private String origen;
+    @ManyToOne
+    @JoinColumn(name = "aeropuerto_id")
+    private Aeropuerto aeropuerto_destino;
     @Column(nullable = false)
 
-    private String destino;
+    @ManyToOne
+    @JoinColumn(name = "avion_id")
+    private Avion avion_id;
     @Column(nullable = false)
 
-    private String aerolinea;
+    @ManyToOne
+    @JoinColumn(name = "pista_id")
+    private Pista pista_id;
     @Column(nullable = false)
 
-    private LocalDateTime fechaSalida;
+    private Date fecha_salida;
     @Column(nullable = false)
 
-    private String estado; //cambiar a enum;
+    private Date fecha_salida_real;
 
-    public Vuelo() {
-    }
+    private Date fecha_llegada;
+    @Column(nullable = false)
 
-    public Vuelo(String numeroVuelo, String origen, String destino, String aerolinea, LocalDateTime fechaSalida, String estado) {
-        this.numeroVuelo = numeroVuelo;
-        this.origen = origen;
-        this.destino = destino;
-        this.aerolinea = aerolinea;
-        this.fechaSalida = fechaSalida;
-        this.estado = estado;
-    }
+    private Date fecha_llegada_real;
+
+    private Time hora_salida;
+    @Column(nullable = false)
+
+    private Time hora_salida_real;
+
+    private Time hora_llegada;
+    @Column(nullable = false)
+
+    private Time hora_llegada_real;
+
+    private estadoVuelo estado;
+    @Column(nullable = false)
+
+    @ManyToOne
+    @JoinColumn(name = "puerta_embarque_id")
+    private Puerta_embarque puerta_embarque_id;
+    @Column(nullable = false)
+
+    private boolean escala;
 
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNumeroVuelo() {
-        return numeroVuelo;
-    }
-
-    public void setNumeroVuelo(String numeroVuelo) {
-        this.numeroVuelo = numeroVuelo;
-    }
-
-    public String getOrigen() {
-        return origen;
-    }
-
-    public void setOrigen(String origen) {
-        this.origen = origen;
-    }
-
-    public String getDestino() {
-        return destino;
-    }
-
-    public void setDestino(String destino) {
-        this.destino = destino;
-    }
-
-    public String getAerolinea() {
-        return aerolinea;
-    }
-
-    public void setAerolinea(String aerolinea) {
-        this.aerolinea = aerolinea;
-    }
-
-    public LocalDateTime getFechaSalida() {
-        return fechaSalida;
-    }
-
-    public void setFechaSalida(LocalDateTime fechaSalida) {
-        this.fechaSalida = fechaSalida;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
 }
