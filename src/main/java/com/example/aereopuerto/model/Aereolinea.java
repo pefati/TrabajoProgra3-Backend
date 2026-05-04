@@ -11,7 +11,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Aerolinea implements Serializable {
+
+public class Aereolinea implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
