@@ -5,8 +5,7 @@ import lombok.*;
 
 import java.io.Serializable;
 
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -24,7 +23,7 @@ public class PuertaEmbarque implements Serializable {
     private int numero;
 
     @ManyToOne
-    @JoinColumn(name = "aeropuerto_id")
-    private Aeropuerto aeropuerto_id;
+    @JoinColumn(name = "aeropuerto_id", nullable = false)
+    private Aeropuerto aeropuerto;
 
 }

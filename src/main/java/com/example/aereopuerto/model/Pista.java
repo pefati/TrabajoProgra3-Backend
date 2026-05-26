@@ -1,12 +1,11 @@
 package com.example.aereopuerto.model;
 
 
+import com.example.aereopuerto.model.enums.EstadoPista;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.sql.Time;
-import java.util.Date;
 
 @Setter
 @Getter
@@ -25,6 +24,7 @@ public class Pista implements Serializable {
     private int Numero;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private EstadoPista Estado;
 
 }

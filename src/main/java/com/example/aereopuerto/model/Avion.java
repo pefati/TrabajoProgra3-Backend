@@ -1,12 +1,12 @@
 package com.example.aereopuerto.model;
 
+import com.example.aereopuerto.model.enums.estadoAvion;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
 
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -24,7 +24,7 @@ public class Avion implements Serializable {
     private String identificador;
 
     @Column (nullable = false)
-    private Float capacidadTanque;
+    private float capacidadTanque;
 
     @Column (nullable = false)
     private int capacidadPasajeros;
@@ -33,11 +33,11 @@ public class Avion implements Serializable {
     private String modelo;
 
     @ManyToOne
-    @JoinColumn(name = "aerolinea_id")
-    @Column (nullable = false)
-    private Aereolinea aerolinea_id;
+    @JoinColumn(name = "aerolinea_id", nullable = false)
+    private Aereolinea aerolinea;
 
     @Column (nullable = false)
+    @Enumerated(EnumType.STRING)
     private estadoAvion estado;
 
 

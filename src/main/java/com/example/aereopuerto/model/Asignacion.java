@@ -1,15 +1,13 @@
 package com.example.aereopuerto.model;
 
+import com.example.aereopuerto.model.enums.RolEmpleado;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -21,11 +19,17 @@ public class Asignacion implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+
+    @ManyToOne
+    @JoinColumn(name = "vuelo_id", nullable = false)
     private Vuelo vuelo;
-    @Column(nullable = false)
+
+    @ManyToOne
+    @JoinColumn(name = "empleado_id", nullable = false)
     private Empleado empleado;
+
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private RolEmpleado rolEmpleado;
 
 

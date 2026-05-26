@@ -20,7 +20,7 @@ public class AvionService {
 
     @Cacheable(value = "aviones", key = "#id")
     public Avion obtenerAvionPorId(Long id) {
-        return avionRepository.findById(id).orElseThrow(() -> new RuntimeException("Avión no encontrado. ID: " + id));
+        return avionRepository.findById(id).orElseThrow(() -> new RuntimeException("Avion no encontrado. ID: " + id));
     }
 
     @Cacheable(value = "aviones", key = "'todos'")

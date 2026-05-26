@@ -4,17 +4,18 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 
 
 public class Empleado implements Serializable {
+    private static final long serialVersionUID = 1L;
 
 
     @Id
@@ -22,11 +23,11 @@ public class Empleado implements Serializable {
     private Long id;
 
     @Column(nullable = false)
-    private Date fecha_nacimiento;
+    private LocalDateTime fecha_nacimiento;
+
     @Column(nullable = false)
     private String nombre;
+
     @Column(nullable = false)
     private String apelido;
-
-
 }

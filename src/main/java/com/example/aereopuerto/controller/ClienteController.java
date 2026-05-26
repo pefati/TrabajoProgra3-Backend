@@ -23,7 +23,7 @@ public class ClienteController {
         this.clienteService = clienteService;
     }
 
-    @Operation(summary = "Obtener cliente por ID", description = "Devuelve los datos de un cliente específico.")
+    @Operation(summary = "Obtener cliente por ID", description = "Devuelve los datos de un cliente especifico.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cliente encontrado exitosamente"),
             @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
