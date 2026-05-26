@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,14 +15,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/pistas")
+@RequiredArgsConstructor
 @Tag(name = "Pistas", description = "Operaciones relacionadas con las pistas")
 public class PistaController {
 
     private final PistaService pistaService;
-
-    public PistaController(PistaService pistaService) {
-        this.pistaService = pistaService;
-    }
 
     @Operation(summary = "Obtener pista por ID", description = "Devuelve los datos de una pista.")
     @GetMapping("/{id}")

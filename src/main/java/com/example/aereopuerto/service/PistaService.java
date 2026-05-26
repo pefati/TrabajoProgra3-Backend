@@ -2,6 +2,7 @@ package com.example.aereopuerto.service;
 
 import com.example.aereopuerto.model.Pista;
 import com.example.aereopuerto.repository.PistaRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -10,13 +11,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class PistaService {
 
     private final PistaRepository pistaRepository;
-
-    public PistaService(PistaRepository pistaRepository) {
-        this.pistaRepository = pistaRepository;
-    }
 
     @Cacheable(value = "pistas", key = "#id")
     public Pista obtenerPistaPorId(Long id) {

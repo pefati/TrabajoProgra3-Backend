@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,14 +15,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/reservas")
+@RequiredArgsConstructor
 @Tag(name = "Reservas", description = "Operaciones relacionadas con las reservas")
 public class ReservaController {
 
     private final ReservaService reservaService;
-
-    public ReservaController(ReservaService reservaService) {
-        this.reservaService = reservaService;
-    }
 
     @Operation(summary = "Obtener reserva por ID", description = "Devuelve los detalles de una reserva.")
     @GetMapping("/{id}")

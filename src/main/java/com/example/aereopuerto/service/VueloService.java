@@ -2,6 +2,7 @@ package com.example.aereopuerto.service;
 
 import com.example.aereopuerto.model.Vuelo;
 import com.example.aereopuerto.repository.VueloRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -10,13 +11,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class VueloService {
 
     private final VueloRepository vueloRepository;
-
-    public VueloService(VueloRepository vueloRepository) {
-        this.vueloRepository = vueloRepository;
-    }
 
     /**
      * Cacheable: Si el vuelo existe en Redis (key = id), lo devuelve inmediatamente sin tocar MySQL.

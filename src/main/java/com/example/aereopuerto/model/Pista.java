@@ -7,12 +7,13 @@ import lombok.*;
 
 import java.io.Serializable;
 
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name = "Pista")
+
 public class Pista implements Serializable {
     private static final long serialVersionUID = 1L;
 

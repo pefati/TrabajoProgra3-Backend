@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,14 +15,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/empleados")
+@RequiredArgsConstructor
 @Tag(name = "Empleados", description = "Operaciones relacionadas con los empleados")
 public class EmpleadoController {
 
     private final EmpleadoService empleadoService;
-
-    public EmpleadoController(EmpleadoService empleadoService) {
-        this.empleadoService = empleadoService;
-    }
 
     @Operation(summary = "Obtener empleado por ID", description = "Devuelve los datos de un empleado.")
     @GetMapping("/{id}")

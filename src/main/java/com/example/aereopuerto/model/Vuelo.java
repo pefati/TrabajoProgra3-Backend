@@ -15,6 +15,8 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name = "Vuelo")
+
 public class Vuelo implements Serializable {
 
     /**

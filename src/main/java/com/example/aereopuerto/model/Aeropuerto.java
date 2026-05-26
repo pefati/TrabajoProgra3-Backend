@@ -10,6 +10,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name = "Aeropuerto")
 
 public class Aeropuerto implements Serializable {
 

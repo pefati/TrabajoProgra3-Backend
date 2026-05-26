@@ -8,5 +8,5 @@ public class AvionDTO {
     private float capacidadTanque;
     private int capacidadPasajeros;
     private String modelo;
-    private int aerolinea_id;
+    private Long aerolinea_id;
 }

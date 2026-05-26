@@ -1,11 +1,13 @@
 package com.example.aereopuerto.controller;
 
+import com.example.aereopuerto.dto.AvionDTO;
 import com.example.aereopuerto.model.Avion;
 import com.example.aereopuerto.service.AvionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,14 +16,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/aviones")
+@RequiredArgsConstructor
 @Tag(name = "Aviones", description = "Operaciones relacionadas con los aviones")
 public class AvionController {
 
     private final AvionService avionService;
 
-    public AvionController(AvionService avionService) {
-        this.avionService = avionService;
-    }
 
     @Operation(summary = "Obtener avion por ID", description = "Devuelve los datos de un avión.")
     @GetMapping("/{id}")
@@ -37,8 +37,8 @@ public class AvionController {
 
     @Operation(summary = "Crear avion", description = "Registra un nuevo avión.")
     @PostMapping
-    public ResponseEntity<Avion> crearAvion(@RequestBody Avion avion) {
-        Avion nuevo = avionService.crearOActualizarAvion(avion);
+    public ResponseEntity<Avion> crearAvion(@RequestBody AvionDTO avion) {
+        Avion nuevo = avionService.crearAvion(avion.getIdentificador(), avion.getCapacidadTanque(), avion.getCapacidadPasajeros(), avion.getModelo(), avion.getAerolinea_id());
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
     }
 

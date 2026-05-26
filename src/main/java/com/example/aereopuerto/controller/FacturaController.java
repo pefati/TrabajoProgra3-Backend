@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,14 +15,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/facturas")
+@RequiredArgsConstructor
 @Tag(name = "Facturas", description = "Operaciones relacionadas con las facturas")
 public class FacturaController {
 
     private final FacturaService facturaService;
-
-    public FacturaController(FacturaService facturaService) {
-        this.facturaService = facturaService;
-    }
 
     @Operation(summary = "Obtener factura por ID", description = "Devuelve los datos de una factura.")
     @GetMapping("/{id}")

@@ -12,7 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
+@Table(name = "Empleado")
 
 public class Empleado implements Serializable {
     private static final long serialVersionUID = 1L;

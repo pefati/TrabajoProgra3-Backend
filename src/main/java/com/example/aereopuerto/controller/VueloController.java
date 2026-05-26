@@ -2,6 +2,7 @@ package com.example.aereopuerto.controller;
 
 import com.example.aereopuerto.model.Vuelo;
 import com.example.aereopuerto.service.VueloService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,14 +15,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/vuelos")
+@RequiredArgsConstructor
 @Tag(name = "Vuelos", description = "Operaciones relacionadas con los vuelos")
 public class VueloController {
 
     private final VueloService vueloService;
-
-    public VueloController(VueloService vueloService) {
-        this.vueloService = vueloService;
-    }
 
     @Operation(summary = "Obtener un vuelo por su ID", description = "Devuelve los detalles de un vuelo. Utiliza caché Redis para respuestas ultra rapidas.")
     @ApiResponses(value = {
