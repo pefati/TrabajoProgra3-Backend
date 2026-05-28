@@ -38,7 +38,7 @@ public class AvionController {
     @Operation(summary = "Crear avion", description = "Registra un nuevo avión.")
     @PostMapping
     public ResponseEntity<Avion> crearAvion(@RequestBody AvionDTO avion) {
-        Avion nuevo = avionService.crearAvion(avion.getIdentificador(), avion.getCapacidadTanque(), avion.getCapacidadPasajeros(), avion.getModelo(), avion.getAerolinea_id());
+        Avion nuevo = avionService.crearAvion(avion.getIdentificador(), avion.getCapacidadTanque(), avion.getCapacidadPasajeros(), avion.getModelo());
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
     }
 
@@ -46,7 +46,7 @@ public class AvionController {
     @PutMapping("/{id}")
     public ResponseEntity<Avion> actualizarAvion(@PathVariable Long id, @RequestBody Avion avion) {
         avion.setAvion_id(id);
-        return ResponseEntity.ok(avionService.crearOActualizarAvion(avion));
+        return ResponseEntity.ok(avionService.EditarAvion(id, avion));
     }
 
     @Operation(summary = "Eliminar avion", description = "Elimina un avión del sistema.")

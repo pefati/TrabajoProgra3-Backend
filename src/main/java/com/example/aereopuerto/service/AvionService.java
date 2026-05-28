@@ -17,7 +17,6 @@ import java.util.List;
 public class AvionService {
 
     private final AvionRepository avionRepository;
-    private final AereolineaRepository aereolineaRepository;
 
     @Cacheable(value = "aviones", key = "#id")
     public Avion obtenerAvionPorId(Long id) {
@@ -31,15 +30,9 @@ public class AvionService {
     }
 
     @CachePut(value = "aviones", key = "#result.avion_id")
-    public Avion crearAvion(String identificador, float capacidadTanque, int capacidadPasajeros, String modelo, Long aereolinea_id) {
-
-
-        Aereolinea al = aereolineaRepository.findById(aereolinea_id)
-                .orElseThrow(() -> new AereolineaInvalidaException("La aereolinea no existe"));
+    public Avion crearAvion(String identificador, float capacidadTanque, int capacidadPasajeros, String modelo) {
 
         Avion a = new Avion();
-
-        a.setAerolinea(al);
         a.setEstado(estadoAvion.DISPONIBLE);
         a.setModelo(modelo);
         a.setCapacidadTanque(capacidadTanque);
@@ -52,8 +45,6 @@ public class AvionService {
     @CachePut(value = "aviones", key = "#result.avion_id")
     public Avion EditarAvion(Long id, Avion av) {
         Avion a = obtenerAvionPorId(id);
-
-        a.setAerolinea(av.getAerolinea());
         a.setEstado(av.getEstado());
         a.setModelo(av.getModelo());
         a.setCapacidadTanque(av.getCapacidadTanque());
