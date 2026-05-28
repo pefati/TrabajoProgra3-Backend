@@ -23,13 +23,15 @@ import java.io.Serializable;
         private Long equipaje_id;
 
         @ManyToOne
-        @JoinColumn (name="reserva_id")
+        @JoinColumn(name = "reserva_id")
         private Reserva reserva_id;
 
         private Float peso;
 
+        @Enumerated(EnumType.STRING)
         private TipoEquipaje tipo;
 
+        @Enumerated(EnumType.STRING)
         private EstadoEquipaje estado;
 
     }
