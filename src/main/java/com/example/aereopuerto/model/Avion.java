@@ -26,7 +26,7 @@ public class Avion implements Serializable {
     private String identificador;
 
     @Column (nullable = false)
-    private float capacidadTanque;
+    private float capacidadBodega;
 
     @Column (nullable = false)
     private int capacidadPasajeros;

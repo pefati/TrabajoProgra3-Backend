@@ -35,7 +35,7 @@ public class AvionService {
         Avion a = new Avion();
         a.setEstado(estadoAvion.DISPONIBLE);
         a.setModelo(modelo);
-        a.setCapacidadTanque(capacidadTanque);
+        a.setCapacidadBodega(capacidadTanque);
         a.setCapacidadPasajeros(capacidadPasajeros);
         a.setIdentificador(identificador);
 
@@ -47,7 +47,7 @@ public class AvionService {
         Avion a = obtenerAvionPorId(id);
         a.setEstado(av.getEstado());
         a.setModelo(av.getModelo());
-        a.setCapacidadTanque(av.getCapacidadTanque());
+        a.setCapacidadBodega(av.getCapacidadBodega());
         a.setCapacidadPasajeros(av.getCapacidadPasajeros());
         a.setIdentificador(av.getIdentificador());
 
