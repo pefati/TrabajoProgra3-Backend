@@ -10,7 +10,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "Aeropuerto")
+@Table(name = "aeropuerto")
 
 public class Aeropuerto implements Serializable {
 
@@ -24,8 +24,8 @@ public class Aeropuerto implements Serializable {
     @Column(nullable = false)
     private String nombre;
 
-    @Column(nullable = false)
-    private String codigo_iata;
+    @Column(nullable = false, name="codigo_iata")
+    private String codigoIata;
 
     @Column(nullable = false)
     private String ciudad;
