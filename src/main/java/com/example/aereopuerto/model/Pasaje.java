@@ -28,6 +28,9 @@ public class Pasaje implements Serializable {
     private String codigo_pasaje;
 
     @Column
+    private String asiento;
+
+    @Column
     @Enumerated(EnumType.STRING)
     private ClasesVuelo clasesVuelo;
 
