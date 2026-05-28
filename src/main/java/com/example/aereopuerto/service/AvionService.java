@@ -4,6 +4,7 @@ import com.example.aereopuerto.model.Avion;
 import com.example.aereopuerto.model.enums.estadoAvion;
 import com.example.aereopuerto.repository.AvionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,6 +17,7 @@ import java.util.List;
 
 public class AvionService {
 
+    @Autowired
     private final AvionRepository avionRepository;
 
     @Cacheable(value = "aviones", key = "#id")

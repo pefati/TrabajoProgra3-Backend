@@ -3,6 +3,7 @@ package com.example.aereopuerto.controller;
 import com.example.aereopuerto.model.Vuelo;
 import com.example.aereopuerto.service.VueloService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import java.util.List;
 @Tag(name = "Vuelos", description = "Operaciones relacionadas con los vuelos")
 public class VueloController {
 
+    @Autowired
     private final VueloService vueloService;
 
     @Operation(summary = "Obtener un vuelo por su ID", description = "Devuelve los detalles de un vuelo. Utiliza caché Redis para respuestas ultra rapidas.")

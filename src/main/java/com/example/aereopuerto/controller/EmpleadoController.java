@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import java.util.List;
 @Tag(name = "Empleados", description = "Operaciones relacionadas con los empleados")
 public class EmpleadoController {
 
+    @Autowired
     private final EmpleadoService empleadoService;
 
     @Operation(summary = "Obtener empleado por ID", description = "Devuelve los datos de un empleado.")

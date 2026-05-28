@@ -3,6 +3,7 @@ package com.example.aereopuerto.service;
 import com.example.aereopuerto.model.Factura;
 import com.example.aereopuerto.repository.FacturaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -14,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FacturaService {
 
+    @Autowired
     private final FacturaRepository facturaRepository;
 
     @Cacheable(value = "facturas", key = "#id")
