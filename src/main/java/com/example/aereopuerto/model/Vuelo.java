@@ -43,35 +43,17 @@ public class Vuelo implements Serializable {
     @JoinColumn(name = "avion_id", nullable = false)
     private Avion avion_id;
 
-    @ManyToOne
-    @JoinColumn(name = "pista_id", nullable = false)
-    private Pista pista_id;
-
-    @ManyToOne
-    @JoinColumn(name = "puerta_embarque_id", nullable = false)
-    private PuertaEmbarque puertaEmbarque;
-
     @Column(nullable = false)
     private LocalDateTime fecha_salida;
-
-    @Column(nullable = false)
-    private LocalDateTime fecha_salida_real;
 
     @Column(nullable = false)
     private LocalDateTime fecha_llegada;
 
     @Column(nullable = false)
-    private LocalDateTime fecha_llegada_real;
-
-    @Column(nullable = false)
     private LocalDateTime hora_salida;
 
-    private LocalDateTime hora_salida_real;
     @Column(nullable = false)
     private LocalDateTime hora_llegada;
-
-    @Column(nullable = false)
-    private LocalDateTime hora_llegada_real;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

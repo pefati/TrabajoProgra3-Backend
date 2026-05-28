@@ -8,12 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptions {
 
-    @ExceptionHandler(AereolineaInvalidaException.class)
-    public ResponseEntity<String> AereolineaInvalidaException(AereolineaInvalidaException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
-    }
+
     @ExceptionHandler(AsignacionInvalidaException.class)
     public ResponseEntity<String> AsignacionInvalidaException(AsignacionInvalidaException ex) {
         return ResponseEntity
@@ -44,18 +39,7 @@ public class GlobalExceptions {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ex.getMessage());
     }
-    @ExceptionHandler(PistaInvalidaException.class)
-    public ResponseEntity<String> PistaInvalidaException(PistaInvalidaException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
-    }
-    @ExceptionHandler(PuertaEmbarqueInvalidoException.class)
-    public ResponseEntity<String> PuertaEmbarqueInvalidoException(PuertaEmbarqueInvalidoException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
-    }
+
     @ExceptionHandler(ReservaInvalidaException.class)
     public ResponseEntity<String> ReservaInvalidaException(ReservaInvalidaException ex) {
         return ResponseEntity

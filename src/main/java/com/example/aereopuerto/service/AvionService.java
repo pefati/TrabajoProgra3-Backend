@@ -1,10 +1,7 @@
 package com.example.aereopuerto.service;
 
-import com.example.aereopuerto.Exceptions.AereolineaInvalidaException;
-import com.example.aereopuerto.model.Aereolinea;
 import com.example.aereopuerto.model.Avion;
 import com.example.aereopuerto.model.enums.estadoAvion;
-import com.example.aereopuerto.repository.AereolineaRepository;
 import com.example.aereopuerto.repository.AvionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;

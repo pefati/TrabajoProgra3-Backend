@@ -34,9 +34,6 @@ public class Avion implements Serializable {
     @Column (nullable = false)
     private String modelo;
 
-    @ManyToOne
-    @JoinColumn(name = "aerolinea_id", nullable = false)
-    private Aereolinea aerolinea;
 
     @Column (nullable = false)
     @Enumerated(EnumType.STRING)

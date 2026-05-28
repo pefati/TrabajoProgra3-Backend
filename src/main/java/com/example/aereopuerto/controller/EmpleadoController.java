@@ -53,4 +53,5 @@ public class EmpleadoController {
         empleadoService.eliminarEmpleado(id);
         return ResponseEntity.noContent().build();
     }
+
 }
