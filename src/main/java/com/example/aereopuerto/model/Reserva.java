@@ -28,10 +28,6 @@ public class Reserva implements Serializable {
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
-    @ManyToOne
-    @JoinColumn(name = "Vuelo_id", nullable = false)
-    private Vuelo vuelo;
-
     @Column(nullable = false)
     private float valor;
 
@@ -40,15 +36,11 @@ public class Reserva implements Serializable {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private ClasesVuelo clasesVuelo;
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
     private EstadoReserva estadoReserva;
-
-    @Column(nullable = false, unique = true)
-    private String numero_ticket;
 
     @Column(nullable = false)
     private LocalDateTime fecha_reserva;
+
+
+
 }
