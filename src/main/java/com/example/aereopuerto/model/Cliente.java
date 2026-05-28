@@ -1,11 +1,13 @@
 package com.example.aereopuerto.model;
 
 
+import com.example.aereopuerto.model.enums.Identificador;
 import com.example.aereopuerto.model.enums.Sexo;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -14,7 +16,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "Cliente")
+@Table(name = "cliente")
 
 public class Cliente implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -30,16 +32,19 @@ public class Cliente implements Serializable {
     private String apellido;
 
     @Column(nullable = false)
-    private String email;
+    private String mail;
 
     @Column(nullable = false)
     private String telefono;
 
     @Column(nullable = false)
-    private LocalDateTime fecha_nacimiento;
+    private LocalDate fecha_nacimiento;
 
-    @Column(nullable = false, unique = true)
-    private String DNI_pasaporte;
+    @Enumerated(EnumType.STRING)
+    private Identificador identificador;
+
+    @Column(nullable = false, unique = true, name= "numero_identificador")
+    private String numeroIdentificador;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
