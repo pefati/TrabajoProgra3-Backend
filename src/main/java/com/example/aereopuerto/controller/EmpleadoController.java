@@ -25,7 +25,7 @@ public class EmpleadoController {
 
     @Operation(summary = "Obtener empleado por ID", description = "Devuelve los datos de un empleado.")
     @GetMapping("/{id}")
-    public ResponseEntity<Empleado> obtenerEmpleado(@PathVariable Long id) {
+    public ResponseEntity<Empleado> obtenerEmpleado(@PathVariable Integer id) {
         return ResponseEntity.ok(empleadoService.obtenerEmpleadoPorId(id));
     }
 
@@ -44,14 +44,14 @@ public class EmpleadoController {
 
     @Operation(summary = "Actualizar empleado", description = "Actualiza los datos de un empleado existente.")
     @PutMapping("/{id}")
-    public ResponseEntity<Empleado> actualizarEmpleado(@PathVariable Long id, @RequestBody Empleado empleado) {
+    public ResponseEntity<Empleado> actualizarEmpleado(@PathVariable Integer id, @RequestBody Empleado empleado) {
         empleado.setId(id);
         return ResponseEntity.ok(empleadoService.crearOActualizarEmpleado(empleado));
     }
 
     @Operation(summary = "Eliminar empleado", description = "Elimina un empleado.")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarEmpleado(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarEmpleado(@PathVariable Integer id) {
         empleadoService.eliminarEmpleado(id);
         return ResponseEntity.noContent().build();
     }

@@ -25,7 +25,7 @@ public class ReservaController {
 
     @Operation(summary = "Obtener reserva por ID", description = "Devuelve los detalles de una reserva.")
     @GetMapping("/{id}")
-    public ResponseEntity<Reserva> obtenerReserva(@PathVariable Long id) {
+    public ResponseEntity<Reserva> obtenerReserva(@PathVariable Integer id) {
         return ResponseEntity.ok(reservaService.obtenerReservaPorId(id));
     }
 
@@ -44,14 +44,14 @@ public class ReservaController {
 
     @Operation(summary = "Actualizar reserva", description = "Actualiza una reserva existente.")
     @PutMapping("/{id}")
-    public ResponseEntity<Reserva> actualizarReserva(@PathVariable Long id, @RequestBody Reserva reserva) {
+    public ResponseEntity<Reserva> actualizarReserva(@PathVariable Integer id, @RequestBody Reserva reserva) {
         reserva.setId(id);
         return ResponseEntity.ok(reservaService.crearOActualizarReserva(reserva));
     }
 
     @Operation(summary = "Eliminar reserva", description = "Elimina una reserva.")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarReserva(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarReserva(@PathVariable Integer id) {
         reservaService.eliminarReserva(id);
         return ResponseEntity.noContent().build();
     }

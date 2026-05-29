@@ -19,7 +19,7 @@ public class FacturaService {
     private final FacturaRepository facturaRepository;
 
     @Cacheable(value = "facturas", key = "#id")
-    public Factura obtenerFacturaPorId(Long id) {
+    public Factura obtenerFacturaPorId(Integer id) {
         return facturaRepository.findById(id).orElseThrow(() -> new RuntimeException("Factura no encontrada. ID: " + id));
     }
 
@@ -34,7 +34,7 @@ public class FacturaService {
     }
 
     @CacheEvict(value = "facturas", key = "#id")
-    public void eliminarFactura(Long id) {
+    public void eliminarFactura(Integer id) {
         facturaRepository.deleteById(id);
     }
 

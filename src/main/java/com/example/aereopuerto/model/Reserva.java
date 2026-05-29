@@ -23,7 +23,7 @@ public class Reserva implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reserva_id")
-    private Long id;
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)

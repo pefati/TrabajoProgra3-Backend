@@ -23,7 +23,7 @@ public class VueloService {
      * Si no existe, lo busca en MySQL, lo devuelve, y automaticamente lo guarda en Redis.
      */
     @Cacheable(value = "vuelos", key = "#id")
-    public Vuelo obtenerVueloPorId(Long id) {
+    public Vuelo obtenerVueloPorId(Integer id) {
         System.out.println("Buscando vuelo " + id);
         return vueloRepository.findById(id).orElseThrow(() -> new RuntimeException("Vuelo no encontrado. ID: " + id));
     }
@@ -42,7 +42,7 @@ public class VueloService {
      * CacheEvict: Al eliminar un registro de MySQL, lo borramos tambien de la cache de Redis.
      */
     @CacheEvict(value = "vuelos", key = "#id")
-    public void eliminarVuelo(Long id) {
+    public void eliminarVuelo(Integer id) {
         System.out.println("Eliminando vuelo " + id);
         vueloRepository.deleteById(id);
     }

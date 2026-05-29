@@ -29,7 +29,7 @@ public class Vuelo implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "vuelo_id")
-    private Long id;
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "aeropuerto_origen_id", nullable = false)

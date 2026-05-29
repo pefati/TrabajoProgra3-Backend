@@ -21,7 +21,7 @@ public class Empleado implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name= "empleado_id")
-    private Long id;
+    private Integer id;
 
     @Column(nullable = false, name= "fecha_nacimiento")
     private LocalDateTime fechaNacimiento;
@@ -30,5 +30,5 @@ public class Empleado implements Serializable {
     private String nombre;
 
     @Column(nullable = false)
-    private String apelido;
+    private String apellido;
 }

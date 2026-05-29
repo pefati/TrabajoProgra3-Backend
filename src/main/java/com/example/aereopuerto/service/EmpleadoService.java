@@ -19,7 +19,7 @@ public class EmpleadoService {
     private final EmpleadoRepository empleadoRepository;
 
     @Cacheable(value = "empleados", key = "#id")
-    public Empleado obtenerEmpleadoPorId(Long id) {
+    public Empleado obtenerEmpleadoPorId(Integer id) {
         return empleadoRepository.findById(id).orElseThrow(() -> new RuntimeException("Empleado no encontrado. ID: " + id));
     }
 
@@ -34,7 +34,7 @@ public class EmpleadoService {
     }
 
     @CacheEvict(value = "empleados", key = "#id")
-    public void eliminarEmpleado(Long id) {
+    public void eliminarEmpleado(Integer id) {
         empleadoRepository.deleteById(id);
     }
 

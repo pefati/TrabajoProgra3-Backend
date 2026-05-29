@@ -19,7 +19,7 @@ public class ReservaService {
     private final ReservaRepository reservaRepository;
 
     @Cacheable(value = "reservas", key = "#id")
-    public Reserva obtenerReservaPorId(Long id) {
+    public Reserva obtenerReservaPorId(Integer id) {
         return reservaRepository.findById(id).orElseThrow(() -> new RuntimeException("Reserva no encontrada. ID: " + id));
     }
 
@@ -34,7 +34,7 @@ public class ReservaService {
     }
 
     @CacheEvict(value = "reservas", key = "#id")
-    public void eliminarReserva(Long id) {
+    public void eliminarReserva(Integer id) {
         reservaRepository.deleteById(id);
     }
 

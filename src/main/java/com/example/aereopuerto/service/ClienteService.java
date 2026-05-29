@@ -19,7 +19,7 @@ public class ClienteService {
     private final ClienteRepository clienteRepository;
 
     @Cacheable(value = "clientes", key = "#id")
-    public Cliente obtenerClientePorId(Long id) {
+    public Cliente obtenerClientePorId(Integer id) {
         return clienteRepository.findById(id).orElseThrow(() -> new RuntimeException("Cliente no encontrado. ID: " + id));
     }
 
@@ -34,7 +34,7 @@ public class ClienteService {
     }
 
     @CacheEvict(value = "clientes", key = "#id")
-    public void eliminarCliente(Long id) {
+    public void eliminarCliente(Integer id) {
         clienteRepository.deleteById(id);
     }
 

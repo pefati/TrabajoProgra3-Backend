@@ -27,7 +27,7 @@ public class AvionController {
 
     @Operation(summary = "Obtener avion por ID", description = "Devuelve los datos de un avión.")
     @GetMapping("/{id}")
-    public ResponseEntity<Avion> obtenerAvion(@PathVariable Long id) {
+    public ResponseEntity<Avion> obtenerAvion(@PathVariable Integer id) {
         return ResponseEntity.ok(avionService.obtenerAvionPorId(id));
     }
 
@@ -46,14 +46,14 @@ public class AvionController {
 
     @Operation(summary = "Actualizar avion", description = "Actualiza la información de un avión existente.")
     @PutMapping("/{id}")
-    public ResponseEntity<Avion> actualizarAvion(@PathVariable Long id, @RequestBody Avion avion) {
-        avion.setAvion_id(id);
+    public ResponseEntity<Avion> actualizarAvion(@PathVariable Integer id, @RequestBody Avion avion) {
+        avion.setId(id);
         return ResponseEntity.ok(avionService.EditarAvion(id, avion));
     }
 
     @Operation(summary = "Eliminar avion", description = "Elimina un avión del sistema.")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarAvion(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarAvion(@PathVariable Integer id) {
         avionService.eliminarAvion(id);
         return ResponseEntity.noContent().build();
     }

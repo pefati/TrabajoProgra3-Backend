@@ -20,7 +20,7 @@ public class Asignacion implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="asignacion_id")
-    private Long id;
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "vuelo_id", nullable = false)

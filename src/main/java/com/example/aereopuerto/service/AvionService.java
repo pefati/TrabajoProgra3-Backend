@@ -21,7 +21,7 @@ public class AvionService {
     private final AvionRepository avionRepository;
 
     @Cacheable(value = "aviones", key = "#id")
-    public Avion obtenerAvionPorId(Long id) {
+    public Avion obtenerAvionPorId(Integer id) {
         return avionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Avion no encontrado. ID: " + id));
     }
@@ -45,7 +45,7 @@ public class AvionService {
     }
 
     @CachePut(value = "aviones", key = "#result.avion_id")
-    public Avion EditarAvion(Long id, Avion av) {
+    public Avion EditarAvion(Integer id, Avion av) {
         Avion a = obtenerAvionPorId(id);
         a.setEstado(av.getEstado());
         a.setModelo(av.getModelo());
@@ -57,7 +57,7 @@ public class AvionService {
     }
 
     @CacheEvict(value = "aviones", key = "#id")
-    public void eliminarAvion(Long id) {
+    public void eliminarAvion(Integer id) {
         avionRepository.deleteById(id);
     }
 

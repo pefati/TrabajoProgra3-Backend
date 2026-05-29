@@ -4,9 +4,9 @@ spring:
 
   # MySQL config
   datasource:
-    url: jdbc:mysql://localhost:3306/localh
+    url: jdbc:mysql://localhost:3306/pf_prog3_gestorAeropuerto
     username: root
-    password: root
+    password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   # JPA
@@ -20,11 +20,11 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
 
   # config redis
-  data:
-    redis:
-      host: localhost
-      port: 6379
+  #data:
+  # redis:
+   #  host: localhost
+    # port: 6379
 
   # configuracion del cache, es opcional pero para tenerlo en cuenta por si lo queremos configurar de forma global
-  cache:
-    type: redis
+  #cache:
+   # type: redis

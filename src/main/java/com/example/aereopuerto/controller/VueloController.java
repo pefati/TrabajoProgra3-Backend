@@ -29,7 +29,7 @@ public class VueloController {
             @ApiResponse(responseCode = "404", description = "Vuelo no encontrado")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Vuelo> obtenerVuelo(@PathVariable Long id) {
+    public ResponseEntity<Vuelo> obtenerVuelo(@PathVariable Integer id) {
         // En la consola verás si va a MySQL o lo saca directamente de Redis
         Vuelo vuelo = vueloService.obtenerVueloPorId(id);
         return ResponseEntity.ok(vuelo);
@@ -58,8 +58,8 @@ public class VueloController {
             @ApiResponse(responseCode = "404", description = "Vuelo a actualizar no encontrado")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<Vuelo> actualizarVuelo(@PathVariable Long id, @RequestBody Vuelo vuelo) {
-        vuelo.setVuelo_id(id);
+    public ResponseEntity<Vuelo> actualizarVuelo(@PathVariable Integer id, @RequestBody Vuelo vuelo) {
+        vuelo.setId(id);
         vueloService.invalidarListaDeVuelos();
         Vuelo actualizado = vueloService.crearOActualizarVuelo(vuelo);
         return ResponseEntity.ok(actualizado);
@@ -68,7 +68,7 @@ public class VueloController {
     @Operation(summary = "Eliminar un vuelo", description = "Borra el vuelo de la base de datos e invalida su entrada en la cache Redis.")
     @ApiResponse(responseCode = "204", description = "Vuelo eliminado exitosamente")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarVuelo(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarVuelo(@PathVariable Integer id) {
         vueloService.invalidarListaDeVuelos();
         vueloService.eliminarVuelo(id);
         return ResponseEntity.noContent().build();

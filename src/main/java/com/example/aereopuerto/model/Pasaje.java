@@ -24,7 +24,7 @@ public class Pasaje implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column (name = "pasaje_id")
-    private Long id;
+    private Integer id;
 
     @Column(name = "codigo_pasaje")
     private String codigoPasaje;

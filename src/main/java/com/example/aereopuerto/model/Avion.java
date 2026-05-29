@@ -20,7 +20,7 @@ public class Avion implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="avion_id")
-    private Long id;
+    private Integer id;
 
     @Column(nullable = false)
     private String identificador;

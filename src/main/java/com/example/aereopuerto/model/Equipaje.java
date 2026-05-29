@@ -20,7 +20,7 @@ import java.io.Serializable;
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Column(name = "equipaje_id")
-        private Long id;
+        private Integer id;
 
         @ManyToOne
         @JoinColumn(name = "reserva_id")

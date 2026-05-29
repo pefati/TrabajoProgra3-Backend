@@ -25,7 +25,7 @@ public class FacturaController {
 
     @Operation(summary = "Obtener factura por ID", description = "Devuelve los datos de una factura.")
     @GetMapping("/{id}")
-    public ResponseEntity<Factura> obtenerFactura(@PathVariable Long id) {
+    public ResponseEntity<Factura> obtenerFactura(@PathVariable Integer id) {
         return ResponseEntity.ok(facturaService.obtenerFacturaPorId(id));
     }
 
@@ -44,14 +44,14 @@ public class FacturaController {
 
     @Operation(summary = "Actualizar factura", description = "Actualiza una factura existente.")
     @PutMapping("/{id}")
-    public ResponseEntity<Factura> actualizarFactura(@PathVariable Long id, @RequestBody Factura factura) {
-        factura.setId_factura(id);
+    public ResponseEntity<Factura> actualizarFactura(@PathVariable Integer id, @RequestBody Factura factura) {
+        factura.setId(id);
         return ResponseEntity.ok(facturaService.crearOActualizarFactura(factura));
     }
 
     @Operation(summary = "Eliminar factura", description = "Elimina una factura.")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarFactura(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarFactura(@PathVariable Integer id) {
         facturaService.eliminarFactura(id);
         return ResponseEntity.noContent().build();
     }
