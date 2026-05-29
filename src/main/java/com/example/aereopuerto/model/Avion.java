@@ -25,10 +25,10 @@ public class Avion implements Serializable {
     @Column(nullable = false)
     private String identificador;
 
-    @Column (nullable = false)
+    @Column (nullable = false, name= "capacidad_bodega")
     private float capacidadBodega;
 
-    @Column (nullable = false)
+    @Column (nullable = false, name= "capacidad_pasajeros")
     private int capacidadPasajeros;
 
     @Column (nullable = false)
