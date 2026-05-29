@@ -14,7 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "Reserva")
+@Table(name = "reserva")
 
 public class Reserva implements Serializable {
 
@@ -22,6 +22,7 @@ public class Reserva implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "reserva_id")
     private Long id;
 
     @ManyToOne
@@ -31,15 +32,15 @@ public class Reserva implements Serializable {
     @Column(nullable = false)
     private float valor;
 
-    @Column(nullable = false)
-    private int cantidad_Pasajes;
+    @Column(nullable = false, name= "cantidad_pasajes")
+    private int cantidadPasajes;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "estado")
     @Enumerated(EnumType.STRING)
     private EstadoReserva estadoReserva;
 
-    @Column(nullable = false)
-    private LocalDateTime fecha_reserva;
+    @Column(nullable = false, name="fecha_reserva")
+    private LocalDateTime fechaReserva;
 
 
 

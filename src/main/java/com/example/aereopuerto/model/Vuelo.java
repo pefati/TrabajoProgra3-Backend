@@ -15,7 +15,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "Vuelo")
+@Table(name = "vuelo")
 
 public class Vuelo implements Serializable {
 
@@ -28,34 +28,34 @@ public class Vuelo implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, unique = true)
-    private Long vuelo_id;
+    @Column(name = "vuelo_id")
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "aeropuerto_id", nullable = false)
-    private Aeropuerto aeropuerto_origen;
+    @JoinColumn(name = "aeropuerto_origen_id", nullable = false)
+    private Aeropuerto aeropuertoOrigen;
 
     @ManyToOne
-    @JoinColumn(name = "aeropuerto_id", nullable = false)
-    private Aeropuerto aeropuerto_destino;
+    @JoinColumn(name = "aeropuerto_destino_id", nullable = false)
+    private Aeropuerto aeropuertoDestino;
 
     @ManyToOne
     @JoinColumn(name = "avion_id", nullable = false)
-    private Avion avion_id;
+    private Avion avion;
 
-    @Column(nullable = false)
-    private LocalDateTime fecha_salida;
+    @Column(nullable = false, name= "fecha_salida")
+    private LocalDateTime fechaSalida;
 
-    @Column(nullable = false)
-    private LocalDateTime fecha_llegada;
+    @Column(nullable = false, name = "fecha_llegada")
+    private LocalDateTime fechaLlegada;
 
-    @Column(nullable = false)
-    private LocalDateTime hora_salida;
+    @Column(nullable = false, name = "hora_salida")
+    private LocalDateTime horaSalida;
 
-    @Column(nullable = false)
-    private LocalDateTime hora_llegada;
+    @Column(nullable = false, name = "hora_llegada")
+    private LocalDateTime horaLlegada;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "estado")
     @Enumerated(EnumType.STRING)
     private estadoVuelo estado;
 

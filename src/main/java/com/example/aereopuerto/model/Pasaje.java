@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.print.attribute.standard.MediaSize;
 import java.io.Serializable;
 
 @Entity
@@ -15,27 +16,27 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "Pasaje")
+@Table(name = "pasaje")
 public class Pasaje implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column (name = "pasaje_id")
     private Long id;
 
-    @Column
-    private String codigo_pasaje;
+    @Column(name = "codigo_pasaje")
+    private String codigoPasaje;
 
-    @Column
     private String asiento;
 
-    @Column
     @Enumerated(EnumType.STRING)
+    @Column(name = "clase")
     private ClasesVuelo clasesVuelo;
 
     @ManyToOne
-    @JoinColumn(name = "Vuelo_id", nullable = false)
+    @JoinColumn(name = "vuelo_id", nullable = false)
     private Vuelo vuelo;
 
     @ManyToOne
@@ -43,7 +44,7 @@ public class Pasaje implements Serializable {
     private Equipaje equipaje;
 
     @ManyToOne
-    @JoinColumn(name = "Reserva_id", nullable = false)
+    @JoinColumn(name = "reserva_id", nullable = false)
     private Reserva reserva;
 
 }

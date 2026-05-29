@@ -12,19 +12,19 @@ import java.io.Serializable;
     @AllArgsConstructor
     @Builder
     @Entity
-
+    @Table(name = "equipaje")
     public class Equipaje implements Serializable {
 
         private static final long serialVersionUID = 1L;
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(nullable = false, unique = true)
-        private Long equipaje_id;
+        @Column(name = "equipaje_id")
+        private Long id;
 
         @ManyToOne
         @JoinColumn(name = "reserva_id")
-        private Reserva reserva_id;
+        private Reserva reserva;
 
         private Float peso;
 

@@ -19,8 +19,8 @@ public class Avion implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, unique = true)
-    private Long avion_id;
+    @Column(name="avion_id")
+    private Long id;
 
     @Column(nullable = false)
     private String identificador;

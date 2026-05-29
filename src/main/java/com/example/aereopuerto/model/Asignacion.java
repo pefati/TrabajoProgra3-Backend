@@ -11,7 +11,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "Asignacion")
+@Table(name = "asignacion")
 
 public class Asignacion implements Serializable {
 
@@ -19,6 +19,7 @@ public class Asignacion implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="asignacion_id")
     private Long id;
 
     @ManyToOne

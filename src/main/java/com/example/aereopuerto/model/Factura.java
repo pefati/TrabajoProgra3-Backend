@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -13,7 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "Factura")
+@Table(name = "factura")
 
 public class Factura implements Serializable{
     private static final long serialVersionUID = 1L;
@@ -21,10 +22,11 @@ public class Factura implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_factura;
+    @Column(name = "factura_id")
+    private Long id;
 
-    @Column(nullable = false)
-    private String situacion_fiscal;
+    @Column(nullable = false, name="situacion_fiscal")
+    private String situacionFiscal;
 
     @ManyToOne
     @JoinColumn(name = "reserva_id", nullable = false)
@@ -33,10 +35,11 @@ public class Factura implements Serializable{
     @Column(nullable = false)
     private String CUIL;
 
-    @Column(nullable = false)
-    private LocalDateTime fecha_emision;
+    @Column(nullable = false, name = "fecha_emision")
+    private LocalDateTime fechaEmision;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "metodo_pago")
+    @Enumerated(EnumType.STRING)
     private MetodosDePago metodoDePago;
 
 

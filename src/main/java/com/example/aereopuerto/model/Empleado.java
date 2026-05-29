@@ -12,7 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "Empleado")
+@Table(name = "empleado")
 
 public class Empleado implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -20,6 +20,7 @@ public class Empleado implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name= "empleado_id")
     private Long id;
 
     @Column(nullable = false, name= "fecha_nacimiento")
