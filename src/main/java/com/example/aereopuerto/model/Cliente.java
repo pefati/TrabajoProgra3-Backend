@@ -7,23 +7,20 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "cliente")
+@Table(name = "Cliente")
 
 public class Cliente implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="cliente_id")
     private Integer id;
 
     @Column(nullable = false)
@@ -33,13 +30,7 @@ public class Cliente implements Serializable {
     private String apellido;
 
     @Column(nullable = false)
-    private String mail;
-
-    @Column(nullable = false)
-    private String telefono;
-
-    @Column(nullable = false)
-    private LocalDate fecha_nacimiento;
+    private LocalDateTime fecha_nacimiento;
 
     @Enumerated(EnumType.STRING)
     private Identificador identificador;
