@@ -1,5 +1,6 @@
 package com.example.aereopuerto.controller;
 
+import com.example.aereopuerto.dto.FacturaDTO;
 import com.example.aereopuerto.model.Factura;
 import com.example.aereopuerto.service.FacturaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,15 +39,14 @@ public class FacturaController {
     @Operation(summary = "Crear factura", description = "Registra una nueva factura.")
     @PostMapping
     public ResponseEntity<Factura> crearFactura(@RequestBody Factura factura) {
-        Factura nueva = facturaService.crearOActualizarFactura(factura);
+        Factura nueva = facturaService.crearFactura(factura);
         return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
     }
 
     @Operation(summary = "Actualizar factura", description = "Actualiza una factura existente.")
     @PutMapping("/{id}")
-    public ResponseEntity<Factura> actualizarFactura(@PathVariable Integer id, @RequestBody Factura factura) {
-        factura.setId(id);
-        return ResponseEntity.ok(facturaService.crearOActualizarFactura(factura));
+    public ResponseEntity<Factura> actualizarFactura(@PathVariable Integer id, @RequestBody FacturaDTO factura) {
+        return ResponseEntity.ok(facturaService.actualizarFactura(id,factura));
     }
 
     @Operation(summary = "Eliminar factura", description = "Elimina una factura.")

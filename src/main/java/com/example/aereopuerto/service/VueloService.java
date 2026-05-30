@@ -1,6 +1,11 @@
 package com.example.aereopuerto.service;
 
+import com.example.aereopuerto.dto.VueloDTO;
+import com.example.aereopuerto.model.Aeropuerto;
+import com.example.aereopuerto.model.Avion;
 import com.example.aereopuerto.model.Vuelo;
+import com.example.aereopuerto.repository.AeropuertoRepository;
+import com.example.aereopuerto.repository.AvionRepository;
 import com.example.aereopuerto.repository.VueloRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +22,8 @@ public class VueloService {
 
     @Autowired
     private final VueloRepository vueloRepository;
+    private final AeropuertoRepository aeropuertoRepository;
+    private final AvionRepository avionRepository;
 
     /**
      * Cacheable: Si el vuelo existe en Redis (key = id), lo devuelve inmediatamente sin tocar MySQL.
@@ -32,12 +39,42 @@ public class VueloService {
      * CachePut: Actualiza la base de datos MySQL e INMEDIATAMENTE actualiza/inserta el valor en Redis.
      * De esta forma, garantizamos que los datos nunca estén "viejos" (desincronizados).
      */
-    @CachePut(value = "vuelos", key = "#result.vuelo_id")
-    public Vuelo crearOActualizarVuelo(Vuelo vuelo) {
-        System.out.println("Guardando vuelo");
+    @CachePut(value = "vuelos", key = "#result.id")
+    public Vuelo crearVuelo(Vuelo vuelo) {
         return vueloRepository.save(vuelo);
     }
 
+    @CachePut(value = "vuelos", key = "#result.id")
+    public Vuelo actualizarVuelo(Integer id, VueloDTO vueloDTO) {
+
+        Vuelo vuelo = vueloRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException(
+                        "Vuelo no encontrado. ID: " + id));
+
+        Aeropuerto origen = aeropuertoRepository.findById(vueloDTO.getAeropuertoOrigenId())
+                .orElseThrow(() -> new RuntimeException(
+                        "Aeropuerto origen no encontrado. ID: " + vueloDTO.getAeropuertoOrigenId()));
+
+        Aeropuerto destino = aeropuertoRepository.findById(vueloDTO.getAeropuertoDestinoId())
+                .orElseThrow(() -> new RuntimeException(
+                        "Aeropuerto destino no encontrado. ID: " + vueloDTO.getAeropuertoDestinoId()));
+
+        Avion avion = avionRepository.findById(vueloDTO.getAvionId())
+                .orElseThrow(() -> new RuntimeException(
+                        "Avión no encontrado. ID: " + vueloDTO.getAvionId()));
+
+        vuelo.setAeropuertoOrigen(origen);
+        vuelo.setAeropuertoDestino(destino);
+        vuelo.setAvion(avion);
+        vuelo.setFechaSalida(vueloDTO.getFechaSalida());
+        vuelo.setFechaLlegada(vueloDTO.getFechaLlegada());
+        vuelo.setHoraSalida(vueloDTO.getHoraSalida());
+        vuelo.setHoraLlegada(vueloDTO.getHoraLlegada());
+        vuelo.setEstado(vueloDTO.getEstado());
+        vuelo.setEscala(vueloDTO.isEscala());
+
+        return vueloRepository.save(vuelo);
+    }
     /**
      * CacheEvict: Al eliminar un registro de MySQL, lo borramos tambien de la cache de Redis.
      */

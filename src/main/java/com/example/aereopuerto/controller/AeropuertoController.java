@@ -1,8 +1,6 @@
 package com.example.aereopuerto.controller;
 
-import com.example.aereopuerto.dto.AvionDTO;
 import com.example.aereopuerto.model.Aeropuerto;
-import com.example.aereopuerto.model.Avion;
 import com.example.aereopuerto.service.AeropuertoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,7 +36,8 @@ public class AeropuertoController {
     @Operation(summary = "Crear aeropuerto", description = "Registra un nuevo aeropuerto.")
     @PostMapping
     public ResponseEntity<Aeropuerto> crearAeropuerto(@RequestBody Aeropuerto aeropuerto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(aeropuerto);
+        Aeropuerto nuevo = aeropuertoService.crearAeropuerto(aeropuerto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
     }
 
     @Operation(summary = "Actualizar aeropuerto", description = "Actualiza la información de un aeropuerto existente.")

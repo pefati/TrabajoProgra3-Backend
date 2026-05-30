@@ -44,7 +44,7 @@ public class ClienteController {
     @ApiResponse(responseCode = "201", description = "Cliente creado exitosamente")
     @PostMapping
     public ResponseEntity<Cliente> crearCliente(@RequestBody Cliente cliente) {
-        Cliente nuevo = clienteService.crearOActualizarCliente(cliente);
+        Cliente nuevo = clienteService.crearCliente(cliente);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
     }
 
@@ -55,8 +55,7 @@ public class ClienteController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<Cliente> actualizarCliente(@PathVariable Integer id, @RequestBody Cliente cliente) {
-        cliente.setId(id);
-        return ResponseEntity.ok(clienteService.crearOActualizarCliente(cliente));
+        return ResponseEntity.ok(clienteService.actualizarCliente(id,cliente));
     }
 
     @Operation(summary = "Eliminar cliente", description = "Elimina un cliente del sistema.")

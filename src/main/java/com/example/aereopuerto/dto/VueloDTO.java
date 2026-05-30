@@ -1,5 +1,6 @@
 package com.example.aereopuerto.dto;
 
+import com.example.aereopuerto.model.enums.estadoVuelo;
 import lombok.Data;
 import org.springframework.cglib.core.Local;
 
@@ -7,17 +8,13 @@ import java.time.LocalDateTime;
 
 @Data
 public class VueloDTO {
-    private int aeropuertoOrigen_id;
-    private int aeropuertoDestino_id;
-    private int avion_id;
-    private int pista_id;
-    private int puerta_embarque_id;
-    private LocalDateTime fecha_salida;
-    private LocalDateTime fecha_salida_real;
-    private LocalDateTime fecha_llegada;
-    private LocalDateTime fecha_llegada_real;
-    private LocalDateTime hora_salida;
-    private LocalDateTime hora_salida_real;
-    private LocalDateTime hora_llegada;
-    private LocalDateTime hora_llegada_real;
+    private int aeropuertoOrigenId;
+    private int aeropuertoDestinoId;
+    private int avionId;
+    private LocalDateTime fechaSalida;
+    private LocalDateTime fechaLlegada;
+    private LocalDateTime horaSalida;
+    private LocalDateTime horaLlegada;
+    private estadoVuelo estado;
+    private boolean escala;
 }

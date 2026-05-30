@@ -1,5 +1,6 @@
 package com.example.aereopuerto.controller;
 
+import com.example.aereopuerto.dto.VueloDTO;
 import com.example.aereopuerto.model.Vuelo;
 import com.example.aereopuerto.service.VueloService;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +49,7 @@ public class VueloController {
     public ResponseEntity<Vuelo> crearVuelo(@RequestBody Vuelo vuelo) {
         // Al crear, se debe limpiar la caché general de la lista
         vueloService.invalidarListaDeVuelos();
-        Vuelo nuevoVuelo = vueloService.crearOActualizarVuelo(vuelo);
+        Vuelo nuevoVuelo = vueloService.crearVuelo(vuelo);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoVuelo);
     }
 
@@ -58,10 +59,8 @@ public class VueloController {
             @ApiResponse(responseCode = "404", description = "Vuelo a actualizar no encontrado")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<Vuelo> actualizarVuelo(@PathVariable Integer id, @RequestBody Vuelo vuelo) {
-        vuelo.setId(id);
-        vueloService.invalidarListaDeVuelos();
-        Vuelo actualizado = vueloService.crearOActualizarVuelo(vuelo);
+    public ResponseEntity<Vuelo> actualizarVuelo(@PathVariable Integer id, @RequestBody VueloDTO vuelo) {
+        Vuelo actualizado = vueloService.actualizarVuelo(id, vuelo);
         return ResponseEntity.ok(actualizado);
     }
 

@@ -29,8 +29,21 @@ public class EmpleadoService {
     }
 
     @CachePut(value = "empleados", key = "#result.id")
-    public Empleado crearOActualizarEmpleado(Empleado empleado) {
+    public Empleado crearEmpleado(Empleado empleado) {
         return empleadoRepository.save(empleado);
+    }
+
+    @CachePut(value = "empleados", key = "#result.id")
+    public Empleado actualizarEmpleado(Integer id, Empleado empleado) {
+
+        Empleado e = empleadoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado. ID: " + id));
+
+        e.setNombre(empleado.getNombre());
+        e.setApellido(empleado.getApellido());
+        e.setFechaNacimiento(empleado.getFechaNacimiento());
+
+        return empleadoRepository.save(e);
     }
 
     @CacheEvict(value = "empleados", key = "#id")

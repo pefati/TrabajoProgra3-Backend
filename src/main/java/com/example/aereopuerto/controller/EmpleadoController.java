@@ -38,15 +38,14 @@ public class EmpleadoController {
     @Operation(summary = "Crear empleado", description = "Registra un nuevo empleado.")
     @PostMapping
     public ResponseEntity<Empleado> crearEmpleado(@RequestBody Empleado empleado) {
-        Empleado nuevo = empleadoService.crearOActualizarEmpleado(empleado);
+        Empleado nuevo = empleadoService.crearEmpleado(empleado);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
     }
 
     @Operation(summary = "Actualizar empleado", description = "Actualiza los datos de un empleado existente.")
     @PutMapping("/{id}")
     public ResponseEntity<Empleado> actualizarEmpleado(@PathVariable Integer id, @RequestBody Empleado empleado) {
-        empleado.setId(id);
-        return ResponseEntity.ok(empleadoService.crearOActualizarEmpleado(empleado));
+        return ResponseEntity.ok(empleadoService.actualizarEmpleado(id,empleado));
     }
 
     @Operation(summary = "Eliminar empleado", description = "Elimina un empleado.")

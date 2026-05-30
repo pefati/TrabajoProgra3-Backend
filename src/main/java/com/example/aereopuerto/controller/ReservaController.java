@@ -1,5 +1,6 @@
 package com.example.aereopuerto.controller;
 
+import com.example.aereopuerto.dto.ReservaDTO;
 import com.example.aereopuerto.model.Reserva;
 import com.example.aereopuerto.service.ReservaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,15 +39,14 @@ public class ReservaController {
     @Operation(summary = "Crear reserva", description = "Registra una nueva reserva.")
     @PostMapping
     public ResponseEntity<Reserva> crearReserva(@RequestBody Reserva reserva) {
-        Reserva nueva = reservaService.crearOActualizarReserva(reserva);
+        Reserva nueva = reservaService.crearReserva(reserva);
         return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
     }
 
     @Operation(summary = "Actualizar reserva", description = "Actualiza una reserva existente.")
     @PutMapping("/{id}")
-    public ResponseEntity<Reserva> actualizarReserva(@PathVariable Integer id, @RequestBody Reserva reserva) {
-        reserva.setId(id);
-        return ResponseEntity.ok(reservaService.crearOActualizarReserva(reserva));
+    public ResponseEntity<Reserva> actualizarReserva(@PathVariable Integer id, @RequestBody ReservaDTO reserva) {
+        return ResponseEntity.ok(reservaService.actualizarReserva(id,reserva));
     }
 
     @Operation(summary = "Eliminar reserva", description = "Elimina una reserva.")

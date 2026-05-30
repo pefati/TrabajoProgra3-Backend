@@ -1,7 +1,6 @@
 package com.example.aereopuerto.service;
 
 import com.example.aereopuerto.model.Avion;
-import com.example.aereopuerto.model.enums.estadoAvion;
 import com.example.aereopuerto.repository.AvionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,27 +30,19 @@ public class AvionService {
         return avionRepository.findAll();
     }
 
-    @CachePut(value = "aviones", key = "#result.avion_id")
-    public Avion crearAvion(String identificador, float capacidadTanque, int capacidadPasajeros, String modelo) {
-
-        Avion a = new Avion();
-        a.setEstado(estadoAvion.DISPONIBLE);
-        a.setModelo(modelo);
-        a.setCapacidadBodega(capacidadTanque);
-        a.setCapacidadPasajeros(capacidadPasajeros);
-        a.setIdentificador(identificador);
-
-        return avionRepository.save(a);
+    @CachePut(value = "aviones", key = "#result.id")
+    public Avion crearAvion(Avion avion) {
+        return avionRepository.save(avion);
     }
 
-    @CachePut(value = "aviones", key = "#result.avion_id")
+    @CachePut(value = "aviones", key = "#result.id")
     public Avion EditarAvion(Integer id, Avion av) {
         Avion a = obtenerAvionPorId(id);
-        a.setEstado(av.getEstado());
-        a.setModelo(av.getModelo());
         a.setCapacidadBodega(av.getCapacidadBodega());
         a.setCapacidadPasajeros(av.getCapacidadPasajeros());
         a.setIdentificador(av.getIdentificador());
+        a.setEstado(av.getEstado());
+        a.setModelo(av.getModelo());
 
         return avionRepository.save(a);
     }

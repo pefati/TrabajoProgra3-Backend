@@ -29,8 +29,26 @@ public class ClienteService {
     }
 
     @CachePut(value = "clientes", key = "#result.id")
-    public Cliente crearOActualizarCliente(Cliente cliente) {
+    public Cliente crearCliente(Cliente cliente) {
         return clienteRepository.save(cliente);
+    }
+
+    @CachePut(value = "clientes", key = "#result.id")
+    public Cliente actualizarCliente(Integer id, Cliente cliente) {
+
+        Cliente c = clienteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado. ID: " + id));
+
+        c.setNombre(cliente.getNombre());
+        c.setApellido(cliente.getApellido());
+        c.setMail(cliente.getMail());
+        c.setIdentificador(cliente.getIdentificador());
+        c.setTelefono(cliente.getTelefono());
+        c.setNumeroIdentificador(cliente.getNumeroIdentificador());
+        c.setFecha_nacimiento(cliente.getFecha_nacimiento());
+        c.setSexo(cliente.getSexo());
+
+        return clienteRepository.save(c);
     }
 
     @CacheEvict(value = "clientes", key = "#id")

@@ -1,11 +1,8 @@
 package com.example.aereopuerto.controller;
 
-import com.example.aereopuerto.dto.AvionDTO;
 import com.example.aereopuerto.model.Avion;
 import com.example.aereopuerto.service.AvionService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,15 +36,14 @@ public class AvionController {
 
     @Operation(summary = "Crear avion", description = "Registra un nuevo avión.")
     @PostMapping
-    public ResponseEntity<Avion> crearAvion(@RequestBody AvionDTO avion) {
-        Avion nuevo = avionService.crearAvion(avion.getIdentificador(), avion.getCapacidadTanque(), avion.getCapacidadPasajeros(), avion.getModelo());
+    public ResponseEntity<Avion> crearAvion(@RequestBody Avion avion) {
+        Avion nuevo = avionService.crearAvion(avion);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
     }
 
     @Operation(summary = "Actualizar avion", description = "Actualiza la información de un avión existente.")
     @PutMapping("/{id}")
     public ResponseEntity<Avion> actualizarAvion(@PathVariable Integer id, @RequestBody Avion avion) {
-        avion.setId(id);
         return ResponseEntity.ok(avionService.EditarAvion(id, avion));
     }
 

@@ -1,5 +1,6 @@
 package com.example.aereopuerto.dto;
 
+import com.example.aereopuerto.model.enums.MetodosDePago;
 import lombok.Data;
 import org.springframework.cglib.core.Local;
 
@@ -7,8 +8,9 @@ import java.time.LocalDateTime;
 
 @Data
 public class FacturaDTO {
-    private String situacion_fiscal;
-    private int reserva_id;
+    private String situacionFiscal;
+    private int reservaId;
     private String CUIL;
-    private LocalDateTime fecha_emision;
+    private LocalDateTime fechaEmision;
+    private MetodosDePago metodoDePago;
 }
