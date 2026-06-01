@@ -4,9 +4,9 @@ spring:
 
   # MySQL config
   datasource:
-    url: jdbc:mysql://localhost:3306/pf_prog3_gestorAeropuerto
+    url: jdbc:mysql://localhost:3306/pf_prog3_gestorAerolinea
     username: root
-    password: 1234
+    password: mocho
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   # JPA
