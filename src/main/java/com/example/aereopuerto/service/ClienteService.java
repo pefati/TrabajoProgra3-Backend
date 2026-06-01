@@ -41,11 +41,11 @@ public class ClienteService {
 
         c.setNombre(cliente.getNombre());
         c.setApellido(cliente.getApellido());
-        c.setMail(cliente.getMail());
+//        c.setMail(cliente.getMail());
         c.setIdentificador(cliente.getIdentificador());
-        c.setTelefono(cliente.getTelefono());
+  //      c.setTelefono(cliente.getTelefono());
         c.setNumeroIdentificador(cliente.getNumeroIdentificador());
-        c.setFecha_nacimiento(cliente.getFecha_nacimiento());
+  //      c.setFecha_nacimiento(cliente.getFecha_nacimiento());
         c.setSexo(cliente.getSexo());
 
         return clienteRepository.save(c);
