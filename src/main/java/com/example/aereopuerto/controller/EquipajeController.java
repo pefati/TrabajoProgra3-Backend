@@ -1,8 +1,6 @@
 package com.example.aereopuerto.controller;
 
-import com.example.aereopuerto.model.Empleado;
 import com.example.aereopuerto.model.Equipaje;
-import com.example.aereopuerto.service.EmpleadoService;
 import com.example.aereopuerto.service.EquipajeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
