@@ -22,10 +22,6 @@ import java.io.Serializable;
         @Column(name = "equipaje_id")
         private Integer id;
 
-        @ManyToOne
-        @JoinColumn(name = "reserva_id")
-        private Reserva reserva;
-
         private Float peso;
 
         @Enumerated(EnumType.STRING)
