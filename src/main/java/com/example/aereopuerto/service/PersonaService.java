@@ -1,7 +1,7 @@
 package com.example.aereopuerto.service;
 
-import com.example.aereopuerto.model.Cliente;
-import com.example.aereopuerto.repository.ClienteRepository;
+import com.example.aereopuerto.model.Persona;
+import com.example.aereopuerto.repository.PersonaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -13,47 +13,47 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ClienteService {
+public class PersonaService {
 
     @Autowired
-    private final ClienteRepository clienteRepository;
+    private final PersonaRepository personaRepository;
 
     @Cacheable(value = "clientes", key = "#id")
-    public Cliente obtenerClientePorId(Integer id) {
-        return clienteRepository.findById(id).orElseThrow(() -> new RuntimeException("Cliente no encontrado. ID: " + id));
+    public Persona obtenerClientePorId(Integer id) {
+        return personaRepository.findById(id).orElseThrow(() -> new RuntimeException("Cliente no encontrado. ID: " + id));
     }
 
     @Cacheable(value = "clientes", key = "'todos'")
-    public List<Cliente> obtenerTodosLosClientes() {
-        return clienteRepository.findAll();
+    public List<Persona> obtenerTodosLosClientes() {
+        return personaRepository.findAll();
     }
 
     @CachePut(value = "clientes", key = "#result.id")
-    public Cliente crearCliente(Cliente cliente) {
-        return clienteRepository.save(cliente);
+    public Persona crearCliente(Persona persona) {
+        return personaRepository.save(persona);
     }
 
     @CachePut(value = "clientes", key = "#result.id")
-    public Cliente actualizarCliente(Integer id, Cliente cliente) {
+    public Persona actualizarCliente(Integer id, Persona persona) {
 
-        Cliente c = clienteRepository.findById(id)
+        Persona c = personaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado. ID: " + id));
 
-        c.setNombre(cliente.getNombre());
-        c.setApellido(cliente.getApellido());
+        c.setNombre(persona.getNombre());
+        c.setApellido(persona.getApellido());
 //        c.setMail(cliente.getMail());
-        c.setIdentificador(cliente.getIdentificador());
+        c.setIdentificador(persona.getIdentificador());
   //      c.setTelefono(cliente.getTelefono());
-        c.setNumeroIdentificador(cliente.getNumeroIdentificador());
+        c.setNumeroIdentificador(persona.getNumeroIdentificador());
   //      c.setFecha_nacimiento(cliente.getFecha_nacimiento());
-        c.setSexo(cliente.getSexo());
+        c.setSexo(persona.getSexo());
 
-        return clienteRepository.save(c);
+        return personaRepository.save(c);
     }
 
     @CacheEvict(value = "clientes", key = "#id")
     public void eliminarCliente(Integer id) {
-        clienteRepository.deleteById(id);
+        personaRepository.deleteById(id);
     }
 
     @CacheEvict(value = "clientes", key = "'todos'")

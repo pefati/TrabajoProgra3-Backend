@@ -1,9 +1,7 @@
 package com.example.aereopuerto.service;
 
-import com.example.aereopuerto.model.Empleado;
 import com.example.aereopuerto.model.Equipaje;
 import com.example.aereopuerto.repository.EquipajeRepository;
-import com.example.aereopuerto.repository.FacturaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;

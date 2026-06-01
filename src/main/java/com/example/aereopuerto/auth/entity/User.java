@@ -1,6 +1,6 @@
 package com.example.aereopuerto.auth.entity;
 
-import com.example.aereopuerto.model.Cliente;
+import com.example.aereopuerto.model.Persona;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +28,7 @@ public class User implements UserDetails {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cliente_id", nullable = false)
-    private Cliente cliente;
+    private Persona persona;
 
     @Column(nullable = false, unique = true)
     private String email;

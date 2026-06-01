@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Builder
 @Table(name = "Cliente")
 
-public class Cliente implements Serializable {
+public class Persona implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id

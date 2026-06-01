@@ -27,8 +27,8 @@ public class Asignacion implements Serializable {
     private Vuelo vuelo;
 
     @ManyToOne
-    @JoinColumn(name = "empleado_id", nullable = false)
-    private Empleado empleado;
+    @JoinColumn(name = "persona_id", nullable = false)
+    private Persona empleado;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

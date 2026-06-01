@@ -26,7 +26,7 @@ CREATE TABLE avion (
     ) NOT NULL
 );
 
-CREATE TABLE cliente (
+CREATE TABLE persona (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     apellido VARCHAR(100) NOT NULL,
@@ -109,7 +109,7 @@ CREATE TABLE reserva (
         'PROCESANDO',
         'BAJA'
     ) NOT NULL,
-    CONSTRAINT fk_reserva_cliente FOREIGN KEY (cliente_id) REFERENCES cliente(id)
+    CONSTRAINT fk_reserva_cliente FOREIGN KEY (cliente_id) REFERENCES persona(id)
 );
 
 
@@ -149,4 +149,4 @@ CREATE TABLE usuario (
     email VARCHAR(255) NOT NULL UNIQUE,
     telefono VARCHAR(50) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    CONSTRAINT fk_usuario_cliente FOREIGN KEY (cliente_id) REFERENCES cliente(id));
+    CONSTRAINT fk_usuario_cliente FOREIGN KEY (cliente_id) REFERENCES persona(id));

@@ -1,9 +1,9 @@
 package com.example.aereopuerto.service;
 
 import com.example.aereopuerto.dto.ReservaDTO;
-import com.example.aereopuerto.model.Cliente;
+import com.example.aereopuerto.model.Persona;
 import com.example.aereopuerto.model.Reserva;
-import com.example.aereopuerto.repository.ClienteRepository;
+import com.example.aereopuerto.repository.PersonaRepository;
 import com.example.aereopuerto.repository.ReservaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class ReservaService {
 
     @Autowired
     private final ReservaRepository reservaRepository;
-    private final ClienteRepository clienteRepository;
+    private final PersonaRepository personaRepository;
 
     @Cacheable(value = "reservas", key = "#id")
     public Reserva obtenerReservaPorId(Integer id) {
@@ -44,11 +44,11 @@ public class ReservaService {
                 .orElseThrow(() -> new RuntimeException(
                         "Reserva no encontrada. ID: " + id));
 
-        Cliente cliente = clienteRepository.findById(reservaDTO.getClienteId())
+        Persona persona = personaRepository.findById(reservaDTO.getClienteId())
                 .orElseThrow(() -> new RuntimeException(
                         "Cliente no encontrado. ID: " + reservaDTO.getClienteId()));
 
-        reserva.setCliente(cliente);
+        reserva.setPersona(persona);
         reserva.setValor(reservaDTO.getValor());
         reserva.setCantidadPasajes(reservaDTO.getCantidadPasajes());
         reserva.setEstadoReserva(reservaDTO.getEstadoReserva());

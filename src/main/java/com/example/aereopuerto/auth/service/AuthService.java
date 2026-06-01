@@ -5,8 +5,8 @@ import com.example.aereopuerto.auth.dto.LoginRequest;
 import com.example.aereopuerto.auth.dto.RegisterRequest;
 import com.example.aereopuerto.auth.entity.User;
 import com.example.aereopuerto.auth.repository.UserRepository;
-import com.example.aereopuerto.model.Cliente;
-import com.example.aereopuerto.repository.ClienteRepository;
+import com.example.aereopuerto.model.Persona;
+import com.example.aereopuerto.repository.PersonaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final ClienteRepository clienteRepository;
+    private final PersonaRepository personaRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -44,11 +44,11 @@ public class AuthService {
             throw new IllegalArgumentException("El email ya está registrado");
         }
 
-        Cliente cliente = clienteRepository.findById(request.getClienteId())
+        Persona persona = personaRepository.findById(request.getClienteId())
                 .orElseThrow(() -> new IllegalArgumentException("Cliente no encontrado con id: " + request.getClienteId()));
 
         User user = User.builder()
-                .cliente(cliente)
+                .persona(persona)
                 .email(request.getEmail())
                 .telefono(request.getTelefono())
                 .password(passwordEncoder.encode(request.getPassword()))

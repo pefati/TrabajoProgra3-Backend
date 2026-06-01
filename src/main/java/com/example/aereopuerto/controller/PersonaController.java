@@ -1,7 +1,7 @@
 package com.example.aereopuerto.controller;
 
-import com.example.aereopuerto.model.Cliente;
-import com.example.aereopuerto.service.ClienteService;
+import com.example.aereopuerto.model.Persona;
+import com.example.aereopuerto.service.PersonaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -18,10 +18,10 @@ import java.util.List;
 @RequestMapping("/api/clientes")
 @RequiredArgsConstructor
 @Tag(name = "Clientes", description = "Operaciones relacionadas con los clientes")
-public class ClienteController {
+public class PersonaController {
 
     @Autowired
-    private final ClienteService clienteService;
+    private final PersonaService personaService;
 
     @Operation(summary = "Obtener cliente por ID", description = "Devuelve los datos de un cliente especifico.")
     @ApiResponses(value = {
@@ -29,22 +29,22 @@ public class ClienteController {
             @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Cliente> obtenerCliente(@PathVariable Integer id) {
-        return ResponseEntity.ok(clienteService.obtenerClientePorId(id));
+    public ResponseEntity<Persona> obtenerCliente(@PathVariable Integer id) {
+        return ResponseEntity.ok(personaService.obtenerClientePorId(id));
     }
 
     @Operation(summary = "Obtener todos los clientes", description = "Devuelve la lista completa de clientes.")
     @ApiResponse(responseCode = "200", description = "Lista devuelta exitosamente")
     @GetMapping
-    public ResponseEntity<List<Cliente>> obtenerTodos() {
-        return ResponseEntity.ok(clienteService.obtenerTodosLosClientes());
+    public ResponseEntity<List<Persona>> obtenerTodos() {
+        return ResponseEntity.ok(personaService.obtenerTodosLosClientes());
     }
 
     @Operation(summary = "Crear cliente", description = "Crea un nuevo cliente en el sistema.")
     @ApiResponse(responseCode = "201", description = "Cliente creado exitosamente")
     @PostMapping
-    public ResponseEntity<Cliente> crearCliente(@RequestBody Cliente cliente) {
-        Cliente nuevo = clienteService.crearCliente(cliente);
+    public ResponseEntity<Persona> crearCliente(@RequestBody Persona persona) {
+        Persona nuevo = personaService.crearCliente(persona);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
     }
 
@@ -54,15 +54,15 @@ public class ClienteController {
             @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<Cliente> actualizarCliente(@PathVariable Integer id, @RequestBody Cliente cliente) {
-        return ResponseEntity.ok(clienteService.actualizarCliente(id,cliente));
+    public ResponseEntity<Persona> actualizarCliente(@PathVariable Integer id, @RequestBody Persona persona) {
+        return ResponseEntity.ok(personaService.actualizarCliente(id, persona));
     }
 
     @Operation(summary = "Eliminar cliente", description = "Elimina un cliente del sistema.")
     @ApiResponse(responseCode = "204", description = "Cliente eliminado exitosamente")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarCliente(@PathVariable Integer id) {
-        clienteService.eliminarCliente(id);
+        personaService.eliminarCliente(id);
         return ResponseEntity.noContent().build();
     }
 }

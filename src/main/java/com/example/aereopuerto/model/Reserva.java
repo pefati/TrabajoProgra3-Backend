@@ -1,13 +1,11 @@
 package com.example.aereopuerto.model;
 
-import com.example.aereopuerto.model.enums.ClasesVuelo;
 import com.example.aereopuerto.model.enums.EstadoReserva;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Data
@@ -27,7 +25,7 @@ public class Reserva implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
-    private Cliente cliente;
+    private Persona persona;
 
     @Column(nullable = false)
     private float valor;
