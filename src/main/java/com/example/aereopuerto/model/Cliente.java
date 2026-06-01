@@ -29,8 +29,8 @@ public class Cliente implements Serializable {
     @Column(nullable = false)
     private String apellido;
 
-    @Column(nullable = false)
-    private LocalDateTime fecha_nacimiento;
+    @Column(nullable = false, name = "fecha_nacimiento")
+    private LocalDateTime fechaNacimiento;
 
     @Enumerated(EnumType.STRING)
     private Identificador identificador;
