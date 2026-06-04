@@ -24,7 +24,7 @@ public class Reserva implements Serializable {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "cliente_id", nullable = false)
+    @JoinColumn(name = "persona_id", nullable = false)
     private Persona persona;
 
     @Column(nullable = false)
