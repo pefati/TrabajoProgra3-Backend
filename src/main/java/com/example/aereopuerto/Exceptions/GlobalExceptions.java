@@ -53,6 +53,20 @@ public class GlobalExceptions {
                 .body(ex.getMessage());
     }
 
+    @ExceptionHandler(CarritoInvalidoException.class)
+    public ResponseEntity<String> CarritoInvalidoException(CarritoInvalidoException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(FavoritoInvalidoException.class)
+    public ResponseEntity<String> FavoritoInvalidoException(FavoritoInvalidoException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ex.getMessage());
+    }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> AllErrors(RuntimeException ex) {
         return ResponseEntity
