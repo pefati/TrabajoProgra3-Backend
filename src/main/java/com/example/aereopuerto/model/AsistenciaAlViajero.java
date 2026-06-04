@@ -21,7 +21,7 @@ public class AsistenciaAlViajero implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="asistencia_id")
+    @Column(name = "asistencia_id")
     private Integer id;
 
     @Column(nullable = false, name = "nombre_plan")
@@ -32,4 +32,7 @@ public class AsistenciaAlViajero implements Serializable {
 
     @Column(nullable = false)
     private Double precio;
+
+}
+
 
