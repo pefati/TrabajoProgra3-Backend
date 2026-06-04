@@ -33,7 +33,7 @@ public class FavoritoController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/vuelos/{vueloId}")
+    @PostMapping("/vuelos/{vueloId}") //Este add favorito lo hice de prueba, para que no haya que pasarle el ID de la persona y lo saque del usuario logueado
     public ResponseEntity<FavoritoDTO> addFavorito(
             @PathVariable Integer vueloId,
             Authentication authentication) {
@@ -41,4 +41,13 @@ public class FavoritoController {
         FavoritoDTO nuevoFavorito = favoritoService.addFavoritoPorToken(emailUsuario, vueloId);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoFavorito);
     }
+
+    @GetMapping
+    public ResponseEntity<List<FavoritoDTO>> getMyFavs(Authentication authentication) {
+        String emailUsuario = authentication.getName();
+        List<FavoritoDTO> favoritos = favoritoService.getFavoritosPorToken(emailUsuario);
+
+        return ResponseEntity.ok(favoritos);
+    }
+
 }
