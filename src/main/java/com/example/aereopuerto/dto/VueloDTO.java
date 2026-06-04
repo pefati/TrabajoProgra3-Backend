@@ -8,13 +8,13 @@ import java.time.LocalDateTime;
 
 @Data
 public class VueloDTO {
-    private int aeropuertoOrigenId;
-    private int aeropuertoDestinoId;
-    private int avionId;
+    private Integer aeropuertoOrigenId;
+    private Integer aeropuertoDestinoId;
+    private Integer avionId;
     private LocalDateTime fechaSalida;
     private LocalDateTime fechaLlegada;
     private LocalDateTime horaSalida;
     private LocalDateTime horaLlegada;
     private estadoVuelo estado;
-    private boolean escala;
+    private Boolean escala;
 }

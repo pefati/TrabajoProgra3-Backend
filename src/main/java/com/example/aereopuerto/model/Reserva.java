@@ -28,10 +28,10 @@ public class Reserva implements Serializable {
     private Persona persona;
 
     @Column(nullable = false)
-    private float valor;
+    private Float valor;
 
     @Column(nullable = false, name= "cantidad_pasajes")
-    private int cantidadPasajes;
+    private Integer cantidadPasajes;
 
     @Column(nullable = false, name = "estado")
     @Enumerated(EnumType.STRING)

@@ -7,9 +7,9 @@ import java.time.LocalDateTime;
 
 @Data
 public class ReservaDTO {
-    private int clienteId;
-    private float valor;
-    private int cantidadPasajes;
+    private Integer clienteId;
+    private Float valor;
+    private Integer cantidadPasajes;
     private EstadoReserva estadoReserva;
     private LocalDateTime fechaReserva;
 }

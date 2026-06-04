@@ -59,5 +59,5 @@ public class Vuelo implements Serializable {
     @Enumerated(EnumType.STRING)
     private estadoVuelo estado;
 
-    private boolean escala;
+    private Boolean escala;
 }

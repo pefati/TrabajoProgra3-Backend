@@ -26,10 +26,10 @@ public class Avion implements Serializable {
     private String identificador;
 
     @Column (nullable = false, name= "capacidad_bodega")
-    private float capacidadBodega;
+    private Float capacidadBodega;
 
     @Column (nullable = false, name= "capacidad_pasajeros")
-    private int capacidadPasajeros;
+    private Integer capacidadPasajeros;
 
     @Column (nullable = false)
     private String modelo;

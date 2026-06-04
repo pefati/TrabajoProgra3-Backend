@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Data
 public class FacturaDTO {
     private String situacionFiscal;
-    private int reservaId;
+    private Integer reservaId;
     private String CUIL;
     private LocalDateTime fechaEmision;
     private MetodosDePago metodoDePago;
