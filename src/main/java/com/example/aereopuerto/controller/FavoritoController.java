@@ -41,4 +41,14 @@ public class FavoritoController {
         FavoritoDTO nuevoFavorito = favoritoService.addFavoritoPorToken(emailUsuario, vueloId);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoFavorito);
     }
+
+    @GetMapping
+    public ResponseEntity<List<FavoritoDTO>> getMisFavoritos(Authentication authentication) {
+
+        String emailUsuario = authentication.getName();
+
+        List<FavoritoDTO> favoritos = favoritoService.getFavoritosPorToken(emailUsuario);
+
+        return ResponseEntity.ok(favoritos);
+    }
 }

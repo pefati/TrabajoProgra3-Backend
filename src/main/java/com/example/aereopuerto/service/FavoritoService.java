@@ -102,6 +102,22 @@ public class FavoritoService {
         return mapToDTO(favoritoRepository.save(favorito));
     }
 
+    @Cacheable(value = "favoritos", key = "#result != null && !#result.isEmpty() ? #result[0].personaId : #email")
+    public List<FavoritoDTO> getFavoritosPorToken(String email) {
+
+        User usuario = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ClienteInvalidoException("Usuario no encontrado para el token provisto."));
+
+        Persona persona = usuario.getPersona();
+        if (persona == null) {
+            throw new ClienteInvalidoException("El usuario no tiene una persona asociada.");
+        }
+
+        return favoritoRepository.findByPersonaId(persona.getId())
+                .stream()
+                .map(this::mapToDTO)
+                .toList();
+    }
 
 }
 
