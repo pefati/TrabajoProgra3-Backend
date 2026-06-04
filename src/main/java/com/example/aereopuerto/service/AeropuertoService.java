@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,12 +31,14 @@ public class AeropuertoService {
     }
 
     @CachePut(value = "aeropuertos", key = "#result.id")
+    @CacheEvict(value = "aeropuertos", key = "'todos'")
     public Aeropuerto crearAeropuerto(Aeropuerto aeropuerto) {
 
         return aeropuertoRepository.save(aeropuerto);
     }
 
     @CachePut(value = "aeropuertos", key = "#result.id")
+    @CacheEvict(value = "aeropuertos", key = "'todos'")
     public Aeropuerto EditarAeropuerto(Integer id, Aeropuerto aeropuerto) {
         Aeropuerto a= aeropuertoRepository.findById(id).orElseThrow();
         a.setCiudad(aeropuerto.getCiudad());
@@ -46,7 +49,10 @@ public class AeropuertoService {
         return aeropuertoRepository.save(a);
     }
 
-    @CacheEvict(value = "aeropuertos", key = "#id")
+    @Caching(evict = {
+            @CacheEvict(value = "aeropuertos", key = "#id"),
+            @CacheEvict(value = "aeropuertos", key = "'todos'")
+    })
     public void eliminarAeropuerto(Integer id) {
         aeropuertoRepository.deleteById(id);
     }
