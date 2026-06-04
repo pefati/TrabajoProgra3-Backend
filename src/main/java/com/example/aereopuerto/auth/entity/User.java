@@ -27,7 +27,7 @@ public class User implements UserDetails {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "cliente_id", nullable = false)
+    @JoinColumn(name = "persona_id", nullable = false)
     private Persona persona;
 
     @Column(nullable = false, unique = true)

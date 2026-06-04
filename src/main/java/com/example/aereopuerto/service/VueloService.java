@@ -71,7 +71,7 @@ public class VueloService {
         vuelo.setHoraSalida(vueloDTO.getHoraSalida());
         vuelo.setHoraLlegada(vueloDTO.getHoraLlegada());
         vuelo.setEstado(vueloDTO.getEstado());
-        vuelo.setEscala(vueloDTO.isEscala());
+        vuelo.setEscala(vueloDTO.getEscala());
 
         return vueloRepository.save(vuelo);
     }
