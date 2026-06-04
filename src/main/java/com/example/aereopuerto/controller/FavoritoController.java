@@ -5,6 +5,7 @@ import com.example.aereopuerto.service.FavoritoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,5 +31,14 @@ public class FavoritoController {
     public ResponseEntity<Void> removeFavorito(@RequestParam Integer personaId, @PathVariable Integer id) {
         favoritoService.removeFavorito(personaId, id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/vuelos/{vueloId}")
+    public ResponseEntity<FavoritoDTO> addFavorito(
+            @PathVariable Integer vueloId,
+            Authentication authentication) {
+        String emailUsuario = authentication.getName();
+        FavoritoDTO nuevoFavorito = favoritoService.addFavoritoPorToken(emailUsuario, vueloId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoFavorito);
     }
 }

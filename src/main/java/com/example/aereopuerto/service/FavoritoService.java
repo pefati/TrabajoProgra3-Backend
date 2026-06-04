@@ -3,6 +3,8 @@ package com.example.aereopuerto.service;
 import com.example.aereopuerto.Exceptions.FavoritoInvalidoException;
 import com.example.aereopuerto.Exceptions.ClienteInvalidoException;
 import com.example.aereopuerto.Exceptions.VueloInvalidoException;
+import com.example.aereopuerto.auth.entity.User;
+import com.example.aereopuerto.auth.repository.UserRepository;
 import com.example.aereopuerto.dto.FavoritoDTO;
 import com.example.aereopuerto.model.Favorito;
 import com.example.aereopuerto.model.Persona;
@@ -25,6 +27,8 @@ public class FavoritoService {
     private final FavoritoRepository favoritoRepository;
     private final PersonaRepository personaRepository;
     private final VueloRepository vueloRepository;
+    private final UserRepository userRepository;
+
 
     @Cacheable(value = "favoritos", key = "#personaId")
     public List<FavoritoDTO> getFavoritosByPersonaId(Integer personaId) {
@@ -70,4 +74,35 @@ public class FavoritoService {
         dto.setFechaAgregado(favorito.getFechaAgregado());
         return dto;
     }
+
+    @CacheEvict(value = "favoritos", key = "#result.personaId") // <-- ¡Ojo a este truco para la caché!
+    public FavoritoDTO addFavoritoPorToken(String email, Integer vueloId) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ClienteInvalidoException("No se encontro a la persona"));
+
+        Persona persona = user.getPersona();
+        if (persona == null) {
+            throw new ClienteInvalidoException("El usuario no tiene una persona asociada.");
+        }
+
+        if (favoritoRepository.findByPersonaIdAndVueloId(persona.getId(), vueloId).isPresent()) {
+            throw new FavoritoInvalidoException("El vuelo ya se encuentra en favoritos.");
+        }
+
+        Vuelo vuelo = vueloRepository.findById(vueloId)
+                .orElseThrow(() -> new VueloInvalidoException("Vuelo no encontrado con id: " + vueloId));
+
+        Favorito favorito = Favorito.builder()
+                .persona(persona)
+                .vuelo(vuelo)
+                .fechaAgregado(LocalDateTime.now())
+                .build();
+
+        return mapToDTO(favoritoRepository.save(favorito));
+    }
+
+
 }
+
+
