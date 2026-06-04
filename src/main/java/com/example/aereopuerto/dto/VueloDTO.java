@@ -16,5 +16,6 @@ public class VueloDTO {
     private LocalDateTime horaSalida;
     private LocalDateTime horaLlegada;
     private estadoVuelo estado;
+    private Double precioVuelo;
     private Boolean escala;
 }

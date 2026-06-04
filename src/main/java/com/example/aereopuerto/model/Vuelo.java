@@ -59,5 +59,8 @@ public class Vuelo implements Serializable {
     @Enumerated(EnumType.STRING)
     private estadoVuelo estado;
 
+    @Column(nullable = false, name = "precio_vuelo")
+    private Double precioVuelo;
+
     private Boolean escala;
 }
