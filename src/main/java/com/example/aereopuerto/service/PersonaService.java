@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,11 +30,13 @@ public class PersonaService {
     }
 
     @CachePut(value = "clientes", key = "#result.id")
+    @CacheEvict(value = "clientes", key = "'todos'")
     public Persona crearCliente(Persona persona) {
         return personaRepository.save(persona);
     }
 
     @CachePut(value = "clientes", key = "#result.id")
+    @CacheEvict(value = "clientes", key = "'todos'")
     public Persona actualizarCliente(Integer id, Persona persona) {
 
         Persona c = personaRepository.findById(id)
@@ -51,7 +54,10 @@ public class PersonaService {
         return personaRepository.save(c);
     }
 
-    @CacheEvict(value = "clientes", key = "#id")
+    @Caching(evict = {
+            @CacheEvict(value = "clientes", key = "#id"),
+            @CacheEvict(value = "clientes", key = "'todos'")
+    })
     public void eliminarCliente(Integer id) {
         personaRepository.deleteById(id);
     }

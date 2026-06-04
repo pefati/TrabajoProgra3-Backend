@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,11 +32,13 @@ public class AvionService {
     }
 
     @CachePut(value = "aviones", key = "#result.id")
+    @CacheEvict(value = "aviones", key = "'todos'")
     public Avion crearAvion(Avion avion) {
         return avionRepository.save(avion);
     }
 
     @CachePut(value = "aviones", key = "#result.id")
+    @CacheEvict(value = "aviones", key = "'todos'")
     public Avion EditarAvion(Integer id, Avion av) {
         Avion a = obtenerAvionPorId(id);
         a.setCapacidadBodega(av.getCapacidadBodega());
@@ -47,7 +50,11 @@ public class AvionService {
         return avionRepository.save(a);
     }
 
-    @CacheEvict(value = "aviones", key = "#id")
+
+    @Caching(evict = {
+            @CacheEvict(value = "aviones", key = "#id"),
+            @CacheEvict(value = "aviones", key = "'todos'")
+    })
     public void eliminarAvion(Integer id) {
         avionRepository.deleteById(id);
     }

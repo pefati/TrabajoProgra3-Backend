@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,12 +40,15 @@ public class VueloService {
      * CachePut: Actualiza la base de datos MySQL e INMEDIATAMENTE actualiza/inserta el valor en Redis.
      * De esta forma, garantizamos que los datos nunca estén "viejos" (desincronizados).
      */
+
     @CachePut(value = "vuelos", key = "#result.id")
+    @CacheEvict(value = "vuelos", key = "'todos'")
     public Vuelo crearVuelo(Vuelo vuelo) {
         return vueloRepository.save(vuelo);
     }
 
     @CachePut(value = "vuelos", key = "#result.id")
+    @CacheEvict(value = "vuelos", key = "'todos'")
     public Vuelo actualizarVuelo(Integer id, VueloDTO vueloDTO) {
 
         Vuelo vuelo = vueloRepository.findById(id)
@@ -79,7 +83,10 @@ public class VueloService {
     /**
      * CacheEvict: Al eliminar un registro de MySQL, lo borramos tambien de la cache de Redis.
      */
-    @CacheEvict(value = "vuelos", key = "#id")
+    @Caching(evict = {
+            @CacheEvict(value = "vuelos", key = "#id"),
+            @CacheEvict(value = "vuelos", key = "'todos'")
+    })
     public void eliminarVuelo(Integer id) {
         System.out.println("Eliminando vuelo " + id);
         vueloRepository.deleteById(id);

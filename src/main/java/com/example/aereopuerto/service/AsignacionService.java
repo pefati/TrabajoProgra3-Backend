@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,12 +34,14 @@ public class AsignacionService {
     }
 
     @CachePut(value = "asignacion", key = "#result.id")
+    @CacheEvict(value = "asignacion", key = "'todas'")
     public Asignacion crearAsignacion(Asignacion asignacion) {
 
         return asignacionRepository.save(asignacion);
     }
 
     @CachePut(value = "asignacion", key = "#result.id")
+    @CacheEvict(value = "asignacion", key = "'todas'")
     public Asignacion EditarAeropuerto(Integer id, Asignacion asignacion) {
         Asignacion a= asignacionRepository.findById(id).orElseThrow();
         a.setEmpleado(asignacion.getEmpleado());
@@ -48,7 +51,10 @@ public class AsignacionService {
         return asignacionRepository.save(a);
     }
 
-    @CacheEvict(value = "asignacion", key = "#id")
+    @Caching(evict = {
+            @CacheEvict(value = "asignacion", key = "#id"),
+            @CacheEvict(value = "asignacion", key = "'todas'")
+    })
     public void eliminarAsignacion(Integer id) {
         asignacionRepository.deleteById(id);
     }

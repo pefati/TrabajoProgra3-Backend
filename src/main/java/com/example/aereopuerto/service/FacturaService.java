@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,11 +34,13 @@ public class FacturaService {
     }
 
     @CachePut(value = "facturas", key = "#result.id")
+    @CacheEvict(value = "facturas", key = "'todos'")
     public Factura crearFactura(Factura factura) {
         return facturaRepository.save(factura);
     }
 
     @CachePut(value = "facturas", key = "#result.id")
+    @CacheEvict(value = "facturas", key = "'todos'")
     public Factura actualizarFactura(Integer id, FacturaDTO facturaDTO) {
 
         Factura f = facturaRepository.findById(id)
@@ -55,7 +58,11 @@ public class FacturaService {
 
         return facturaRepository.save(f);
     }
-    @CacheEvict(value = "facturas", key = "#id")
+
+    @Caching(evict = {
+            @CacheEvict(value = "facturas", key = "#id"),
+            @CacheEvict(value = "facturas", key = "'todos'")
+    })
     public void eliminarFactura(Integer id) {
         facturaRepository.deleteById(id);
     }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,11 +34,13 @@ public class PasajeService {
     }
 
     @CachePut(value = "pasajes", key = "#result.id")
+    @CacheEvict(value = "pasajes", key = "'todos'")
     public Pasaje crearPasaje(Pasaje pasaje) {
         return pasajeRepository.save(pasaje);
     }
 
     @CachePut(value = "pasajes", key = "#result.id")
+    @CacheEvict(value = "pasajes", key = "'todos'")
     public Pasaje editarPasaje(Integer id, PasajeDTO pasajeDTO) {
 
         Pasaje pasajeExistente = pasajeRepository.findById(id)
@@ -62,7 +65,10 @@ public class PasajeService {
         return pasajeRepository.save(pasajeExistente);
     }
 
-    @CacheEvict(value = "pasajes", key = "#id")
+    @Caching(evict = {
+            @CacheEvict(value = "pasajes", key = "#id"),
+            @CacheEvict(value = "pasajes", key = "'todos'")
+    })
     public void eliminarPasaje(Integer id) {
         pasajeRepository.deleteById(id);
     }

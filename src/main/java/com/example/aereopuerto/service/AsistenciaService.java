@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,11 +32,13 @@ public class AsistenciaService {
     }
 
     @CachePut(value = "asistenciaAlViajero", key = "#result.id")
+    @CacheEvict(value = "asistenciaAlViajero", key = "'todos'")
     public AsistenciaAlViajero crearAsistencia(AsistenciaAlViajero asistenciaAlViajero) {
         return asistenciaRepository.save(asistenciaAlViajero);
     }
 
     @CachePut(value = "asistenciaAlViajero", key = "#result.id")
+    @CacheEvict(value = "asistenciaAlViajero", key = "'todos'")
     public AsistenciaAlViajero actualizarAsistencia(Integer id, AsistenciaAlViajero asistenciaAlViajero) {
 
         AsistenciaAlViajero asistencia = asistenciaRepository.findById(id) .orElseThrow(() -> new RuntimeException("Asistencia al viajero no encontrada. ID: " + id));
@@ -46,7 +49,11 @@ public class AsistenciaService {
         return asistenciaRepository.save(asistencia);
     }
 
-    @CacheEvict(value = "asistenciaAlViajero", key = "#id")
+
+    @Caching(evict = {
+            @CacheEvict(value = "asistenciaAlViajero", key = "#id"),
+            @CacheEvict(value = "asistenciaAlViajero", key = "'todos'")
+    })
     public void eliminarAsistencia(Integer id) {
         asistenciaRepository.deleteById(id);
     }
