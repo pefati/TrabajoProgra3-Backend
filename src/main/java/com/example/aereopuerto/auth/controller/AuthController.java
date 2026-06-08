@@ -3,6 +3,7 @@ package com.example.aereopuerto.auth.controller;
 import com.example.aereopuerto.auth.dto.AuthResponse;
 import com.example.aereopuerto.auth.dto.LoginRequest;
 import com.example.aereopuerto.auth.dto.RegisterRequest;
+import com.example.aereopuerto.auth.dto.RegisterRequestSinPersona;
 import com.example.aereopuerto.auth.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,4 +38,11 @@ public class AuthController {
     public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException exception) {
         return ResponseEntity.badRequest().body(Map.of("message", exception.getMessage()));
     }
+
+    @PostMapping("/register/limpio")
+    @Operation(summary = "Registro", description = "Registra un nuevo usuario vinculado a un Cliente existente.")
+    public ResponseEntity<AuthResponse> registerSinPersona(@Valid @RequestBody RegisterRequestSinPersona request) {
+        return ResponseEntity.ok(authService.registerSinPersona(request));
+    }
+
 }
