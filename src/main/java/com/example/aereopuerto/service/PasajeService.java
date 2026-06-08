@@ -1,5 +1,9 @@
 package com.example.aereopuerto.service;
 
+import com.example.aereopuerto.Exceptions.EquipajeInvalidoException;
+import com.example.aereopuerto.Exceptions.PasajeInvalidoException;
+import com.example.aereopuerto.Exceptions.ReservaInvalidaException;
+import com.example.aereopuerto.Exceptions.VueloInvalidoException;
 import com.example.aereopuerto.dto.FacturaDTO;
 import com.example.aereopuerto.dto.PasajeDTO;
 import com.example.aereopuerto.model.*;
@@ -25,7 +29,7 @@ public class PasajeService {
 
     @Cacheable(value = "pasajes", key = "#id")
     public Pasaje obtenerPasajePorId(Integer id) {
-        return pasajeRepository.findById(id).orElseThrow(() -> new RuntimeException("Pasaje no encontrado. ID: " + id));
+        return pasajeRepository.findById(id).orElseThrow(() -> new PasajeInvalidoException("Pasaje no encontrado. ID: " + id));
     }
 
     @Cacheable(value = "pasajes", key = "'todos'")
@@ -44,16 +48,16 @@ public class PasajeService {
     public Pasaje editarPasaje(Integer id, PasajeDTO pasajeDTO) {
 
         Pasaje pasajeExistente = pasajeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pasaje no encontrado"));
+                .orElseThrow(() -> new PasajeInvalidoException("Pasaje no encontrado"));
 
         Vuelo vuelo = vueloRepository.findById(pasajeDTO.getVueloId())
-                .orElseThrow(() -> new RuntimeException("Vuelo no encontrado"));
+                .orElseThrow(() -> new VueloInvalidoException("Vuelo no encontrado"));
 
         Equipaje equipaje = equipajeRepository.findById(pasajeDTO.getEquipajeId())
-                .orElseThrow(() -> new RuntimeException("Equipaje no encontrado"));
+                .orElseThrow(() -> new EquipajeInvalidoException("Equipaje no encontrado"));
 
         Reserva reserva = reservaRepository.findById(pasajeDTO.getReservaId())
-                .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
+                .orElseThrow(() -> new ReservaInvalidaException("Reserva no encontrada"));
 
         pasajeExistente.setCodigoPasaje(pasajeDTO.getCodigoPasaje());
         pasajeExistente.setAsiento(pasajeDTO.getAsiento());

@@ -1,5 +1,6 @@
 package com.example.aereopuerto.service;
 
+import com.example.aereopuerto.Exceptions.EquipajeInvalidoException;
 import com.example.aereopuerto.model.Equipaje;
 import com.example.aereopuerto.repository.EquipajeRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class EquipajeService {
 
     @Cacheable(value = "equipajes", key = "#id")
     public Equipaje obtenerEquipajePorId(Integer id) {
-        return equipajeRepository.findById(id).orElseThrow(() -> new RuntimeException("Equipaje no encontrado. ID: " + id));
+        return equipajeRepository.findById(id).orElseThrow(() -> new EquipajeInvalidoException("Equipaje no encontrado. ID: " + id));
     }
 
     @Cacheable(value = "equipajes", key = "'todos'")
@@ -40,7 +41,7 @@ public class EquipajeService {
     public Equipaje actualizarEquipaje(Integer id, Equipaje equipaje) {
 
         Equipaje e = equipajeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Equipaje no encontrado. ID: " + id));
+                .orElseThrow(() -> new EquipajeInvalidoException("Equipaje no encontrado. ID: " + id));
 
         e.setPeso(equipaje.getPeso());
         e.setTipo(equipaje.getTipo());

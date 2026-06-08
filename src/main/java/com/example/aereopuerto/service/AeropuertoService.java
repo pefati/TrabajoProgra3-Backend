@@ -1,5 +1,6 @@
 package com.example.aereopuerto.service;
 
+import com.example.aereopuerto.Exceptions.AeropuertoInvalidoException;
 import com.example.aereopuerto.model.Aeropuerto;
 import com.example.aereopuerto.repository.AeropuertoRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class AeropuertoService {
     @Cacheable(value = "aeropuertos", key = "#id")
     public Aeropuerto obtenerAeropuertoPorId(Integer id) {
         return aeropuertoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Aeropuerto no encontrado. ID: " + id));
+                    .orElseThrow(() -> new AeropuertoInvalidoException("Aeropuerto no encontrado. ID: " + id));
     }
 
     @Cacheable(value = "aeropuertos", key = "'todos'")
@@ -40,7 +41,7 @@ public class AeropuertoService {
     @CachePut(value = "aeropuertos", key = "#result.id")
     @CacheEvict(value = "aeropuertos", key = "'todos'")
     public Aeropuerto EditarAeropuerto(Integer id, Aeropuerto aeropuerto) {
-        Aeropuerto a= aeropuertoRepository.findById(id).orElseThrow();
+        Aeropuerto a= aeropuertoRepository.findById(id).orElseThrow(() -> new AeropuertoInvalidoException("Aeropuerto no encontrado. ID: " + id));
         a.setCiudad(aeropuerto.getCiudad());
         a.setPais(aeropuerto.getPais());
         a.setNombre(aeropuerto.getNombre());

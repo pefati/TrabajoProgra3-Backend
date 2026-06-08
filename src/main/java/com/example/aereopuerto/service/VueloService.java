@@ -1,5 +1,8 @@
 package com.example.aereopuerto.service;
 
+import com.example.aereopuerto.Exceptions.AeropuertoInvalidoException;
+import com.example.aereopuerto.Exceptions.AvionInvalidoException;
+import com.example.aereopuerto.Exceptions.VueloInvalidoException;
 import com.example.aereopuerto.dto.VueloDTO;
 import com.example.aereopuerto.model.Aeropuerto;
 import com.example.aereopuerto.model.Avion;
@@ -33,7 +36,7 @@ public class VueloService {
     @Cacheable(value = "vuelos", key = "#id")
     public Vuelo obtenerVueloPorId(Integer id) {
         System.out.println("Buscando vuelo " + id);
-        return vueloRepository.findById(id).orElseThrow(() -> new RuntimeException("Vuelo no encontrado. ID: " + id));
+        return vueloRepository.findById(id).orElseThrow(() -> new VueloInvalidoException("Vuelo no encontrado. ID: " + id));
     }
 
     /**
@@ -52,19 +55,18 @@ public class VueloService {
     public Vuelo actualizarVuelo(Integer id, VueloDTO vueloDTO) {
 
         Vuelo vuelo = vueloRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(
-                        "Vuelo no encontrado. ID: " + id));
+                .orElseThrow(() -> new VueloInvalidoException("Vuelo no encontrado. ID: " + id));
 
         Aeropuerto origen = aeropuertoRepository.findById(vueloDTO.getAeropuertoOrigenId())
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new AeropuertoInvalidoException(
                         "Aeropuerto origen no encontrado. ID: " + vueloDTO.getAeropuertoOrigenId()));
 
         Aeropuerto destino = aeropuertoRepository.findById(vueloDTO.getAeropuertoDestinoId())
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new AeropuertoInvalidoException(
                         "Aeropuerto destino no encontrado. ID: " + vueloDTO.getAeropuertoDestinoId()));
 
         Avion avion = avionRepository.findById(vueloDTO.getAvionId())
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new AvionInvalidoException(
                         "Avión no encontrado. ID: " + vueloDTO.getAvionId()));
 
         vuelo.setAeropuertoOrigen(origen);

@@ -1,5 +1,6 @@
 package com.example.aereopuerto.service;
 
+import com.example.aereopuerto.Exceptions.AvionInvalidoException;
 import com.example.aereopuerto.model.Avion;
 import com.example.aereopuerto.repository.AvionRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class AvionService {
     @Cacheable(value = "aviones", key = "#id")
     public Avion obtenerAvionPorId(Integer id) {
         return avionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Avion no encontrado. ID: " + id));
+                .orElseThrow(() -> new AvionInvalidoException("Avion no encontrado. ID: " + id));
     }
 
     @Cacheable(value = "aviones", key = "'todos'")

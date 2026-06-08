@@ -1,7 +1,7 @@
 package com.example.aereopuerto.service;
 
 import com.example.aereopuerto.Exceptions.FavoritoInvalidoException;
-import com.example.aereopuerto.Exceptions.ClienteInvalidoException;
+import com.example.aereopuerto.Exceptions.PersonaInvalidaException;
 import com.example.aereopuerto.Exceptions.VueloInvalidoException;
 import com.example.aereopuerto.auth.entity.User;
 import com.example.aereopuerto.auth.repository.UserRepository;
@@ -41,11 +41,11 @@ public class FavoritoService {
     @CacheEvict(value = "favoritos", key = "#personaId")
     public FavoritoDTO addFavorito(Integer personaId, Integer vueloId) {
         if (favoritoRepository.findByPersonaIdAndVueloId(personaId, vueloId).isPresent()) {
-            throw new FavoritoInvalidoException("El vuelo ya se encuentra en favoritos para este cliente.");
+            throw new FavoritoInvalidoException("El vuelo ya se encuentra en favoritos para este usuario.");
         }
 
         Persona persona = personaRepository.findById(personaId)
-                .orElseThrow(() -> new ClienteInvalidoException("Cliente no encontrado con id: " + personaId));
+                .orElseThrow(() -> new PersonaInvalidaException("Usuario no encontrado con id: " + personaId));
 
         Vuelo vuelo = vueloRepository.findById(vueloId)
                 .orElseThrow(() -> new VueloInvalidoException("Vuelo no encontrado con id: " + vueloId));
@@ -79,11 +79,11 @@ public class FavoritoService {
     public FavoritoDTO addFavoritoPorToken(String email, Integer vueloId) {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ClienteInvalidoException("No se encontro a la persona"));
+                .orElseThrow(() -> new PersonaInvalidaException("No se encontro al usuario"));
 
         Persona persona = user.getPersona();
         if (persona == null) {
-            throw new ClienteInvalidoException("El usuario no tiene una persona asociada.");
+            throw new PersonaInvalidaException("El usuario no tiene una persona asociada.");
         }
 
         if (favoritoRepository.findByPersonaIdAndVueloId(persona.getId(), vueloId).isPresent()) {
@@ -106,11 +106,11 @@ public class FavoritoService {
     public List<FavoritoDTO> getFavoritosPorToken(String email) {
 
         User usuario = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ClienteInvalidoException("Usuario no encontrado para el token provisto."));
+                .orElseThrow(() -> new PersonaInvalidaException("Usuario no encontrado para el token provisto."));
 
         Persona persona = usuario.getPersona();
         if (persona == null) {
-            throw new ClienteInvalidoException("El usuario no tiene una persona asociada.");
+            throw new PersonaInvalidaException("El usuario no tiene una persona asociada.");
         }
 
         return favoritoRepository.findByPersonaId(persona.getId())

@@ -1,5 +1,7 @@
 package com.example.aereopuerto.service;
 
+import com.example.aereopuerto.Exceptions.PersonaInvalidaException;
+import com.example.aereopuerto.Exceptions.ReservaInvalidaException;
 import com.example.aereopuerto.dto.ReservaDTO;
 import com.example.aereopuerto.model.Persona;
 import com.example.aereopuerto.model.Reserva;
@@ -25,7 +27,7 @@ public class ReservaService {
 
     @Cacheable(value = "reservas", key = "#id")
     public Reserva obtenerReservaPorId(Integer id) {
-        return reservaRepository.findById(id).orElseThrow(() -> new RuntimeException("Reserva no encontrada. ID: " + id));
+        return reservaRepository.findById(id).orElseThrow(() -> new ReservaInvalidaException("Reserva no encontrada. ID: " + id));
     }
 
     @Cacheable(value = "reservas", key = "'todos'")
@@ -44,12 +46,12 @@ public class ReservaService {
     public Reserva actualizarReserva(Integer id, ReservaDTO reservaDTO) {
 
         Reserva reserva = reservaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new ReservaInvalidaException(
                         "Reserva no encontrada. ID: " + id));
 
         Persona persona = personaRepository.findById(reservaDTO.getClienteId())
-                .orElseThrow(() -> new RuntimeException(
-                        "Cliente no encontrado. ID: " + reservaDTO.getClienteId()));
+                .orElseThrow(() -> new PersonaInvalidaException(
+                        "Usuario no encontrado. ID: " + reservaDTO.getClienteId()));
 
         reserva.setPersona(persona);
         reserva.setValor(reservaDTO.getValor());

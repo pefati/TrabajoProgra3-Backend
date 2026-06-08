@@ -1,7 +1,7 @@
 package com.example.aereopuerto.service;
 
 import com.example.aereopuerto.Exceptions.CarritoInvalidoException;
-import com.example.aereopuerto.Exceptions.ClienteInvalidoException;
+import com.example.aereopuerto.Exceptions.PersonaInvalidaException;
 import com.example.aereopuerto.Exceptions.VueloInvalidoException;
 import com.example.aereopuerto.dto.CarritoDTO;
 import com.example.aereopuerto.dto.CarritoItemDTO;
@@ -32,7 +32,7 @@ public class CarritoService {
     public CarritoDTO getCarritoByPersonaId(Integer personaId) {
         Carrito carrito = carritoRepository.findByPersonaId(personaId).orElseGet(() -> {
             Persona persona = personaRepository.findById(personaId)
-                    .orElseThrow(() -> new ClienteInvalidoException("Cliente no encontrado con id: " + personaId));
+                    .orElseThrow(() -> new PersonaInvalidaException("Persona no encontrado con id: " + personaId));
             Carrito newCarrito = Carrito.builder().persona(persona).build();
             return carritoRepository.save(newCarrito);
         });
@@ -43,7 +43,7 @@ public class CarritoService {
     public CarritoItemDTO addItem(Integer personaId, Integer vueloId, int cantidad, ClasesVuelo clase) {
         Carrito carrito = carritoRepository.findByPersonaId(personaId).orElseGet(() -> {
             Persona persona = personaRepository.findById(personaId)
-                    .orElseThrow(() -> new ClienteInvalidoException("Cliente no encontrado con id: " + personaId));
+                    .orElseThrow(() -> new PersonaInvalidaException("Persona no encontrado con id: " + personaId));
             Carrito newCarrito = Carrito.builder().persona(persona).build();
             return carritoRepository.save(newCarrito);
         });

@@ -1,5 +1,6 @@
 package com.example.aereopuerto.service;
 
+import com.example.aereopuerto.Exceptions.PersonaInvalidaException;
 import com.example.aereopuerto.model.Persona;
 import com.example.aereopuerto.repository.PersonaRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class PersonaService {
 
     @Cacheable(value = "clientes", key = "#id")
     public Persona obtenerClientePorId(Integer id) {
-        return personaRepository.findById(id).orElseThrow(() -> new RuntimeException("Cliente no encontrado. ID: " + id));
+        return personaRepository.findById(id).orElseThrow(() -> new PersonaInvalidaException("Persona no encontrado. ID: " + id));
     }
 
     @Cacheable(value = "clientes", key = "'todos'")
@@ -40,7 +41,7 @@ public class PersonaService {
     public Persona actualizarCliente(Integer id, Persona persona) {
 
         Persona c = personaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado. ID: " + id));
+                .orElseThrow(() -> new PersonaInvalidaException("Persona no encontrado. ID: " + id));
 
         c.setNombre(persona.getNombre());
         c.setApellido(persona.getApellido());

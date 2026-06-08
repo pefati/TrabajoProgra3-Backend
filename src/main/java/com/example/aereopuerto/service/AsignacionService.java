@@ -1,6 +1,7 @@
 package com.example.aereopuerto.service;
 
 
+import com.example.aereopuerto.Exceptions.AsignacionInvalidaException;
 import com.example.aereopuerto.model.Aeropuerto;
 import com.example.aereopuerto.model.Asignacion;
 import com.example.aereopuerto.repository.AsignacionRepository;
@@ -25,7 +26,7 @@ public class AsignacionService {
     @Cacheable(value = "asignacion", key = "#id")
     public Asignacion obtenerAsignacionPorId(Integer id) {
         return asignacionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Asignacion no encontrada. ID: " + id));
+                .orElseThrow(() -> new AsignacionInvalidaException("Asignacion no encontrada. ID: " + id));
     }
 
     @Cacheable(value = "asignacion", key = "'todas'")
@@ -43,7 +44,7 @@ public class AsignacionService {
     @CachePut(value = "asignacion", key = "#result.id")
     @CacheEvict(value = "asignacion", key = "'todas'")
     public Asignacion EditarAeropuerto(Integer id, Asignacion asignacion) {
-        Asignacion a= asignacionRepository.findById(id).orElseThrow();
+        Asignacion a= asignacionRepository.findById(id).orElseThrow(() -> new AsignacionInvalidaException("Asignacion no encontrada. ID: " + id));
         a.setEmpleado(asignacion.getEmpleado());
         a.setVuelo(asignacion.getVuelo());
         a.setRolEmpleado(asignacion.getRolEmpleado());

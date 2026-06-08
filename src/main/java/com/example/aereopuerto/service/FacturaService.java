@@ -1,5 +1,6 @@
 package com.example.aereopuerto.service;
 
+import com.example.aereopuerto.Exceptions.FacturaInvalidaException;
 import com.example.aereopuerto.dto.FacturaDTO;
 import com.example.aereopuerto.model.Factura;
 import com.example.aereopuerto.model.Reserva;
@@ -25,7 +26,7 @@ public class FacturaService {
 
     @Cacheable(value = "facturas", key = "#id")
     public Factura obtenerFacturaPorId(Integer id) {
-        return facturaRepository.findById(id).orElseThrow(() -> new RuntimeException("Factura no encontrada. ID: " + id));
+        return facturaRepository.findById(id).orElseThrow(() -> new FacturaInvalidaException("Factura no encontrada. ID: " + id));
     }
 
     @Cacheable(value = "facturas", key = "'todos'")
@@ -44,7 +45,7 @@ public class FacturaService {
     public Factura actualizarFactura(Integer id, FacturaDTO facturaDTO) {
 
         Factura f = facturaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Factura no encontrada. ID: " + id));
+                .orElseThrow(() -> new FacturaInvalidaException("Factura no encontrada. ID: " + id));
 
         Reserva reserva = reservaRepository.findById(facturaDTO.getReservaId())
                 .orElseThrow(() -> new RuntimeException(

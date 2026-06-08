@@ -1,5 +1,6 @@
 package com.example.aereopuerto.service;
 
+import com.example.aereopuerto.Exceptions.AsistenciaInvalidaException;
 import com.example.aereopuerto.model.AsistenciaAlViajero;
 import com.example.aereopuerto.model.Equipaje;
 import com.example.aereopuerto.repository.AsistenciaRepository;
@@ -23,7 +24,7 @@ public class AsistenciaService {
 
     @Cacheable(value = "asistenciaAlViajero", key = "#id")
     public AsistenciaAlViajero obtenerAsistenciaPorId(Integer id) {
-        return asistenciaRepository.findById(id).orElseThrow(() -> new RuntimeException("Asistencia al viajero no encontrada. ID: " + id));
+        return asistenciaRepository.findById(id).orElseThrow(() -> new AsistenciaInvalidaException("Asistencia al viajero no encontrada. ID: " + id));
     }
 
     @Cacheable(value = "asistenciasAlViajero", key = "'todos'")
@@ -41,7 +42,7 @@ public class AsistenciaService {
     @CacheEvict(value = "asistenciaAlViajero", key = "'todos'")
     public AsistenciaAlViajero actualizarAsistencia(Integer id, AsistenciaAlViajero asistenciaAlViajero) {
 
-        AsistenciaAlViajero asistencia = asistenciaRepository.findById(id) .orElseThrow(() -> new RuntimeException("Asistencia al viajero no encontrada. ID: " + id));
+        AsistenciaAlViajero asistencia = asistenciaRepository.findById(id) .orElseThrow(() -> new AsistenciaInvalidaException("Asistencia al viajero no encontrada. ID: " + id));
         asistencia.setDescripcion(asistenciaAlViajero.getDescripcion());
         asistencia.setNombrePlan(asistenciaAlViajero.getNombrePlan());
         asistencia.setPrecio(asistenciaAlViajero.getPrecio());
