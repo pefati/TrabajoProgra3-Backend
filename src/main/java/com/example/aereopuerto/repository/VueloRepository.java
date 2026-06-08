@@ -2,8 +2,9 @@ package com.example.aereopuerto.repository;
 
 import com.example.aereopuerto.model.Vuelo;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface VueloRepository extends JpaRepository<Vuelo, Integer> {
+public interface VueloRepository extends JpaRepository<Vuelo, Integer>, JpaSpecificationExecutor<Vuelo> {
 }

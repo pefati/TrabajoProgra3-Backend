@@ -3,6 +3,7 @@ package com.example.aereopuerto.service;
 import com.example.aereopuerto.Exceptions.AeropuertoInvalidoException;
 import com.example.aereopuerto.Exceptions.AvionInvalidoException;
 import com.example.aereopuerto.Exceptions.VueloInvalidoException;
+import com.example.aereopuerto.Specifications.VueloSpecification;
 import com.example.aereopuerto.dto.VueloDTO;
 import com.example.aereopuerto.model.Aeropuerto;
 import com.example.aereopuerto.model.Avion;
@@ -16,8 +17,10 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -111,5 +114,24 @@ public class VueloService {
     @CacheEvict(value = "vuelos", key = "'todos'")
     public void invalidarListaDeVuelos() {
         System.out.println("Limpiando la cachee");
+    }
+
+    public List<Vuelo> buscarVuelosConFiltrosAvanzados(
+            String ciudadOrigen,
+            String ciudadDestino,
+            LocalDateTime fechaSalida,
+            LocalDateTime fechaLlegada,
+            Double precioMaximo,
+            Boolean escala) {
+
+        Specification<Vuelo> spec = Specification
+                .where(VueloSpecification.porCiudadOrigen(ciudadOrigen))
+                .and(VueloSpecification.porCiudadDestino(ciudadDestino))
+                .and(VueloSpecification.porFechaSalidaDesde(fechaSalida))
+                .and(VueloSpecification.porFechaLlegadaHasta(fechaLlegada))
+                .and(VueloSpecification.precioMenorOIgualA(precioMaximo))
+                .and(VueloSpecification.porEscala(escala));
+
+        return vueloRepository.findAll(spec);
     }
 }
