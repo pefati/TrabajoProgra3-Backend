@@ -81,7 +81,7 @@ public class AuthService {
         persona.setSexo(Sexo.OTRO);  //por defecto puse que la creacion sea con Sexo.OTRO , el usuario lo cambiara al completar su perfil si lo desea
         persona.setIdentificador(Identificador.DNI); //por defecto puse que la creacion sea con DNI, el usuario lo cambiara al completar su perfil si lo desea
         persona.setNombre("Pendiente");
-        persona.setNumeroIdentificador("Pendiente");
+        persona.setNumeroIdentificador(request.getDni());
         persona.setFechaNacimiento(LocalDateTime.now());
         personaRepository.save(persona);
 
