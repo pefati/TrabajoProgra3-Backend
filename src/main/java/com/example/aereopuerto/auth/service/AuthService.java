@@ -3,15 +3,20 @@ package com.example.aereopuerto.auth.service;
 import com.example.aereopuerto.auth.dto.AuthResponse;
 import com.example.aereopuerto.auth.dto.LoginRequest;
 import com.example.aereopuerto.auth.dto.RegisterRequest;
+import com.example.aereopuerto.auth.dto.RegisterRequestSinPersona;
 import com.example.aereopuerto.auth.entity.User;
 import com.example.aereopuerto.auth.repository.UserRepository;
 import com.example.aereopuerto.model.Persona;
+import com.example.aereopuerto.model.enums.Identificador;
+import com.example.aereopuerto.model.enums.Sexo;
 import com.example.aereopuerto.repository.PersonaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -63,4 +68,38 @@ public class AuthService {
                 .userId(user.getId())
                 .build();
     }
+
+    public AuthResponse registerSinPersona (RegisterRequestSinPersona request){
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("El email ya está registrado");
+        }
+
+
+        Persona persona = new Persona();
+        persona.setApellido("Pendiente");
+        persona.setSexo(Sexo.OTRO);  //por defecto puse que la creacion sea con Sexo.OTRO , el usuario lo cambiara al completar su perfil si lo desea
+        persona.setIdentificador(Identificador.DNI); //por defecto puse que la creacion sea con DNI, el usuario lo cambiara al completar su perfil si lo desea
+        persona.setNombre("Pendiente");
+        persona.setNumeroIdentificador("Pendiente");
+        persona.setFechaNacimiento(LocalDateTime.now());
+        personaRepository.save(persona);
+
+        User user = User.builder()
+                .persona(persona)
+                .email(request.getEmail())
+                .telefono("Pendiente")
+                .password(passwordEncoder.encode(request.getPassword()))
+                .build();
+
+        userRepository.save(user);
+
+        String token = jwtService.generateToken(user, user.getId());
+        return AuthResponse.builder()
+                .token(token)
+                .email(user.getEmail())
+                .userId(user.getId())
+                .build();
+    }
+
 }
