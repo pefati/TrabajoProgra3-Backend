@@ -5,6 +5,7 @@ import com.example.aereopuerto.model.Vuelo;
 import com.example.aereopuerto.service.VueloService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -72,4 +75,35 @@ public class VueloController {
         vueloService.eliminarVuelo(id);
         return ResponseEntity.noContent().build();
     }
+
+
+    @Operation(summary = "filtrar", description = "Filtra los vuelos segun los criterios enviados por parametro.")
+    @ApiResponse(responseCode = "204", description = "Vuelos encontrados exitosamente")
+    @GetMapping("/filtrar")
+    public ResponseEntity<List<Vuelo>> buscarVuelos(
+            @RequestParam(required = false) String Origen,
+            @RequestParam(required = false) String Destino,
+
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaSalida,
+
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaLlegada,
+
+            @RequestParam(required = false) Double precioMaximo,
+            @RequestParam(required = false) Boolean escala) {
+
+        List<Vuelo> vuelos = vueloService.buscarVuelosConFiltrosAvanzados(
+                Origen,
+                Destino,
+                fechaSalida,
+                fechaLlegada,
+                precioMaximo,
+                escala
+        );
+
+        return ResponseEntity.ok(vuelos);
+    }
 }
+
+
