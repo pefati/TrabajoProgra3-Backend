@@ -15,51 +15,51 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/clientes")
+@RequestMapping("/api/personas")
 @RequiredArgsConstructor
-@Tag(name = "Clientes", description = "Operaciones relacionadas con los clientes")
+@Tag(name = "Personas", description = "Operaciones relacionadas con los usuarios")
 public class PersonaController {
 
     @Autowired
     private final PersonaService personaService;
 
-    @Operation(summary = "Obtener cliente por ID", description = "Devuelve los datos de un cliente especifico.")
+    @Operation(summary = "Obtener usuario por ID", description = "Devuelve los datos de un usuario especifico.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Cliente encontrado exitosamente"),
-            @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
+            @ApiResponse(responseCode = "200", description = "Usuario encontrado exitosamente"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     @GetMapping("/{id}")
     public ResponseEntity<Persona> obtenerCliente(@PathVariable Integer id) {
         return ResponseEntity.ok(personaService.obtenerClientePorId(id));
     }
 
-    @Operation(summary = "Obtener todos los clientes", description = "Devuelve la lista completa de clientes.")
+    @Operation(summary = "Obtener todos los usuarios", description = "Devuelve la lista completa de usuarios.")
     @ApiResponse(responseCode = "200", description = "Lista devuelta exitosamente")
     @GetMapping
     public ResponseEntity<List<Persona>> obtenerTodos() {
         return ResponseEntity.ok(personaService.obtenerTodosLosClientes());
     }
 
-    @Operation(summary = "Crear cliente", description = "Crea un nuevo cliente en el sistema.")
-    @ApiResponse(responseCode = "201", description = "Cliente creado exitosamente")
+    @Operation(summary = "Crear usuario", description = "Crea un nuevo usuario en el sistema.")
+    @ApiResponse(responseCode = "201", description = "usuario creado exitosamente")
     @PostMapping
     public ResponseEntity<Persona> crearCliente(@RequestBody Persona persona) {
         Persona nuevo = personaService.crearCliente(persona);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
     }
 
-    @Operation(summary = "Actualizar cliente", description = "Actualiza los datos de un cliente existente.")
+    @Operation(summary = "Actualizar usuario", description = "Actualiza los datos de un usuario existente.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Cliente actualizado exitosamente"),
-            @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
+            @ApiResponse(responseCode = "200", description = "Usuario actualizado exitosamente"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     @PutMapping("/{id}")
     public ResponseEntity<Persona> actualizarCliente(@PathVariable Integer id, @RequestBody Persona persona) {
         return ResponseEntity.ok(personaService.actualizarCliente(id, persona));
     }
 
-    @Operation(summary = "Eliminar cliente", description = "Elimina un cliente del sistema.")
-    @ApiResponse(responseCode = "204", description = "Cliente eliminado exitosamente")
+    @Operation(summary = "Eliminar usuario", description = "Elimina un usuario del sistema.")
+    @ApiResponse(responseCode = "204", description = "Usuario eliminado exitosamente")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarCliente(@PathVariable Integer id) {
         personaService.eliminarCliente(id);
