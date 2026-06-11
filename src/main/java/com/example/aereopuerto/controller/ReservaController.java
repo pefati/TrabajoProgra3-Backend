@@ -1,16 +1,19 @@
 package com.example.aereopuerto.controller;
 
+import com.example.aereopuerto.auth.entity.User;
 import com.example.aereopuerto.dto.ReservaDTO;
 import com.example.aereopuerto.model.Reserva;
 import com.example.aereopuerto.service.ReservaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +26,21 @@ public class ReservaController {
 
     @Autowired
     private final ReservaService reservaService;
+
+    @Operation(
+            summary = "Ver mis reservas",
+            description = "Devuelve todas las reservas del cliente autenticado. Requiere JWT válido.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Reservas obtenidas exitosamente"),
+            @ApiResponse(responseCode = "401", description = "No autenticado")
+    })
+    @GetMapping("/mis-reservas")
+    public ResponseEntity<List<Reserva>> obtenerMisReservas(
+            @AuthenticationPrincipal User usuarioAutenticado) {
+        return ResponseEntity.ok(reservaService.obtenerMisReservas(usuarioAutenticado));
+    }
 
     @Operation(summary = "Obtener reserva por ID", description = "Devuelve los detalles de una reserva.")
     @GetMapping("/{id}")
@@ -46,7 +64,7 @@ public class ReservaController {
     @Operation(summary = "Actualizar reserva", description = "Actualiza una reserva existente.")
     @PutMapping("/{id}")
     public ResponseEntity<Reserva> actualizarReserva(@PathVariable Integer id, @RequestBody ReservaDTO reserva) {
-        return ResponseEntity.ok(reservaService.actualizarReserva(id,reserva));
+        return ResponseEntity.ok(reservaService.actualizarReserva(id, reserva));
     }
 
     @Operation(summary = "Eliminar reserva", description = "Elimina una reserva.")

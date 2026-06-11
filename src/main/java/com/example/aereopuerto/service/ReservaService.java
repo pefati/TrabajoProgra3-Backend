@@ -2,6 +2,7 @@ package com.example.aereopuerto.service;
 
 import com.example.aereopuerto.Exceptions.PersonaInvalidaException;
 import com.example.aereopuerto.Exceptions.ReservaInvalidaException;
+import com.example.aereopuerto.auth.entity.User;
 import com.example.aereopuerto.dto.ReservaDTO;
 import com.example.aereopuerto.model.Persona;
 import com.example.aereopuerto.model.Reserva;
@@ -33,6 +34,15 @@ public class ReservaService {
     @Cacheable(value = "reservas", key = "'todos'")
     public List<Reserva> obtenerTodasLasReservas() {
         return reservaRepository.findAll();
+    }
+
+    /**
+     * Devuelve únicamente las reservas pertenecientes al usuario autenticado.
+     * Se obtiene la Persona vinculada al User del JWT y se filtran las reservas por ella.
+     */
+    public List<Reserva> obtenerMisReservas(User usuarioAutenticado) {
+        Persona persona = usuarioAutenticado.getPersona();
+        return reservaRepository.findByPersona(persona);
     }
 
     @CachePut(value = "reservas", key = "#result.id")
