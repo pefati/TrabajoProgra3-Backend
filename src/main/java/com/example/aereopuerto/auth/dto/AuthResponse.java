@@ -14,4 +14,7 @@ public class AuthResponse {
     private String email;
     private Integer userId;
     private Boolean perfilCompleto;
+
+    public AuthResponse(String nuevoToken) {
+    }
 }

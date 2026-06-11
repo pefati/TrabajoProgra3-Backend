@@ -42,10 +42,28 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Boolean perfilCompleto;
 
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
+    public boolean isPerfilCompleto() {
+        return role != Role.ROLE_INCOMPLETO;
+    }
+/*
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
+
+
+ */
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
 
     @Override
     public String getUsername() {

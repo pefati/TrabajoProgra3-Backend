@@ -1,6 +1,7 @@
 package com.example.aereopuerto.auth.service;
 
 import com.example.aereopuerto.auth.dto.*;
+import com.example.aereopuerto.auth.entity.Role;
 import com.example.aereopuerto.auth.entity.User;
 import com.example.aereopuerto.auth.repository.UserRepository;
 import com.example.aereopuerto.model.Persona;
@@ -8,6 +9,7 @@ import com.example.aereopuerto.model.enums.Identificador;
 import com.example.aereopuerto.model.enums.Sexo;
 import com.example.aereopuerto.repository.PersonaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -65,6 +67,7 @@ public class AuthService {
                 .email(request.getEmail())
                 .telefono("Pendiente")
                 .password(passwordEncoder.encode(request.getPassword()))
+                .role(Role.ROLE_INCOMPLETO)
                 .perfilCompleto(false)
                 .build();
 
@@ -80,7 +83,7 @@ public class AuthService {
     }
 
 
-    public void completarPerfil(CompletarPerfilRequest request) {
+    public ResponseEntity<AuthResponse> completarPerfil(CompletarPerfilRequest request) {
 
         String email = SecurityContextHolder
                 .getContext()
@@ -121,9 +124,15 @@ public class AuthService {
         user.setTelefono(request.getTelefono());
 
         user.setPerfilCompleto(true);
+        user.setRole(Role.ROLE_USUARIO);
 
         personaRepository.save(persona);
         userRepository.save(user);
+
+        String nuevoToken = jwtService.generateToken(user, user.getId());
+        return ResponseEntity.ok(new AuthResponse(nuevoToken));
+
+
     }
 /*
     public AuthResponse registerSinPersona (RegisterRequestSinPersona request){
