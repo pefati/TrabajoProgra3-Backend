@@ -60,7 +60,7 @@ public class SecurityConfig {
                         .requestMatchers(PUBLIC_URLS).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/vuelos/**").permitAll()
 
-                        .requestMatchers("/api/perfil/completar").hasRole("INCOMPLETO")
+                        .requestMatchers("/api/auth/completarPerfil").hasRole("INCOMPLETO")
 
                         .requestMatchers(
                                 "/api/reservas/**",
