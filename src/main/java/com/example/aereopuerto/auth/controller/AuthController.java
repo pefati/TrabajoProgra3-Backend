@@ -31,9 +31,9 @@ public class AuthController {
         return ResponseEntity.ok(authService.register(request));
     }
 
-    @PutMapping("/completarPerfil/{userId}")
-    public ResponseEntity<String> completarPerfil(@PathVariable Integer userId, @RequestBody CompletarPerfilRequest request) {
-        authService.completarPerfil(userId, request);
+    @PutMapping("/completarPerfil")
+    public ResponseEntity<String> completarPerfil(@Valid @RequestBody CompletarPerfilRequest request) {
+        authService.completarPerfil(request);
         return ResponseEntity.ok("Perfil completado correctamente");
     }
 

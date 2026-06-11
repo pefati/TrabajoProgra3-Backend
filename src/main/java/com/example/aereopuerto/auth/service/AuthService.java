@@ -10,6 +10,7 @@ import com.example.aereopuerto.repository.PersonaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -79,9 +80,14 @@ public class AuthService {
     }
 
 
-    public void completarPerfil(Integer userId, CompletarPerfilRequest request) {
+    public void completarPerfil(CompletarPerfilRequest request) {
 
-        User user = userRepository.findById(userId)
+        String email = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new IllegalArgumentException("Usuario no encontrado"));
 
