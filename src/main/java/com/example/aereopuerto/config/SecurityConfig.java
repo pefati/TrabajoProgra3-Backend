@@ -30,6 +30,8 @@ public class SecurityConfig {
             "/api/auth/**"
     };
 
+
+    /*
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -37,6 +39,45 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PUBLIC_URLS).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/vuelos/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+     */
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+
+                        .requestMatchers(PUBLIC_URLS).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/vuelos/**").permitAll()
+
+                        .requestMatchers("/api/perfil/completar").hasRole("INCOMPLETO")
+
+                        .requestMatchers(
+                                "/api/reservas/**",
+                                "/api/personas/**",
+                                "/api/pasajes/**",
+                                "/api/favoritos/**",
+                                "/api/facturas/**",
+                                "/api/carrito/**",
+                                "/api/asistenciasAlViajero/**"
+                        ).hasAnyRole("USUARIO", "EMPLEADO", "ADMIN")
+
+                        .requestMatchers(
+                                "/api/aviones/**",
+                                "/api/asignacion/**",
+                                "/api/aeropuertos/**"
+                        ).hasAnyRole("EMPLEADO", "ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
