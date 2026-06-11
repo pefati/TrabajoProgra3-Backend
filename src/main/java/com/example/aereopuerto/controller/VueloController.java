@@ -2,6 +2,7 @@ package com.example.aereopuerto.controller;
 
 import com.example.aereopuerto.dto.VueloDTO;
 import com.example.aereopuerto.model.Vuelo;
+import com.example.aereopuerto.model.enums.estadoVuelo;
 import com.example.aereopuerto.service.VueloService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,7 +36,6 @@ public class VueloController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<Vuelo> obtenerVuelo(@PathVariable Integer id) {
-        // En la consola verás si va a MySQL o lo saca directamente de Redis
         Vuelo vuelo = vueloService.obtenerVueloPorId(id);
         return ResponseEntity.ok(vuelo);
     }
@@ -50,7 +51,6 @@ public class VueloController {
     @ApiResponse(responseCode = "201", description = "Vuelo creado exitosamente")
     @PostMapping
     public ResponseEntity<Vuelo> crearVuelo(@RequestBody Vuelo vuelo) {
-        // Al crear, se debe limpiar la caché general de la lista
         vueloService.invalidarListaDeVuelos();
         Vuelo nuevoVuelo = vueloService.crearVuelo(vuelo);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoVuelo);
@@ -76,34 +76,49 @@ public class VueloController {
         return ResponseEntity.noContent().build();
     }
 
-
-    @Operation(summary = "filtrar", description = "Filtra los vuelos segun los criterios enviados por parametro.")
-    @ApiResponse(responseCode = "204", description = "Vuelos encontrados exitosamente")
+    @Operation(
+            summary = "Filtrar vuelos",
+            description = "Filtra el listado de vuelos según los criterios indicados. Todos los parámetros son opcionales y se combinan entre sí."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Vuelos encontrados exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Parámetros de búsqueda inválidos")
+    })
     @GetMapping("/filtrar")
     public ResponseEntity<List<Vuelo>> buscarVuelos(
-            @RequestParam(required = false) String Origen,
-            @RequestParam(required = false) String Destino,
+            @Parameter(description = "Ciudad de origen (búsqueda parcial, sin distinción de mayúsculas)")
+            @RequestParam(required = false) String origen,
 
+            @Parameter(description = "Ciudad de destino (búsqueda parcial, sin distinción de mayúsculas)")
+            @RequestParam(required = false) String destino,
+
+            @Parameter(description = "Fecha/hora mínima de salida (yyyy-MM-dd'T'HH:mm:ss)")
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaSalida,
 
+            @Parameter(description = "Fecha/hora máxima de llegada (ISO 8601: yyyy-MM-dd'T'HH:mm:ss)")
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaLlegada,
 
+            @Parameter(description = "Precio máximo del vuelo")
             @RequestParam(required = false) Double precioMaximo,
-            @RequestParam(required = false) Boolean escala) {
+
+            @Parameter(description = "true = con escala, false = vuelo directo")
+            @RequestParam(required = false) Boolean escala,
+
+            @Parameter(description = "Estado del vuelo: PROGRAMADO, BOARDING, ACTIVO, CANCELADO, REPROGRAMADO")
+            @RequestParam(required = false) estadoVuelo estado) {
 
         List<Vuelo> vuelos = vueloService.buscarVuelosConFiltrosAvanzados(
-                Origen,
-                Destino,
+                origen,
+                destino,
                 fechaSalida,
                 fechaLlegada,
                 precioMaximo,
-                escala
+                escala,
+                estado
         );
 
         return ResponseEntity.ok(vuelos);
     }
 }
-
-
