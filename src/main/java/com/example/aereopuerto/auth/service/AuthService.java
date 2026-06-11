@@ -1,9 +1,6 @@
 package com.example.aereopuerto.auth.service;
 
-import com.example.aereopuerto.auth.dto.AuthResponse;
-import com.example.aereopuerto.auth.dto.LoginRequest;
-import com.example.aereopuerto.auth.dto.RegisterRequest;
-import com.example.aereopuerto.auth.dto.RegisterRequestSinPersona;
+import com.example.aereopuerto.auth.dto.*;
 import com.example.aereopuerto.auth.entity.User;
 import com.example.aereopuerto.auth.repository.UserRepository;
 import com.example.aereopuerto.model.Persona;
@@ -41,6 +38,7 @@ public class AuthService {
                 .token(token)
                 .email(user.getEmail())
                 .userId(user.getId())
+                .perfilCompleto(user.getPerfilCompleto())
                 .build();
     }
 
@@ -49,14 +47,24 @@ public class AuthService {
             throw new IllegalArgumentException("El email ya está registrado");
         }
 
-        Persona persona = personaRepository.findById(request.getClienteId())
-                .orElseThrow(() -> new IllegalArgumentException("Cliente no encontrado con id: " + request.getClienteId()));
+        //Persona persona = personaRepository.findById(request.getClienteId())
+        //        .orElseThrow(() -> new IllegalArgumentException("Cliente no encontrado con id: " + request.getClienteId()));
+
+        Persona persona = new Persona();
+        persona.setApellido("Pendiente");
+        persona.setSexo(null);
+        persona.setIdentificador(null);
+        persona.setNombre("Pendiente");
+        persona.setNumeroIdentificador(null);
+        persona.setFechaNacimiento(null);
+        personaRepository.save(persona);
 
         User user = User.builder()
                 .persona(persona)
                 .email(request.getEmail())
-                .telefono(request.getTelefono())
+                .telefono("Pendiente")
                 .password(passwordEncoder.encode(request.getPassword()))
+                .perfilCompleto(false)
                 .build();
 
         userRepository.save(user);
@@ -66,9 +74,52 @@ public class AuthService {
                 .token(token)
                 .email(user.getEmail())
                 .userId(user.getId())
+                .perfilCompleto(user.getPerfilCompleto())
                 .build();
     }
 
+
+    public void completarPerfil(Integer userId, CompletarPerfilRequest request) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Usuario no encontrado"));
+
+        if (Boolean.TRUE.equals(user.getPerfilCompleto())) {
+            throw new IllegalArgumentException(
+                    "El perfil ya fue completado"
+            );
+        }
+
+        if (request.getNombre() == null || request.getNombre().isBlank() ||
+                request.getApellido() == null || request.getApellido().isBlank() ||
+                request.getNumeroIdentificador() == null || request.getNumeroIdentificador().isBlank() ||
+                request.getIdentificador() == null ||
+                request.getSexo() == null ||
+                request.getFechaNacimiento() == null ||
+                request.getTelefono() == null || request.getTelefono().isBlank()) {
+
+            throw new IllegalArgumentException(
+                    "Todos los campos son obligatorios"
+            );
+        }
+
+        Persona persona = user.getPersona();
+
+        persona.setNombre(request.getNombre());
+        persona.setApellido(request.getApellido());
+        persona.setNumeroIdentificador(request.getNumeroIdentificador());
+        persona.setIdentificador(request.getIdentificador());
+        persona.setSexo(request.getSexo());
+        persona.setFechaNacimiento(request.getFechaNacimiento());
+        user.setTelefono(request.getTelefono());
+
+        user.setPerfilCompleto(true);
+
+        personaRepository.save(persona);
+        userRepository.save(user);
+    }
+/*
     public AuthResponse registerSinPersona (RegisterRequestSinPersona request){
 
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -82,7 +133,7 @@ public class AuthService {
         persona.setIdentificador(Identificador.DNI); //por defecto puse que la creacion sea con DNI, el usuario lo cambiara al completar su perfil si lo desea
         persona.setNombre("Pendiente");
         persona.setNumeroIdentificador(request.getDni());
-        persona.setFechaNacimiento(LocalDateTime.now());
+        persona.setFechaNacimiento(null);
         personaRepository.save(persona);
 
         User user = User.builder()
@@ -101,5 +152,7 @@ public class AuthService {
                 .userId(user.getId())
                 .build();
     }
+
+ */
 
 }

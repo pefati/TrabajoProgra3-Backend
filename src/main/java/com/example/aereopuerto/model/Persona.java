@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.sql.Date;
 import java.time.LocalDateTime;
 
 @Entity
@@ -30,16 +31,16 @@ public class Persona implements Serializable {
     @Column(nullable = false)
     private String apellido;
 
-    @Column(nullable = false, name = "fecha_nacimiento")
-    private LocalDateTime fechaNacimiento;
+    @Column(nullable = true, name = "fecha_nacimiento")
+    private Date fechaNacimiento;
 
     @Enumerated(EnumType.STRING)
     private Identificador identificador;
 
-    @Column(nullable = false, unique = true, name= "numero_identificador")
+    @Column(nullable = true, unique = true, name= "numero_identificador")
     private String numeroIdentificador;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     @Enumerated(EnumType.STRING)
     private Sexo sexo;
 
