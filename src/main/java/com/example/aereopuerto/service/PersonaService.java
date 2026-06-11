@@ -1,7 +1,10 @@
 package com.example.aereopuerto.service;
 
 import com.example.aereopuerto.Exceptions.PersonaInvalidaException;
+import com.example.aereopuerto.Specifications.PersonaSpecification;
 import com.example.aereopuerto.model.Persona;
+import com.example.aereopuerto.model.enums.Identificador;
+import com.example.aereopuerto.model.enums.Sexo;
 import com.example.aereopuerto.repository.PersonaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +12,10 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.util.List;
 
 @Service
@@ -65,6 +70,25 @@ public class PersonaService {
 
     @CacheEvict(value = "clientes", key = "'todos'")
     public void invalidarListaDeClientes() {
+    }
+
+    public List<Persona> buscarPersonasConFiltros(
+            String nombre,
+            String apellido,
+            Identificador identificador,
+            String numeroIdentificador,
+            Sexo sexo,
+            Date fechaNacimiento) {
+
+        Specification<Persona> spec = Specification
+                .where(PersonaSpecification.porNombre(nombre))
+                .and(PersonaSpecification.porApellido(apellido))
+                .and(PersonaSpecification.porIdentificador(identificador))
+                .and(PersonaSpecification.porNumeroIdentificador(numeroIdentificador))
+                .and(PersonaSpecification.porSexo(sexo))
+                .and(PersonaSpecification.porFechaNacimiento(fechaNacimiento));
+
+        return personaRepository.findAll(spec);
     }
 
 
