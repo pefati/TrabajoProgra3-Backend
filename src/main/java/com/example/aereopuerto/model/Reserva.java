@@ -28,7 +28,7 @@ public class Reserva implements Serializable {
     private Persona persona;
 
     @Column(nullable = false)
-    private Float valor;
+    private Double valor;
 
     @Column(nullable = false, name= "cantidad_pasajes")
     private Integer cantidadPasajes;

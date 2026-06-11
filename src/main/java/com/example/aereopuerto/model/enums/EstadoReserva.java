@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 public enum EstadoReserva {
     ACTIVO,
     BAJA,
-    PROCESANDO;
+    PROCESANDO,
+    CONFIRMADO;
 
     @JsonCreator
     public static EstadoReserva fromString(String value) {

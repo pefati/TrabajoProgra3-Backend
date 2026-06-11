@@ -7,7 +7,9 @@ import org.springframework.cglib.core.Local;
 
 import java.io.Serializable;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 
 @Data
@@ -44,16 +46,16 @@ public class Vuelo implements Serializable {
     private Avion avion;
 
     @Column(nullable = false, name= "fecha_salida")
-    private LocalDateTime fechaSalida;
+    private LocalDate fechaSalida;
 
     @Column(nullable = false, name = "fecha_llegada")
-    private LocalDateTime fechaLlegada;
+    private LocalDate fechaLlegada;
 
     @Column(nullable = false, name = "hora_salida")
-    private LocalDateTime horaSalida;
+    private LocalTime horaSalida;
 
     @Column(nullable = false, name = "hora_llegada")
-    private LocalDateTime horaLlegada;
+    private LocalTime horaLlegada;
 
     @Column(nullable = false, name = "estado")
     @Enumerated(EnumType.STRING)
