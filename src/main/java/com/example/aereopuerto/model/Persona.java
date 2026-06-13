@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -32,7 +33,7 @@ public class Persona implements Serializable {
     private String apellido;
 
     @Column(nullable = true, name = "fecha_nacimiento")
-    private Date fechaNacimiento;
+    private LocalDate fechaNacimiento;
 
     @Enumerated(EnumType.STRING)
     private Identificador identificador;
