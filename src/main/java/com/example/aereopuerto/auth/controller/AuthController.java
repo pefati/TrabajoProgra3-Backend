@@ -7,8 +7,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -34,6 +36,19 @@ public class AuthController {
     @GetMapping("/perfil")
     public ResponseEntity<PerfilResponse> obtenerPerfil() {
         return ResponseEntity.ok(authService.obtenerPerfil());
+    }
+
+    @GetMapping("/usuarios")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<UsuarioResponse>> obtenerUsuarios() {
+        return ResponseEntity.ok(authService.obtenerUsuarios());
+    }
+
+    @GetMapping("/usuarios/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UsuarioResponse> obtenerUsuario(
+            @PathVariable Integer id) {
+        return ResponseEntity.ok(authService.obtenerUsuario(id));
     }
 
     @PutMapping("/completarPerfil")

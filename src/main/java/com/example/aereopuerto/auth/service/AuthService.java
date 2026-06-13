@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -103,6 +104,40 @@ public class AuthService {
                 .numeroIdentificador(persona.getNumeroIdentificador())
                 .fechaNacimiento(persona.getFechaNacimiento())
                 .sexo(persona.getSexo())
+                .build();
+    }
+
+    public List<UsuarioResponse> obtenerUsuarios() {
+
+        List<User> usuarios = userRepository.findAll();
+
+        return usuarios.stream()
+                .map(user -> UsuarioResponse.builder()
+                        .id(user.getId())
+                        .nombre(user.getPersona().getNombre())
+                        .apellido(user.getPersona().getApellido())
+                        .email(user.getEmail())
+                        .telefono(user.getTelefono())
+                        .role(user.getRole())
+                        .build())
+                .toList();
+    }
+
+    public UsuarioResponse obtenerUsuario (Integer id)
+    {
+        User user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Usuario no encontrado"));
+
+        Persona persona = user.getPersona();
+
+        return UsuarioResponse.builder()
+                .id(user.getId())
+                .nombre(persona.getNombre())
+                .apellido(persona.getApellido())
+                .email(user.getEmail())
+                .telefono(user.getTelefono())
+                .role(user.getRole())
                 .build();
     }
 
