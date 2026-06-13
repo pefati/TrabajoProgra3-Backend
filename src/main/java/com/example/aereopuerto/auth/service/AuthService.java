@@ -82,6 +82,30 @@ public class AuthService {
                 .build();
     }
 
+    public PerfilResponse obtenerPerfil() {
+
+        String email = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Usuario no encontrado"));
+
+        Persona persona = user.getPersona();
+
+        return PerfilResponse.builder()
+                .nombre(persona.getNombre())
+                .apellido(persona.getApellido())
+                .email(user.getEmail())
+                .telefono(user.getTelefono())
+                .numeroIdentificador(persona.getNumeroIdentificador())
+                .fechaNacimiento(persona.getFechaNacimiento())
+                .sexo(persona.getSexo())
+                .build();
+    }
+
 
     public ResponseEntity<AuthResponse> completarPerfil(CompletarPerfilRequest request) {
 

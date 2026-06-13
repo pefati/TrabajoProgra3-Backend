@@ -31,6 +31,11 @@ public class AuthController {
         return ResponseEntity.ok(authService.register(request));
     }
 
+    @GetMapping("/perfil")
+    public ResponseEntity<PerfilResponse> obtenerPerfil() {
+        return ResponseEntity.ok(authService.obtenerPerfil());
+    }
+
     @PutMapping("/completarPerfil")
     public ResponseEntity<String> completarPerfil(@Valid @RequestBody CompletarPerfilRequest request) {
         authService.completarPerfil(request);
