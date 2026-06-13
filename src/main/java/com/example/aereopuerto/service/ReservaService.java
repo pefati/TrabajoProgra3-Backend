@@ -3,9 +3,13 @@ package com.example.aereopuerto.service;
 import com.example.aereopuerto.Exceptions.PersonaInvalidaException;
 import com.example.aereopuerto.Exceptions.ReservaInvalidaException;
 import com.example.aereopuerto.auth.entity.User;
+import com.example.aereopuerto.dto.PasajeDTO;
 import com.example.aereopuerto.dto.ReservaDTO;
+import com.example.aereopuerto.model.Pasaje;
 import com.example.aereopuerto.model.Persona;
 import com.example.aereopuerto.model.Reserva;
+import com.example.aereopuerto.model.enums.EstadoReserva;
+import com.example.aereopuerto.repository.PasajeRepository;
 import com.example.aereopuerto.repository.PersonaRepository;
 import com.example.aereopuerto.repository.ReservaRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +29,7 @@ public class ReservaService {
     @Autowired
     private final ReservaRepository reservaRepository;
     private final PersonaRepository personaRepository;
+    private final PasajeRepository pasajeRepository;
 
     @Cacheable(value = "reservas", key = "#id")
     public Reserva obtenerReservaPorId(Integer id) {
@@ -70,6 +75,25 @@ public class ReservaService {
         reserva.setFechaReserva(reservaDTO.getFechaReserva());
 
         return reservaRepository.save(reserva);
+    }
+
+    @CacheEvict(value = "reservas", allEntries = true)
+    public void cancelarReserva(Integer id) {
+
+        Reserva reserva = reservaRepository.findById(id)
+                .orElseThrow(() ->
+                        new ReservaInvalidaException("Reserva no encontrada"));
+
+        if (reserva.getEstadoReserva() == EstadoReserva.CANCELADA) {
+            throw new IllegalArgumentException(
+                    "La reserva ya se encuentra cancelada"
+            );
+        }
+        List<Pasaje> pasajes =
+                pasajeRepository.findByReservaId(reserva.getId());
+        pasajeRepository.deleteAll(pasajes);
+        reserva.setEstadoReserva(EstadoReserva.CANCELADA);
+        reservaRepository.save(reserva);
     }
 
     @Caching(evict = {

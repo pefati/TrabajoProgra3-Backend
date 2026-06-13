@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 public enum EstadoReserva {
     ACTIVO,
-    BAJA,
+    CANCELADA,
     PROCESANDO,
     CONFIRMADO;
 

@@ -67,6 +67,15 @@ public class ReservaController {
         return ResponseEntity.ok(reservaService.actualizarReserva(id, reserva));
     }
 
+    @Operation(summary = "Cancelar reserva", description = "Cancela una reserva existente.")
+    @PutMapping("/{id}/cancelar")
+    public ResponseEntity<String> cancelarReserva(@PathVariable Integer id) {
+
+        reservaService.cancelarReserva(id);
+
+        return ResponseEntity.ok("Reserva cancelada correctamente");
+    }
+
     @Operation(summary = "Eliminar reserva", description = "Elimina una reserva.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarReserva(@PathVariable Integer id) {

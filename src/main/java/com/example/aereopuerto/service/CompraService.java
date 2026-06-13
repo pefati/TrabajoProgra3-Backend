@@ -27,9 +27,7 @@ public class CompraService {
     private final EquipajeRepository equipajeRepository;
     private final AsistenciaRepository asistenciaRepository;
 
-    // =========================
-    // MÉTODO PRINCIPAL
-    // =========================
+
     public void confirmarCompra(CompraDTO dto) {
         Carrito carrito = obtenerCarrito(dto.getPersonaId());
         validarCarrito(carrito);
@@ -120,7 +118,6 @@ public class CompraService {
                         .vuelo(item.getVuelo())
                         .reserva(reserva)
                         .equipaje(equipaje)
-                        .asiento(null)
                         .build();
 
                 pasajes.add(p);
