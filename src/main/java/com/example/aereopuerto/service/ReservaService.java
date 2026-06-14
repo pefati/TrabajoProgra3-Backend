@@ -2,7 +2,9 @@ package com.example.aereopuerto.service;
 
 import com.example.aereopuerto.Exceptions.PersonaInvalidaException;
 import com.example.aereopuerto.Exceptions.ReservaInvalidaException;
+import com.example.aereopuerto.Specifications.ReservaSpecification;
 import com.example.aereopuerto.auth.entity.User;
+import com.example.aereopuerto.auth.repository.UserRepository;
 import com.example.aereopuerto.dto.PasajeDTO;
 import com.example.aereopuerto.dto.ReservaDTO;
 import com.example.aereopuerto.model.Pasaje;
@@ -18,8 +20,10 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -30,6 +34,7 @@ public class ReservaService {
     private final ReservaRepository reservaRepository;
     private final PersonaRepository personaRepository;
     private final PasajeRepository pasajeRepository;
+    private final UserRepository userRepository;
 
     @Cacheable(value = "reservas", key = "#id")
     public Reserva obtenerReservaPorId(Integer id) {
@@ -102,6 +107,55 @@ public class ReservaService {
     })
     public void eliminarReserva(Integer id) {
         reservaRepository.deleteById(id);
+    }
+
+    public List<Reserva> buscarTodasReservasConFiltros(
+            String email,
+            EstadoReserva estado,
+            LocalDateTime fechaDesde,
+            LocalDateTime fechaHasta,
+            Double valorMinimo,
+            Double valorMaximo,
+            Integer cantidadPasajes) {
+
+        Integer personaId = null;
+        if (email != null && !email.trim().isEmpty()) {
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new PersonaInvalidaException("Usuario no encontrado con email: " + email));
+            personaId = user.getPersona().getId();
+        }
+
+        Specification<Reserva> spec = Specification
+                .where(ReservaSpecification.porPersonaId(personaId))
+                .and(ReservaSpecification.porEstado(estado))
+                .and(ReservaSpecification.porFechaDesde(fechaDesde))
+                .and(ReservaSpecification.porFechaHasta(fechaHasta))
+                .and(ReservaSpecification.porValorMinimo(valorMinimo))
+                .and(ReservaSpecification.porValorMaximo(valorMaximo))
+                .and(ReservaSpecification.porCantidadPasajes(cantidadPasajes));
+
+        return reservaRepository.findAll(spec);
+    }
+
+    public List<Reserva> buscarMisReservasConFiltros(
+            Persona persona,
+            EstadoReserva estado,
+            LocalDateTime fechaDesde,
+            LocalDateTime fechaHasta,
+            Double valorMinimo,
+            Double valorMaximo,
+            Integer cantidadPasajes) {
+
+        Specification<Reserva> spec = Specification
+                .where(ReservaSpecification.porPersonaId(persona.getId()))
+                .and(ReservaSpecification.porEstado(estado))
+                .and(ReservaSpecification.porFechaDesde(fechaDesde))
+                .and(ReservaSpecification.porFechaHasta(fechaHasta))
+                .and(ReservaSpecification.porValorMinimo(valorMinimo))
+                .and(ReservaSpecification.porValorMaximo(valorMaximo))
+                .and(ReservaSpecification.porCantidadPasajes(cantidadPasajes));
+
+        return reservaRepository.findAll(spec);
     }
 
     @CacheEvict(value = "reservas", key = "'todos'")
