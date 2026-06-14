@@ -46,10 +46,7 @@ public class ReservaService {
         return reservaRepository.findAll();
     }
 
-    /**
-     * Devuelve únicamente las reservas pertenecientes al usuario autenticado.
-     * Se obtiene la Persona vinculada al User del JWT y se filtran las reservas por ella.
-     */
+    @Cacheable(value = "reservas", key = "'persona_' + #usuarioAutenticado.persona.id")
     public List<Reserva> obtenerMisReservas(User usuarioAutenticado) {
         Persona persona = usuarioAutenticado.getPersona();
         return reservaRepository.findByPersona(persona);
