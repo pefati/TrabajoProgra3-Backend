@@ -3,6 +3,7 @@ package com.example.aereopuerto.controller;
 import com.example.aereopuerto.auth.entity.User;
 import com.example.aereopuerto.dto.ReservaDTO;
 import com.example.aereopuerto.model.Reserva;
+import com.example.aereopuerto.model.enums.EstadoReserva;
 import com.example.aereopuerto.service.ReservaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -11,11 +12,13 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -82,4 +85,37 @@ public class ReservaController {
         reservaService.eliminarReserva(id);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "Filtrar reservas de su totalidad", description = "Aplica los filtros deseados a la totalidad de las reservas .")
+    @GetMapping("/filtrar")
+    public ResponseEntity<List<Reserva>> filtrarReservas(
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) EstadoReserva estado,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaDesde,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaHasta,
+            @RequestParam(required = false) Double valorMinimo,
+            @RequestParam(required = false) Double valorMaximo,
+            @RequestParam(required = false) Integer cantidadPasajes) {
+
+        return ResponseEntity.ok(reservaService.buscarTodasReservasConFiltros(
+                email, estado, fechaDesde, fechaHasta, valorMinimo, valorMaximo, cantidadPasajes));
+    }
+
+
+    //La idea sería que usuario solo pueda filtrar dentro de SUS reservas
+    @Operation(summary = "Filtrar mis reservas ", description = "Aplica los filtros deseados a las reservas del usuario.")
+    @GetMapping("/mis-reservas/filtrar")
+    public ResponseEntity<List<Reserva>> filtrarMisReservas(
+            @AuthenticationPrincipal User usuarioAutenticado,
+            @RequestParam(required = false) EstadoReserva estado,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaDesde,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaHasta,
+            @RequestParam(required = false) Double valorMinimo,
+            @RequestParam(required = false) Double valorMaximo,
+            @RequestParam(required = false) Integer cantidadPasajes) {
+
+        return ResponseEntity.ok(reservaService.buscarMisReservasConFiltros(
+                usuarioAutenticado.getPersona(), estado, fechaDesde, fechaHasta, valorMinimo, valorMaximo, cantidadPasajes));
+    }
+
 }
