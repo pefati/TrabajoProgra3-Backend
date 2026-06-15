@@ -5,7 +5,6 @@ import com.example.aereopuerto.Exceptions.ReservaInvalidaException;
 import com.example.aereopuerto.Specifications.ReservaSpecification;
 import com.example.aereopuerto.auth.entity.User;
 import com.example.aereopuerto.auth.repository.UserRepository;
-import com.example.aereopuerto.dto.PasajeDTO;
 import com.example.aereopuerto.dto.ReservaDTO;
 import com.example.aereopuerto.model.Pasaje;
 import com.example.aereopuerto.model.Persona;
@@ -23,6 +22,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -35,6 +35,7 @@ public class ReservaService {
     private final PersonaRepository personaRepository;
     private final PasajeRepository pasajeRepository;
     private final UserRepository userRepository;
+    private final PoliticaDevolucionService politicaService;
 
     @Cacheable(value = "reservas", key = "#id")
     public Reserva obtenerReservaPorId(Integer id) {
@@ -71,7 +72,7 @@ public class ReservaService {
                         "Usuario no encontrado. ID: " + reservaDTO.getClienteId()));
 
         reserva.setPersona(persona);
-        reserva.setValor(reservaDTO.getValor());
+        reserva.setValor(BigDecimal.valueOf(reservaDTO.getValor()));
         reserva.setCantidadPasajes(reservaDTO.getCantidadPasajes());
         reserva.setEstadoReserva(reservaDTO.getEstadoReserva());
         reserva.setFechaReserva(reservaDTO.getFechaReserva());
@@ -91,6 +92,16 @@ public class ReservaService {
                     "La reserva ya se encuentra cancelada"
             );
         }
+
+        BigDecimal reembolso = politicaService.calcular(reserva);
+        if (reembolso.compareTo(BigDecimal.ZERO) == 0) {
+            System.out.println("No corresponde reembolso para la reserva ID: " + id);
+        } else if (reembolso.compareTo(reserva.getValor()) == 0) {
+            System.out.println("Reembolso total de $" + reembolso + " para la reserva ID: " + id);
+        } else {
+            System.out.println("Reembolso parcial de $" + reembolso + " para la reserva ID: " + id);
+        }
+
         List<Pasaje> pasajes =
                 pasajeRepository.findByReservaId(reserva.getId());
         pasajeRepository.deleteAll(pasajes);
