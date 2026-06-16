@@ -21,10 +21,10 @@ public class PoliticaDevolucionService {
             return reserva.getValor();
         }
         else if (diasRestantes >= 20 &&  diasRestantes < 30){
-           return reserva.getValor().multiply(new BigDecimal(.50));
+           return reserva.getValor().multiply(BigDecimal.valueOf(0.50));
         }
         else if (diasRestantes > 10 && diasRestantes < 20){
-            return reserva.getValor().multiply(new BigDecimal(.15));
+            return reserva.getValor().multiply(BigDecimal.valueOf(0.15));
         }
         else {
             return BigDecimal.ZERO;

@@ -97,11 +97,13 @@ public class AuthService {
         Persona persona = user.getPersona();
 
         return PerfilResponse.builder()
+                .personaId(persona.getId())
                 .nombre(persona.getNombre())
                 .apellido(persona.getApellido())
                 .email(user.getEmail())
                 .telefono(user.getTelefono())
                 .numeroIdentificador(persona.getNumeroIdentificador())
+                .identificador(persona.getIdentificador())
                 .fechaNacimiento(persona.getFechaNacimiento())
                 .sexo(persona.getSexo())
                 .build();
@@ -192,6 +194,54 @@ public class AuthService {
         return ResponseEntity.ok(new AuthResponse(nuevoToken));
 
 
+    }
+
+    public ResponseEntity<AuthResponse> actualizarPerfil(CompletarPerfilRequest request) {
+
+        String email = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Usuario no encontrado"));
+
+        validarPerfilRequest(request);
+
+        Persona persona = user.getPersona();
+
+        persona.setNombre(request.getNombre());
+        persona.setApellido(request.getApellido());
+        persona.setNumeroIdentificador(request.getNumeroIdentificador());
+        persona.setIdentificador(request.getIdentificador());
+        persona.setSexo(request.getSexo());
+        persona.setFechaNacimiento(request.getFechaNacimiento());
+        user.setTelefono(request.getTelefono());
+
+        user.setPerfilCompleto(true);
+        user.setRole(Role.ROLE_USUARIO);
+
+        personaRepository.save(persona);
+        userRepository.save(user);
+
+        String nuevoToken = jwtService.generateToken(user, user.getId());
+        return ResponseEntity.ok(new AuthResponse(nuevoToken));
+    }
+
+    private void validarPerfilRequest(CompletarPerfilRequest request) {
+        if (request.getNombre() == null || request.getNombre().isBlank() ||
+                request.getApellido() == null || request.getApellido().isBlank() ||
+                request.getNumeroIdentificador() == null || request.getNumeroIdentificador().isBlank() ||
+                request.getIdentificador() == null ||
+                request.getSexo() == null ||
+                request.getFechaNacimiento() == null ||
+                request.getTelefono() == null || request.getTelefono().isBlank()) {
+
+            throw new IllegalArgumentException(
+                    "Todos los campos son obligatorios"
+            );
+        }
     }
 /*
     public AuthResponse registerSinPersona (RegisterRequestSinPersona request){

@@ -28,17 +28,13 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
 
-    private static final String[] PUBLIC_URLS = {
-            "/api/auth/**"
-    };
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
 
-                        .requestMatchers(PUBLIC_URLS).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/vuelos/**").permitAll()
 
                         .requestMatchers("/api/auth/completarPerfil").hasRole("INCOMPLETO")
@@ -50,7 +46,9 @@ public class SecurityConfig {
                                 "/api/favoritos/**",
                                 "/api/facturas/**",
                                 "/api/carrito/**",
-                                "/api/asistenciasAlViajero/**"
+                                "/api/compras/**",
+                                "/api/asistenciasAlViajero/**",
+                                "/api/auth/perfil"
                         ).hasAnyRole("USUARIO", "EMPLEADO", "ADMIN")
 
                         .requestMatchers(

@@ -52,9 +52,13 @@ public class AuthController {
     }
 
     @PutMapping("/completarPerfil")
-    public ResponseEntity<String> completarPerfil(@Valid @RequestBody CompletarPerfilRequest request) {
-        authService.completarPerfil(request);
-        return ResponseEntity.ok("Perfil completado correctamente");
+    public ResponseEntity<AuthResponse> completarPerfil(@Valid @RequestBody CompletarPerfilRequest request) {
+        return authService.completarPerfil(request);
+    }
+
+    @PutMapping("/perfil")
+    public ResponseEntity<AuthResponse> actualizarPerfil(@Valid @RequestBody CompletarPerfilRequest request) {
+        return authService.actualizarPerfil(request);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

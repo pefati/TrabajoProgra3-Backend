@@ -3,6 +3,7 @@ package com.example.aereopuerto.service;
 import com.example.aereopuerto.Exceptions.FacturaInvalidaException;
 import com.example.aereopuerto.dto.FacturaDTO;
 import com.example.aereopuerto.model.Factura;
+import com.example.aereopuerto.model.Persona;
 import com.example.aereopuerto.model.Reserva;
 import com.example.aereopuerto.repository.FacturaRepository;
 import com.example.aereopuerto.repository.ReservaRepository;
@@ -32,6 +33,11 @@ public class FacturaService {
     @Cacheable(value = "facturas", key = "'todos'")
     public List<Factura> obtenerTodasLasFacturas() {
         return facturaRepository.findAll();
+    }
+
+    @Cacheable(value = "facturas", key = "#id")
+    public List<Factura> obtenerFacturasPorPersona(Persona persona) {
+        return facturaRepository.findByReservaPersona(persona);
     }
 
     @CachePut(value = "facturas", key = "#result.id")

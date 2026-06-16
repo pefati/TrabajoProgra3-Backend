@@ -14,9 +14,9 @@ import com.example.aereopuerto.repository.CarritoItemRepository;
 import com.example.aereopuerto.repository.CarritoRepository;
 import com.example.aereopuerto.repository.PersonaRepository;
 import com.example.aereopuerto.repository.VueloRepository;
+import com.example.aereopuerto.auth.entity.User;
+import com.example.aereopuerto.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,8 +27,8 @@ public class CarritoService {
     private final CarritoItemRepository carritoItemRepository;
     private final PersonaRepository personaRepository;
     private final VueloRepository vueloRepository;
+    private final UserRepository userRepository;
 
-    @Cacheable(value = "carrito", key = "#personaId")
     public CarritoDTO getCarritoByPersonaId(Integer personaId) {
         Carrito carrito = carritoRepository.findByPersonaId(personaId).orElseGet(() -> {
             Persona persona = personaRepository.findById(personaId)
@@ -39,7 +39,6 @@ public class CarritoService {
         return mapToDTO(carrito);
     }
 
-    @CacheEvict(value = "carrito", key = "#personaId")
     public CarritoItemDTO addItem(Integer personaId, Integer vueloId, int cantidad, ClasesVuelo clase) {
         Carrito carrito = carritoRepository.findByPersonaId(personaId).orElseGet(() -> {
             Persona persona = personaRepository.findById(personaId)
@@ -65,19 +64,49 @@ public class CarritoService {
         return mapItemToDTO(carritoItemRepository.save(item));
     }
 
-    @CacheEvict(value = "carrito", key = "#personaId")
     public void removeItem(Integer personaId, Integer itemId) {
         CarritoItem item = carritoItemRepository.findById(itemId)
                 .orElseThrow(() -> new CarritoInvalidoException("Item del carrito no encontrado con id: " + itemId));
+        if (!item.getCarrito().getPersona().getId().equals(personaId)) {
+            throw new CarritoInvalidoException("El item no pertenece al usuario autenticado.");
+        }
         carritoItemRepository.delete(item);
     }
 
-    @CacheEvict(value = "carrito", key = "#personaId")
     public void clearCarrito(Integer personaId, Integer carritoId) {
         Carrito carrito = carritoRepository.findById(carritoId)
                 .orElseThrow(() -> new CarritoInvalidoException("Carrito no encontrado con id: " + carritoId));
+        if (!carrito.getPersona().getId().equals(personaId)) {
+            throw new CarritoInvalidoException("El carrito no pertenece al usuario autenticado.");
+        }
         carrito.getItems().clear();
         carritoRepository.save(carrito);
+    }
+
+    public CarritoDTO getCarritoPorToken(String email) {
+        return getCarritoByPersonaId(obtenerPersonaPorEmail(email).getId());
+    }
+
+    public CarritoItemDTO addItemPorToken(String email, Integer vueloId, int cantidad, ClasesVuelo clase) {
+        return addItem(obtenerPersonaPorEmail(email).getId(), vueloId, cantidad, clase);
+    }
+
+    public void removeItemPorToken(String email, Integer itemId) {
+        removeItem(obtenerPersonaPorEmail(email).getId(), itemId);
+    }
+
+    public void clearCarritoPorToken(String email, Integer carritoId) {
+        clearCarrito(obtenerPersonaPorEmail(email).getId(), carritoId);
+    }
+
+    private Persona obtenerPersonaPorEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new PersonaInvalidaException("Usuario no encontrado para el token provisto."));
+        Persona persona = user.getPersona();
+        if (persona == null) {
+            throw new PersonaInvalidaException("El usuario no tiene una persona asociada.");
+        }
+        return persona;
     }
 
     private CarritoDTO mapToDTO(Carrito carrito) {

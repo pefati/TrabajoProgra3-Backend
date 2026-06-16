@@ -16,5 +16,6 @@ public class AuthResponse {
     private Boolean perfilCompleto;
 
     public AuthResponse(String nuevoToken) {
+        this.token = nuevoToken;
     }
 }
