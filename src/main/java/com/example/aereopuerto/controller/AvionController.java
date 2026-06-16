@@ -1,5 +1,6 @@
 package com.example.aereopuerto.controller;
 
+import com.example.aereopuerto.dto.AvionDTO;
 import com.example.aereopuerto.model.Avion;
 import com.example.aereopuerto.service.AvionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,7 +44,7 @@ public class AvionController {
 
     @Operation(summary = "Actualizar avion", description = "Actualiza la información de un avión existente.")
     @PutMapping("/{id}")
-    public ResponseEntity<Avion> actualizarAvion(@PathVariable Integer id, @RequestBody Avion avion) {
+    public ResponseEntity<Avion> actualizarAvion(@PathVariable Integer id, @RequestBody AvionDTO avion) {
         return ResponseEntity.ok(avionService.EditarAvion(id, avion));
     }
 
