@@ -1,10 +1,10 @@
 package com.example.aereopuerto.Exceptions;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.view.script.ScriptTemplateConfig;
 
 @RestControllerAdvice
 public class GlobalExceptions {
@@ -63,10 +63,18 @@ public class GlobalExceptions {
                 .body(ex.getMessage());
     }
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<java.util.Map<String, String>> DataIntegrityViolation(DataIntegrityViolationException ex) {
+        String msg = "Ya existe un registro con esos datos. Verificá que el número de documento no esté en uso.";
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(java.util.Map.of("message", msg));
+    }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> AllErrors(RuntimeException ex) {
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ex.getMessage());
     }
 

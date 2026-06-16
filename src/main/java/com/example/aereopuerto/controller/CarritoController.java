@@ -1,5 +1,6 @@
 package com.example.aereopuerto.controller;
 
+import com.example.aereopuerto.auth.repository.UserRepository;
 import com.example.aereopuerto.dto.CarritoDTO;
 import com.example.aereopuerto.dto.CarritoItemDTO;
 import com.example.aereopuerto.model.enums.ClasesVuelo;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class CarritoController {
 
     private final CarritoService carritoService;
+    private final UserRepository userRepository;
 
     @GetMapping
     public ResponseEntity<CarritoDTO> getMiCarrito(Authentication authentication) {
@@ -35,6 +37,14 @@ public class CarritoController {
             @RequestParam int cantidad,
             @RequestParam ClasesVuelo clase,
             Authentication authentication) {
+            
+        com.example.aereopuerto.auth.entity.User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+                
+        if (!Boolean.TRUE.equals(user.getIsVerified())) {
+            throw new IllegalArgumentException("Debes verificar tu cuenta desde tu correo electrónico para poder reservar vuelos.");
+        }
+        
         return ResponseEntity.status(HttpStatus.CREATED).body(carritoService.addItemPorToken(authentication.getName(), vueloId, cantidad, clase));
     }
 

@@ -23,4 +23,6 @@ public class PerfilResponse {
     private Identificador identificador;
     private LocalDate fechaNacimiento;
     private Sexo sexo;
+    private Boolean twoFactorEnabled;
+    private Boolean isVerified;
 }

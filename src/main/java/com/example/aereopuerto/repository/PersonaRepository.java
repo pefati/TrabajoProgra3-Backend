@@ -9,4 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface PersonaRepository extends JpaRepository<Persona, Integer>, JpaSpecificationExecutor<Persona> {
+    Optional<Persona> findByNumeroIdentificador(String numeroIdentificador);
 }

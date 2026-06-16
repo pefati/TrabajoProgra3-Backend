@@ -66,6 +66,21 @@ public class AuthController {
         return ResponseEntity.badRequest().body(Map.of("message", exception.getMessage()));
     }
 
+    @GetMapping("/verify")
+    public ResponseEntity<AuthResponse> verifyEmail(@RequestParam String token) {
+        return ResponseEntity.ok(authService.verifyEmail(token));
+    }
+
+    @PostMapping("/verify-2fa")
+    public ResponseEntity<AuthResponse> verify2fa(@Valid @RequestBody Verify2FARequest request) {
+        return ResponseEntity.ok(authService.verify2fa(request));
+    }
+
+    @PostMapping("/toggle-2fa")
+    public ResponseEntity<String> toggle2fa() {
+        return authService.toggle2fa();
+    }
+
     /*@PostMapping("/register/limpio")
     @Operation(summary = "Registro", description = "Registra un nuevo usuario vinculado a un Cliente existente.")
     public ResponseEntity<AuthResponse> registerSinPersona(@Valid @RequestBody RegisterRequestSinPersona request) {

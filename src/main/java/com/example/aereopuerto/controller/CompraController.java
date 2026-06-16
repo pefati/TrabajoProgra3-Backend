@@ -21,6 +21,9 @@ public class CompraController {
 
     @PostMapping("/confirmar")
     public ResponseEntity<String> confirmar(@RequestBody CompraDTO dto, @AuthenticationPrincipal User usuarioAutenticado) {
+        if (!Boolean.TRUE.equals(usuarioAutenticado.getIsVerified())) {
+            throw new IllegalArgumentException("Debes verificar tu cuenta desde tu correo electrónico para poder comprar vuelos.");
+        }
         compraService.confirmarCompra(dto, usuarioAutenticado);
         return ResponseEntity.ok("Compra realizada");
     }

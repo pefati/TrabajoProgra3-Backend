@@ -5,8 +5,6 @@ import com.example.aereopuerto.auth.entity.Role;
 import com.example.aereopuerto.auth.entity.User;
 import com.example.aereopuerto.auth.repository.UserRepository;
 import com.example.aereopuerto.model.Persona;
-import com.example.aereopuerto.model.enums.Identificador;
-import com.example.aereopuerto.model.enums.Sexo;
 import com.example.aereopuerto.repository.PersonaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +14,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +27,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final EmailService emailService;
 
     public AuthResponse login(LoginRequest request) {
         authenticationManager.authenticate(
@@ -37,12 +37,25 @@ public class AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
 
+        if (Boolean.TRUE.equals(user.getTwoFactorEnabled())) {
+            String code = String.format("%06d", new Random().nextInt(999999));
+            user.setTwoFactorCode(code);
+            userRepository.save(user);
+            emailService.sendTwoFactorCode(user.getEmail(), code);
+            
+            AuthResponse response = new AuthResponse();
+            response.setRequires2fa(true);
+            response.setEmail(user.getEmail());
+            return response;
+        }
+
         String token = jwtService.generateToken(user, user.getId());
         return AuthResponse.builder()
                 .token(token)
                 .email(user.getEmail())
                 .userId(user.getId())
                 .perfilCompleto(user.getPerfilCompleto())
+                .requires2fa(false)
                 .build();
     }
 
@@ -50,9 +63,6 @@ public class AuthService {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("El email ya está registrado");
         }
-
-        //Persona persona = personaRepository.findById(request.getClienteId())
-        //        .orElseThrow(() -> new IllegalArgumentException("Cliente no encontrado con id: " + request.getClienteId()));
 
         Persona persona = new Persona();
         persona.setApellido("Pendiente");
@@ -63,6 +73,8 @@ public class AuthService {
         persona.setFechaNacimiento(null);
         personaRepository.save(persona);
 
+        String verificationToken = UUID.randomUUID().toString();
+
         User user = User.builder()
                 .persona(persona)
                 .email(request.getEmail())
@@ -70,16 +82,21 @@ public class AuthService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.ROLE_INCOMPLETO)
                 .perfilCompleto(false)
+                .isVerified(false)
+                .verificationToken(verificationToken)
+                .twoFactorEnabled(false)
                 .build();
 
         userRepository.save(user);
 
-        String token = jwtService.generateToken(user, user.getId());
+        emailService.sendVerificationEmail(user.getEmail(), verificationToken);
+
         return AuthResponse.builder()
-                .token(token)
+                .token(null)
                 .email(user.getEmail())
                 .userId(user.getId())
                 .perfilCompleto(user.getPerfilCompleto())
+                .requires2fa(false)
                 .build();
     }
 
@@ -106,6 +123,8 @@ public class AuthService {
                 .identificador(persona.getIdentificador())
                 .fechaNacimiento(persona.getFechaNacimiento())
                 .sexo(persona.getSexo())
+                .twoFactorEnabled(user.getTwoFactorEnabled())
+                .isVerified(user.getIsVerified())
                 .build();
     }
 
@@ -155,26 +174,16 @@ public class AuthService {
                 .orElseThrow(() ->
                         new IllegalArgumentException("Usuario no encontrado"));
 
-        if (Boolean.TRUE.equals(user.getPerfilCompleto())) {
-            throw new IllegalArgumentException(
-                    "El perfil ya fue completado"
-            );
-        }
-
-        if (request.getNombre() == null || request.getNombre().isBlank() ||
-                request.getApellido() == null || request.getApellido().isBlank() ||
-                request.getNumeroIdentificador() == null || request.getNumeroIdentificador().isBlank() ||
-                request.getIdentificador() == null ||
-                request.getSexo() == null ||
-                request.getFechaNacimiento() == null ||
-                request.getTelefono() == null || request.getTelefono().isBlank()) {
-
-            throw new IllegalArgumentException(
-                    "Todos los campos son obligatorios"
-            );
-        }
+        validarPerfilRequest(request);
 
         Persona persona = user.getPersona();
+
+        personaRepository.findByNumeroIdentificador(request.getNumeroIdentificador())
+                .ifPresent(existing -> {
+                    if (!existing.getId().equals(persona.getId())) {
+                        throw new IllegalArgumentException("El n\u00famero de documento ya est\u00e1 registrado por otro usuario.");
+                    }
+                });
 
         persona.setNombre(request.getNombre());
         persona.setApellido(request.getApellido());
@@ -191,8 +200,13 @@ public class AuthService {
         userRepository.save(user);
 
         String nuevoToken = jwtService.generateToken(user, user.getId());
-        return ResponseEntity.ok(new AuthResponse(nuevoToken));
-
+        return ResponseEntity.ok(AuthResponse.builder()
+                .token(nuevoToken)
+                .email(user.getEmail())
+                .userId(user.getId())
+                .perfilCompleto(true)
+                .requires2fa(false)
+                .build());
 
     }
 
@@ -211,6 +225,13 @@ public class AuthService {
 
         Persona persona = user.getPersona();
 
+        personaRepository.findByNumeroIdentificador(request.getNumeroIdentificador())
+                .ifPresent(existing -> {
+                    if (!existing.getId().equals(persona.getId())) {
+                        throw new IllegalArgumentException("El número de documento ya está registrado por otro usuario.");
+                    }
+                });
+
         persona.setNombre(request.getNombre());
         persona.setApellido(request.getApellido());
         persona.setNumeroIdentificador(request.getNumeroIdentificador());
@@ -226,7 +247,13 @@ public class AuthService {
         userRepository.save(user);
 
         String nuevoToken = jwtService.generateToken(user, user.getId());
-        return ResponseEntity.ok(new AuthResponse(nuevoToken));
+        return ResponseEntity.ok(AuthResponse.builder()
+                .token(nuevoToken)
+                .email(user.getEmail())
+                .userId(user.getId())
+                .perfilCompleto(true)
+                .requires2fa(false)
+                .build());
     }
 
     private void validarPerfilRequest(CompletarPerfilRequest request) {
@@ -243,30 +270,34 @@ public class AuthService {
             );
         }
     }
-/*
-    public AuthResponse registerSinPersona (RegisterRequestSinPersona request){
 
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("El email ya está registrado");
+    public AuthResponse verifyEmail(String token) {
+        User user = userRepository.findByVerificationToken(token)
+                .orElseThrow(() -> new IllegalArgumentException("Token inválido"));
+
+        user.setIsVerified(true);
+        user.setVerificationToken(null);
+        userRepository.save(user);
+
+        String jwtToken = jwtService.generateToken(user, user.getId());
+        return AuthResponse.builder()
+                .token(jwtToken)
+                .email(user.getEmail())
+                .userId(user.getId())
+                .perfilCompleto(user.getPerfilCompleto())
+                .requires2fa(false)
+                .build();
+    }
+
+    public AuthResponse verify2fa(Verify2FARequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        if (!request.getCode().equals(user.getTwoFactorCode())) {
+            throw new IllegalArgumentException("Código 2FA incorrecto");
         }
 
-
-        Persona persona = new Persona();
-        persona.setApellido("Pendiente");
-        persona.setSexo(Sexo.OTRO);  //por defecto puse que la creacion sea con Sexo.OTRO , el usuario lo cambiara al completar su perfil si lo desea
-        persona.setIdentificador(Identificador.DNI); //por defecto puse que la creacion sea con DNI, el usuario lo cambiara al completar su perfil si lo desea
-        persona.setNombre("Pendiente");
-        persona.setNumeroIdentificador(request.getDni());
-        persona.setFechaNacimiento(null);
-        personaRepository.save(persona);
-
-        User user = User.builder()
-                .persona(persona)
-                .email(request.getEmail())
-                .telefono("Pendiente")
-                .password(passwordEncoder.encode(request.getPassword()))
-                .build();
-
+        user.setTwoFactorCode(null);
         userRepository.save(user);
 
         String token = jwtService.generateToken(user, user.getId());
@@ -274,9 +305,25 @@ public class AuthService {
                 .token(token)
                 .email(user.getEmail())
                 .userId(user.getId())
+                .perfilCompleto(user.getPerfilCompleto())
+                .requires2fa(false)
                 .build();
     }
 
- */
+    public ResponseEntity<String> toggle2fa() {
+        String email = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
 
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        boolean currentStatus = Boolean.TRUE.equals(user.getTwoFactorEnabled());
+        user.setTwoFactorEnabled(!currentStatus);
+        userRepository.save(user);
+
+        String status = !currentStatus ? "habilitado" : "deshabilitado";
+        return ResponseEntity.ok("2FA " + status + " exitosamente.");
+    }
 }

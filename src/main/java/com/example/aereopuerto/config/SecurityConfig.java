@@ -33,11 +33,11 @@ public class SecurityConfig {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-
-                        .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register", "/api/auth/verify-2fa").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/auth/verify").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/vuelos/**").permitAll()
 
-                        .requestMatchers("/api/auth/completarPerfil").hasRole("INCOMPLETO")
+                        .requestMatchers("/api/auth/completarPerfil", "/api/auth/toggle-2fa").hasAnyAuthority("ROLE_INCOMPLETO", "ROLE_USUARIO", "ROLE_EMPLEADO", "ROLE_ADMIN")
 
                         .requestMatchers(
                                 "/api/reservas/**",
@@ -49,7 +49,7 @@ public class SecurityConfig {
                                 "/api/compras/**",
                                 "/api/asistenciasAlViajero/**",
                                 "/api/auth/perfil"
-                        ).hasAnyRole("USUARIO", "EMPLEADO", "ADMIN")
+                        ).hasAnyRole("USUARIO", "EMPLEADO", "ADMIN", "INCOMPLETO")
 
                         .requestMatchers(
                                 "/api/aviones/**",
