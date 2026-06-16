@@ -30,23 +30,13 @@ public class CarritoService {
 
     @Cacheable(value = "carrito", key = "#personaId")
     public CarritoDTO getCarritoByPersonaId(Integer personaId) {
-        Carrito carrito = carritoRepository.findByPersonaId(personaId).orElseGet(() -> {
-            Persona persona = personaRepository.findById(personaId)
-                    .orElseThrow(() -> new PersonaInvalidaException("Persona no encontrado con id: " + personaId));
-            Carrito newCarrito = Carrito.builder().persona(persona).build();
-            return carritoRepository.save(newCarrito);
-        });
+        Carrito carrito = createOrFindCarrito(personaId);
         return mapToDTO(carrito);
     }
 
     @CacheEvict(value = "carrito", key = "#personaId")
     public CarritoItemDTO addItem(Integer personaId, Integer vueloId, int cantidad, ClasesVuelo clase) {
-        Carrito carrito = carritoRepository.findByPersonaId(personaId).orElseGet(() -> {
-            Persona persona = personaRepository.findById(personaId)
-                    .orElseThrow(() -> new PersonaInvalidaException("Persona no encontrado con id: " + personaId));
-            Carrito newCarrito = Carrito.builder().persona(persona).build();
-            return carritoRepository.save(newCarrito);
-        });
+        Carrito carrito = createOrFindCarrito(personaId);
 
         Vuelo vuelo = vueloRepository.findById(vueloId)
                 .orElseThrow(() -> new VueloInvalidoException("Vuelo no encontrado con id: " + vueloId));
@@ -67,17 +57,40 @@ public class CarritoService {
 
     @CacheEvict(value = "carrito", key = "#personaId")
     public void removeItem(Integer personaId, Integer itemId) {
+        Carrito carrito = createOrFindCarrito(personaId);
+
         CarritoItem item = carritoItemRepository.findById(itemId)
                 .orElseThrow(() -> new CarritoInvalidoException("Item del carrito no encontrado con id: " + itemId));
-        carritoItemRepository.delete(item);
+
+        if(carrito.getId().equals(item.getCarrito().getId())) {
+            carritoItemRepository.delete(item);
+        }
+        else{
+            throw new CarritoInvalidoException("El item " + item.getId() + " no se encuentra en el carrito.");
+        }
     }
 
     @CacheEvict(value = "carrito", key = "#personaId")
     public void clearCarrito(Integer personaId, Integer carritoId) {
+
         Carrito carrito = carritoRepository.findById(carritoId)
                 .orElseThrow(() -> new CarritoInvalidoException("Carrito no encontrado con id: " + carritoId));
-        carrito.getItems().clear();
-        carritoRepository.save(carrito);
+        if (personaId == carrito.getPersona().getId()) {
+            carrito.getItems().clear();
+            carritoRepository.save(carrito);
+        }
+        else{
+            throw new CarritoInvalidoException("El carrito " + carrito.getId() + " no coincide con el de la persona " +personaId);
+        }
+    }
+
+    private Carrito createOrFindCarrito (Integer personaId){
+        return carritoRepository.findByPersonaId(personaId).orElseGet(() -> {
+            Persona persona = personaRepository.findById(personaId)
+                    .orElseThrow(() -> new PersonaInvalidaException("Persona no encontrado con id: " + personaId));
+            Carrito newCarrito = Carrito.builder().persona(persona).build();
+            return carritoRepository.save(newCarrito);
+        });
     }
 
     private CarritoDTO mapToDTO(Carrito carrito) {
