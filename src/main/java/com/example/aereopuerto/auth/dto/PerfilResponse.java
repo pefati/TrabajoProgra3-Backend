@@ -25,4 +25,5 @@ public class PerfilResponse {
     private Sexo sexo;
     private Boolean twoFactorEnabled;
     private Boolean isVerified;
+    private String role;
 }

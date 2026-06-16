@@ -125,6 +125,7 @@ public class AuthService {
                 .sexo(persona.getSexo())
                 .twoFactorEnabled(user.getTwoFactorEnabled())
                 .isVerified(user.getIsVerified())
+                .role(user.getRole().name())
                 .build();
     }
 
