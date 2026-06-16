@@ -1,6 +1,7 @@
 package com.example.aereopuerto.service;
 
 import com.example.aereopuerto.Exceptions.AvionInvalidoException;
+import com.example.aereopuerto.dto.AvionDTO;
 import com.example.aereopuerto.model.Avion;
 import com.example.aereopuerto.repository.AvionRepository;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class AvionService {
 
     @CachePut(value = "aviones", key = "#result.id")
     @CacheEvict(value = "aviones", key = "'todos'")
-    public Avion EditarAvion(Integer id, Avion av) {
+    public Avion EditarAvion(Integer id, AvionDTO av) {
         Avion a = obtenerAvionPorId(id);
         a.setCapacidadBodega(av.getCapacidadBodega());
         a.setCapacidadPasajeros(av.getCapacidadPasajeros());
