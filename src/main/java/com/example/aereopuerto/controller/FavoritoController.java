@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,20 +21,22 @@ public class FavoritoController {
 
     @Operation(summary = "Obtener favoritos por ID de persona.", description = "Devuelve favoritos de una persona.")
     @GetMapping("/{personaId}")
+    @PreAuthorize("hasAnyRole('EMPLEADO', 'ADMIN')")
     public ResponseEntity<List<FavoritoDTO>> getFavoritos(@PathVariable Integer personaId) {
         return ResponseEntity.ok(favoritoService.getFavoritosByPersonaId(personaId));
     }
 
     @Operation(summary = "Agregar un vuelo a favoritos. ", description = "Agrega unvuelo a favoritos de la persona.")
     @PostMapping
+    @PreAuthorize("hasAnyRole('EMPLEADO', 'ADMIN')")
     public ResponseEntity<FavoritoDTO> addFavorito(@RequestParam Integer personaId, @RequestParam Integer vueloId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(favoritoService.addFavorito(personaId, vueloId));
     }
 
     @Operation(summary = "Eliminar un favorito.", description = "Elimina un favorito de una persona.")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removeFavorito(@RequestParam Integer personaId, @PathVariable Integer id) {
-        favoritoService.removeFavorito(personaId, id);
+    public ResponseEntity<Void> removeFavorito(@PathVariable Integer id, Authentication authentication) {
+        favoritoService.removeFavoritoPorToken(authentication.getName(), id);
         return ResponseEntity.noContent().build();
     }
 

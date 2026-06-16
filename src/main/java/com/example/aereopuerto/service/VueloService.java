@@ -104,11 +104,13 @@ public class VueloService {
             LocalDateTime fechaLlegada,
             Double precioMaximo,
             Boolean escala,
-            estadoVuelo estado) {
+            estadoVuelo estado,
+            String paisDestino) {
 
         Specification<Vuelo> spec = Specification
                 .where(VueloSpecification.porCiudadOrigen(ciudadOrigen))
                 .and(VueloSpecification.porCiudadDestino(ciudadDestino))
+                .and(VueloSpecification.porPaisDestino(paisDestino))
                 .and(VueloSpecification.porFechaSalidaDesde(fechaSalida))
                 .and(VueloSpecification.porFechaLlegadaHasta(fechaLlegada))
                 .and(VueloSpecification.precioMenorOIgualA(precioMaximo))

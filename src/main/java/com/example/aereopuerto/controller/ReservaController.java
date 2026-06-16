@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,18 +48,21 @@ public class ReservaController {
 
     @Operation(summary = "Obtener reserva por ID", description = "Devuelve los detalles de una reserva.")
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('EMPLEADO', 'ADMIN')")
     public ResponseEntity<Reserva> obtenerReserva(@PathVariable Integer id) {
         return ResponseEntity.ok(reservaService.obtenerReservaPorId(id));
     }
 
     @Operation(summary = "Obtener todas las reservas", description = "Devuelve la lista completa de reservas.")
     @GetMapping
+    @PreAuthorize("hasAnyRole('EMPLEADO', 'ADMIN')")
     public ResponseEntity<List<Reserva>> obtenerTodas() {
         return ResponseEntity.ok(reservaService.obtenerTodasLasReservas());
     }
 
     @Operation(summary = "Crear reserva", description = "Registra una nueva reserva.")
     @PostMapping
+    @PreAuthorize("hasAnyRole('EMPLEADO', 'ADMIN')")
     public ResponseEntity<Reserva> crearReserva(@RequestBody Reserva reserva) {
         Reserva nueva = reservaService.crearReserva(reserva);
         return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
@@ -66,12 +70,14 @@ public class ReservaController {
 
     @Operation(summary = "Actualizar reserva", description = "Actualiza una reserva existente.")
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('EMPLEADO', 'ADMIN')")
     public ResponseEntity<Reserva> actualizarReserva(@PathVariable Integer id, @RequestBody ReservaDTO reserva) {
         return ResponseEntity.ok(reservaService.actualizarReserva(id, reserva));
     }
 
     @Operation(summary = "Cancelar reserva", description = "Cancela una reserva existente.")
     @PutMapping("/{id}/cancelar")
+    @PreAuthorize("hasAnyRole('EMPLEADO', 'ADMIN')")
     public ResponseEntity<String> cancelarReserva(@PathVariable Integer id) {
 
         reservaService.cancelarReserva(id);
@@ -79,8 +85,16 @@ public class ReservaController {
         return ResponseEntity.ok("Reserva cancelada correctamente");
     }
 
+    @Operation(summary = "Cancelar reserva", description = "Cancela una reserva existente.")
+    @PatchMapping("/cancelar/{id}")
+    public ResponseEntity<String> cancelarReservaDesdeFrontend(@PathVariable Integer id, @AuthenticationPrincipal User usuarioAutenticado) {
+        reservaService.cancelarReservaPorUsuario(id, usuarioAutenticado);
+        return ResponseEntity.ok("Reserva cancelada correctamente");
+    }
+
     @Operation(summary = "Eliminar reserva", description = "Elimina una reserva.")
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('EMPLEADO', 'ADMIN')")
     public ResponseEntity<Void> eliminarReserva(@PathVariable Integer id) {
         reservaService.eliminarReserva(id);
         return ResponseEntity.noContent().build();
@@ -88,6 +102,7 @@ public class ReservaController {
 
     @Operation(summary = "Filtrar reservas de su totalidad", description = "Aplica los filtros deseados a la totalidad de las reservas .")
     @GetMapping("/filtrar")
+    @PreAuthorize("hasAnyRole('EMPLEADO', 'ADMIN')")
     public ResponseEntity<List<Reserva>> filtrarReservas(
             @RequestParam(required = false) String email,
             @RequestParam(required = false) EstadoReserva estado,

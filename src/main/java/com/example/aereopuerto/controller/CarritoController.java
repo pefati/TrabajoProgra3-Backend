@@ -1,5 +1,6 @@
 package com.example.aereopuerto.controller;
 
+import com.example.aereopuerto.auth.repository.UserRepository;
 import com.example.aereopuerto.dto.CarritoDTO;
 import com.example.aereopuerto.dto.CarritoItemDTO;
 import com.example.aereopuerto.model.enums.ClasesVuelo;
@@ -8,6 +9,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,9 +19,16 @@ import org.springframework.web.bind.annotation.*;
 public class CarritoController {
 
     private final CarritoService carritoService;
+    private final UserRepository userRepository;
+
+    @GetMapping
+    public ResponseEntity<CarritoDTO> getMiCarrito(Authentication authentication) {
+        return ResponseEntity.ok(carritoService.getCarritoPorToken(authentication.getName()));
+    }
 
     @Operation(summary = "Obtener carrito por ID de persona", description = "Devuelve los datos de un carrito.")
     @GetMapping("/{personaId}")
+    @PreAuthorize("hasAnyRole('EMPLEADO', 'ADMIN')")
     public ResponseEntity<CarritoDTO> getCarrito(@PathVariable Integer personaId) {
         return ResponseEntity.ok(carritoService.getCarritoByPersonaId(personaId));
     }
@@ -26,24 +36,42 @@ public class CarritoController {
     @Operation(summary = "Agregar item al carrito", description = "Agrega un item al carrito de la persona.")
     @PostMapping("/items")
     public ResponseEntity<CarritoItemDTO> addItemToCarrito(
-            @RequestParam Integer personaId,
             @RequestParam Integer vueloId,
             @RequestParam int cantidad,
-            @RequestParam ClasesVuelo clase) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(carritoService.addItem(personaId, vueloId, cantidad, clase));
+            @RequestParam ClasesVuelo clase,
+            Authentication authentication) {
+            
+        com.example.aereopuerto.auth.entity.User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+                
+        if (!Boolean.TRUE.equals(user.getIsVerified())) {
+            throw new IllegalArgumentException("Debes verificar tu cuenta desde tu correo electrónico para poder reservar vuelos.");
+        }
+        
+        return ResponseEntity.status(HttpStatus.CREATED).body(carritoService.addItemPorToken(authentication.getName(), vueloId, cantidad, clase));
     }
 
     @Operation(summary = "Eliminar vuelo del carrito", description = "Elimina un vuelo del carrito de la persona.")
     @DeleteMapping("/items/{itemId}")
-    public ResponseEntity<Void> removeItemFromCarrito(@RequestParam Integer personaId, @PathVariable Integer itemId) {
-        carritoService.removeItem(personaId, itemId);
+    public ResponseEntity<Void> removeItemFromCarrito(@PathVariable Integer itemId, Authentication authentication) {
+        carritoService.removeItemPorToken(authentication.getName(), itemId);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Limpiar todo el carrito", description = "Limpia todo el carrito de una persona")
     @DeleteMapping("/{carritoId}/clear")
-    public ResponseEntity<Void> clearCarrito(@RequestParam Integer personaId, @PathVariable Integer carritoId) {
-        carritoService.clearCarrito(personaId, carritoId);
+    public ResponseEntity<Void> clearCarrito(@PathVariable Integer carritoId, Authentication authentication) {
+        carritoService.clearCarritoPorToken(authentication.getName(), carritoId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/personas/{personaId}/items")
+    @PreAuthorize("hasAnyRole('EMPLEADO', 'ADMIN')")
+    public ResponseEntity<CarritoItemDTO> addItemToCarritoPorPersona(
+            @PathVariable Integer personaId,
+            @RequestParam Integer vueloId,
+            @RequestParam int cantidad,
+            @RequestParam ClasesVuelo clase) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(carritoService.addItem(personaId, vueloId, cantidad, clase));
     }
 }

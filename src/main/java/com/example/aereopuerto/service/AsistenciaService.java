@@ -33,13 +33,13 @@ public class AsistenciaService {
     }
 
     @CachePut(value = "asistenciaAlViajero", key = "#result.id")
-    @CacheEvict(value = "asistenciaAlViajero", key = "'todos'")
+    @CacheEvict(value = "asistenciasAlViajero", key = "'todos'")
     public AsistenciaAlViajero crearAsistencia(AsistenciaAlViajero asistenciaAlViajero) {
         return asistenciaRepository.save(asistenciaAlViajero);
     }
 
     @CachePut(value = "asistenciaAlViajero", key = "#result.id")
-    @CacheEvict(value = "asistenciaAlViajero", key = "'todos'")
+    @CacheEvict(value = "asistenciasAlViajero", key = "'todos'")
     public AsistenciaAlViajero actualizarAsistencia(Integer id, AsistenciaAlViajero asistenciaAlViajero) {
 
         AsistenciaAlViajero asistencia = asistenciaRepository.findById(id) .orElseThrow(() -> new AsistenciaInvalidaException("Asistencia al viajero no encontrada. ID: " + id));
@@ -53,13 +53,13 @@ public class AsistenciaService {
 
     @Caching(evict = {
             @CacheEvict(value = "asistenciaAlViajero", key = "#id"),
-            @CacheEvict(value = "asistenciaAlViajero", key = "'todos'")
+            @CacheEvict(value = "asistenciasAlViajero", key = "'todos'")
     })
     public void eliminarAsistencia(Integer id) {
         asistenciaRepository.deleteById(id);
     }
 
-    @CacheEvict(value = "asistenciaAlViajero", key = "'todos'")
+    @CacheEvict(value = "asistenciasAlViajero", key = "'todos'")
     public void invalidarListaDeAsistenciasAlViajero() {
     }
 }

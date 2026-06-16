@@ -6,10 +6,12 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +44,10 @@ public class JwtService {
     public String generateToken(UserDetails userDetails, Integer userId) {
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("userId", userId);
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+        if (authorities != null && !authorities.isEmpty()) {
+            extraClaims.put("role", authorities.iterator().next().getAuthority());
+        }
         return buildToken(extraClaims, userDetails);
     }
 

@@ -92,6 +92,9 @@ public class VueloController {
             @Parameter(description = "Ciudad de destino (búsqueda parcial, sin distinción de mayúsculas)")
             @RequestParam(required = false) String destino,
 
+            @Parameter(description = "pais de destino (búsqueda parcial, sin distinción de mayúsculas)")
+            @RequestParam(required = false) String paisDestino,
+
             @Parameter(description = "Fecha/hora mínima de salida (yyyy-MM-dd'T'HH:mm:ss)")
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaSalida,
@@ -116,7 +119,8 @@ public class VueloController {
                 fechaLlegada,
                 precioMaximo,
                 escala,
-                estado
+                estado,
+                paisDestino
         );
 
         return ResponseEntity.ok(vuelos);

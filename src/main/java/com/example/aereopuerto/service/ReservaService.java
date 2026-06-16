@@ -109,6 +109,16 @@ public class ReservaService {
         reservaRepository.save(reserva);
     }
 
+    @CacheEvict(value = "reservas", allEntries = true)
+    public void cancelarReservaPorUsuario(Integer id, User usuarioAutenticado) {
+        Reserva reserva = reservaRepository.findById(id)
+                .orElseThrow(() -> new ReservaInvalidaException("Reserva no encontrada"));
+        if (!reserva.getPersona().getId().equals(usuarioAutenticado.getPersona().getId())) {
+            throw new ReservaInvalidaException("La reserva no pertenece al usuario autenticado.");
+        }
+        cancelarReserva(id);
+    }
+
     @Caching(evict = {
             @CacheEvict(value = "reservas", key = "#id"),
             @CacheEvict(value = "reservas", key = "'todos'")

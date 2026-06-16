@@ -4,6 +4,8 @@ import com.example.aereopuerto.auth.dto.*;
 import com.example.aereopuerto.auth.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +23,34 @@ public class AuthController {
 
     private final AuthService authService;
 
+    private void setTokenCookie(HttpServletResponse response, String token) {
+        Cookie cookie = new Cookie("token", token);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(24 * 60 * 60);
+        cookie.setAttribute("SameSite", "Strict");
+        response.addCookie(cookie);
+    }
+
+    private void clearTokenCookie(HttpServletResponse response) {
+        Cookie cookie = new Cookie("token", null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        cookie.setAttribute("SameSite", "Strict");
+        response.addCookie(cookie);
+    }
+
     @PostMapping("/login")
     @Operation(summary = "Login", description = "Autentica un usuario y devuelve un JWT.")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
+        AuthResponse authResponse = authService.login(request);
+        if (authResponse.getToken() != null) {
+            setTokenCookie(response, authResponse.getToken());
+        }
+        return ResponseEntity.ok(authResponse);
     }
 
     @PostMapping("/register")
@@ -52,14 +78,55 @@ public class AuthController {
     }
 
     @PutMapping("/completarPerfil")
-    public ResponseEntity<String> completarPerfil(@Valid @RequestBody CompletarPerfilRequest request) {
-        authService.completarPerfil(request);
-        return ResponseEntity.ok("Perfil completado correctamente");
+    public ResponseEntity<AuthResponse> completarPerfil(@Valid @RequestBody CompletarPerfilRequest request, HttpServletResponse response) {
+        ResponseEntity<AuthResponse> res = authService.completarPerfil(request);
+        if (res.getBody() != null && res.getBody().getToken() != null) {
+            setTokenCookie(response, res.getBody().getToken());
+        }
+        return res;
+    }
+
+    @PutMapping("/perfil")
+    public ResponseEntity<AuthResponse> actualizarPerfil(@Valid @RequestBody CompletarPerfilRequest request, HttpServletResponse response) {
+        ResponseEntity<AuthResponse> res = authService.actualizarPerfil(request);
+        if (res.getBody() != null && res.getBody().getToken() != null) {
+            setTokenCookie(response, res.getBody().getToken());
+        }
+        return res;
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException exception) {
         return ResponseEntity.badRequest().body(Map.of("message", exception.getMessage()));
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<AuthResponse> verifyEmail(@RequestParam String token, HttpServletResponse response) {
+        AuthResponse authResponse = authService.verifyEmail(token);
+        if (authResponse.getToken() != null) {
+            setTokenCookie(response, authResponse.getToken());
+        }
+        return ResponseEntity.ok(authResponse);
+    }
+
+    @PostMapping("/verify-2fa")
+    public ResponseEntity<AuthResponse> verify2fa(@Valid @RequestBody Verify2FARequest request, HttpServletResponse response) {
+        AuthResponse authResponse = authService.verify2fa(request);
+        if (authResponse.getToken() != null) {
+            setTokenCookie(response, authResponse.getToken());
+        }
+        return ResponseEntity.ok(authResponse);
+    }
+
+    @PostMapping("/toggle-2fa")
+    public ResponseEntity<String> toggle2fa() {
+        return authService.toggle2fa();
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, String>> logout(HttpServletResponse response) {
+        clearTokenCookie(response);
+        return ResponseEntity.ok(Map.of("message", "Sesi\u00f3n cerrada exitosamente"));
     }
 
     /*@PostMapping("/register/limpio")

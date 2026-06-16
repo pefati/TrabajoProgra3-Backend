@@ -3,6 +3,7 @@ package com.example.aereopuerto.service;
 import com.example.aereopuerto.Exceptions.CarritoInvalidoException;
 import com.example.aereopuerto.Exceptions.EquipajeInvalidoException;
 import com.example.aereopuerto.Exceptions.VueloInvalidoException;
+import com.example.aereopuerto.auth.entity.User;
 import com.example.aereopuerto.dto.CompraDTO;
 import com.example.aereopuerto.model.*;
 import com.example.aereopuerto.model.enums.EstadoReserva;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,8 +30,8 @@ public class CompraService {
     private final AsistenciaRepository asistenciaRepository;
 
 
-    public void confirmarCompra(CompraDTO dto) {
-        Carrito carrito = obtenerCarrito(dto.getPersonaId());
+    public void confirmarCompra(CompraDTO dto, User usuarioAutenticado) {
+        Carrito carrito = obtenerCarrito(usuarioAutenticado.getPersona().getId());
         validarCarrito(carrito);
         validarDisponibilidad(carrito);
         Equipaje equipaje = obtenerEquipaje(dto.getEquipajeId());
@@ -92,7 +94,7 @@ public class CompraService {
         Reserva reserva = Reserva.builder()
                 .persona(carrito.getPersona())
                 .cantidadPasajes(totalPasajes)
-                .valor(total)
+                .valor(BigDecimal.valueOf(total))
                 .estadoReserva(EstadoReserva.CONFIRMADO)
                 .fechaReserva(LocalDateTime.now())
                 .build();

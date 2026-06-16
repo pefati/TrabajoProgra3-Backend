@@ -60,7 +60,7 @@ public class AsignacionService {
         asignacionRepository.deleteById(id);
     }
 
-    @CacheEvict(value = "asignacione", key = "'todas'")
+    @CacheEvict(value = "asignacion", key = "'todas'")
     public void invalidarListaDeAsignaciones() {
     }
 }

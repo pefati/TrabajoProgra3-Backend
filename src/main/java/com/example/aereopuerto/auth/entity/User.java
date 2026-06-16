@@ -42,6 +42,17 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Boolean perfilCompleto;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private Boolean isVerified = false;
+
+    @Column(unique = true)
+    private String verificationToken;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private Boolean twoFactorEnabled = false;
+
+    private String twoFactorCode;
+
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
