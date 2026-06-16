@@ -31,7 +31,7 @@ public class PasajeController {
         return ResponseEntity.ok(pasajeService.obtenerPasajePorId(id));
     }
 
-    @Operation(summary = "Obtener todas los pasajes", description = "Devuelve todas los pasajes registrados.")
+    @Operation(summary = "Obtener todos los pasajes", description = "Devuelve todos los pasajes registrados.")
     @GetMapping
     public ResponseEntity<List<Pasaje>> obtenerTodas() {
         return ResponseEntity.ok(pasajeService.obtenerTodasLosPasajes());

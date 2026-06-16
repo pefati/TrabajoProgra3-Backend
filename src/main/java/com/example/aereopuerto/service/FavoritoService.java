@@ -59,8 +59,9 @@ public class FavoritoService {
         Favorito favorito = favoritoRepository.findById(favoritoId)
                 .orElseThrow(() -> new FavoritoInvalidoException("Favorito no encontrado con id: " + favoritoId));
         if (!favorito.getPersona().getId().equals(personaId)) {
-            throw new FavoritoInvalidoException("El favorito no pertenece al usuario autenticado.");
+            throw new FavoritoInvalidoException("El favorito no pertenece a esta persona.");
         }
+
         favoritoRepository.delete(favorito);
     }
 
@@ -73,6 +74,7 @@ public class FavoritoService {
         return dto;
     }
 
+    @CacheEvict(value = "favoritos", key = "#result.personaId")
     public FavoritoDTO addFavoritoPorToken(String email, Integer vueloId) {
         Persona persona = obtenerPersonaPorEmail(email);
 

@@ -40,6 +40,45 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/completarPerfil", "/api/auth/toggle-2fa").hasAnyAuthority("ROLE_INCOMPLETO", "ROLE_USUARIO", "ROLE_EMPLEADO", "ROLE_ADMIN")
 
                         .requestMatchers(
+                                HttpMethod.GET, "/api/reservas",
+                                                "/api/reservas/filtrar",
+                                                "/api/asistenciasAlViajero",
+                                                "/api/equipajes",
+                                                "/api/facturas",
+                                                "/api/pasajes",
+                                                "/api/pasajes/{id}",
+                                                "/api/personas",
+                                                "/api/personas/{id}",
+                                                "/api/personas/filtrar",
+                                                "/api/facturas",
+                                                "/api/facturas/{id}"
+
+
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(
+                                HttpMethod.POST, "/api/vuelos",
+                                                "/api/pasajes"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(
+                                HttpMethod.PUT, "/api/vuelos/{id}",
+                                                "/api/personas/{id}",
+                                                "/api/facturas/{id}",
+                                                "/api/pasajes/{id}"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(
+                                HttpMethod.DELETE,"/api/reservas/{id}",
+                                                  "/api/asistenciasAlViajero",
+                                                  "/api/vuelos/{id}",
+                                                  "/api/personas/{id}",
+                                                  "/api/facturas/{id}",
+                                                  "/api/pasajes/{id}"
+
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(
                                 "/api/reservas/**",
                                 "/api/personas/**",
                                 "/api/pasajes/**",

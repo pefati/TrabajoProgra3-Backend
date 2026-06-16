@@ -30,22 +30,12 @@ public class CarritoService {
     private final UserRepository userRepository;
 
     public CarritoDTO getCarritoByPersonaId(Integer personaId) {
-        Carrito carrito = carritoRepository.findByPersonaId(personaId).orElseGet(() -> {
-            Persona persona = personaRepository.findById(personaId)
-                    .orElseThrow(() -> new PersonaInvalidaException("Persona no encontrado con id: " + personaId));
-            Carrito newCarrito = Carrito.builder().persona(persona).build();
-            return carritoRepository.save(newCarrito);
-        });
+        Carrito carrito = createOrFindCarrito(personaId);
         return mapToDTO(carrito);
     }
 
     public CarritoItemDTO addItem(Integer personaId, Integer vueloId, int cantidad, ClasesVuelo clase) {
-        Carrito carrito = carritoRepository.findByPersonaId(personaId).orElseGet(() -> {
-            Persona persona = personaRepository.findById(personaId)
-                    .orElseThrow(() -> new PersonaInvalidaException("Persona no encontrado con id: " + personaId));
-            Carrito newCarrito = Carrito.builder().persona(persona).build();
-            return carritoRepository.save(newCarrito);
-        });
+        Carrito carrito = createOrFindCarrito(personaId);
 
         Vuelo vuelo = vueloRepository.findById(vueloId)
                 .orElseThrow(() -> new VueloInvalidoException("Vuelo no encontrado con id: " + vueloId));
@@ -65,22 +55,41 @@ public class CarritoService {
     }
 
     public void removeItem(Integer personaId, Integer itemId) {
+        Carrito carrito = createOrFindCarrito(personaId);
+
         CarritoItem item = carritoItemRepository.findById(itemId)
                 .orElseThrow(() -> new CarritoInvalidoException("Item del carrito no encontrado con id: " + itemId));
-        if (!item.getCarrito().getPersona().getId().equals(personaId)) {
+
+        if(!carrito.getId().equals(item.getCarrito().getId())) {
+            throw new CarritoInvalidoException("El item " + item.getId() + " no se encuentra en el carrito.");
+        }
+        else if (!item.getCarrito().getPersona().getId().equals(personaId)) {
             throw new CarritoInvalidoException("El item no pertenece al usuario autenticado.");
         }
-        carritoItemRepository.delete(item);
+        else{
+          carritoItemRepository.delete(item);    
+        }
     }
 
     public void clearCarrito(Integer personaId, Integer carritoId) {
+
         Carrito carrito = carritoRepository.findById(carritoId)
                 .orElseThrow(() -> new CarritoInvalidoException("Carrito no encontrado con id: " + carritoId));
-        if (!carrito.getPersona().getId().equals(personaId)) {
+       if (!carrito.getPersona().getId().equals(personaId)) {
             throw new CarritoInvalidoException("El carrito no pertenece al usuario autenticado.");
         }
         carrito.getItems().clear();
         carritoRepository.save(carrito);
+    }
+
+    private Carrito createOrFindCarrito (Integer personaId){
+        return carritoRepository.findByPersonaId(personaId).orElseGet(() -> {
+            Persona persona = personaRepository.findById(personaId)
+                    .orElseThrow(() -> new PersonaInvalidaException("Persona no encontrado con id: " + personaId));
+            Carrito newCarrito = Carrito.builder().persona(persona).build();
+            return carritoRepository.save(newCarrito);
+        });
+        
     }
 
     public CarritoDTO getCarritoPorToken(String email) {
