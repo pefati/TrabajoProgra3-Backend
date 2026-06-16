@@ -8,7 +8,7 @@ import lombok.Data;
 public class PasajeDTO {
 
     private String codigoPasaje;
-    private String asiento;
+    private Integer asientoId;
     private ClasesVuelo clasesVuelo;
     private Integer vueloId;
     private Integer equipajeId;

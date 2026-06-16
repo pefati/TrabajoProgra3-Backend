@@ -29,8 +29,6 @@ public class Pasaje implements Serializable {
     @Column(name = "codigo_pasaje")
     private String codigoPasaje;
 
-    private String asiento;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "clase")
     private ClasesVuelo clasesVuelo;
@@ -44,7 +42,15 @@ public class Pasaje implements Serializable {
     private Equipaje equipaje;
 
     @ManyToOne
+    @JoinColumn(name= "asistencia_id", nullable = false)
+    private AsistenciaAlViajero asistenciaAlViajero;
+
+    @ManyToOne
     @JoinColumn(name = "reserva_id", nullable = false)
     private Reserva reserva;
+
+    @ManyToOne
+    @JoinColumn(name = "asiento_id")
+    private Asiento asiento;
 
 }

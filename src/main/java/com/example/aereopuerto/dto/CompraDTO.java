@@ -3,6 +3,8 @@ package com.example.aereopuerto.dto;
 import com.example.aereopuerto.model.enums.MetodosDePago;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class CompraDTO {
     private Integer personaId;
@@ -11,5 +13,6 @@ public class CompraDTO {
     private String cuil;
     private String situacionFiscal;
     private MetodosDePago metodoPago;
+    private List<Integer> asientosSeleccionados;
 
 }

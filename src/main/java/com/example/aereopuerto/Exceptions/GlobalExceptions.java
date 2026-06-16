@@ -105,4 +105,11 @@ public class GlobalExceptions {
                 .status(HttpStatus.NOT_FOUND)
                 .body(ex.getMessage());
     }
+
+    @ExceptionHandler(AsientoInvalidoException.class)
+    public ResponseEntity<String> AsientoInvalidoException(AsientoInvalidoException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
+    }
 }
