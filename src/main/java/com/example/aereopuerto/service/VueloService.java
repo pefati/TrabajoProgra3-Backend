@@ -119,4 +119,26 @@ public class VueloService {
 
         return vueloRepository.findAll(spec);
     }
+
+
+    public List<Vuelo> buscarVuelosConFiltrosAvanzados(
+            String origen,
+            String destino,
+            LocalDateTime fechaSalida,
+            LocalDateTime fechaLlegada,
+            Double precioMaximo,
+            Boolean escala,
+            estadoVuelo estado) {
+
+        Specification<Vuelo> spec = Specification
+                .where(VueloSpecification.porOrigenGeneral(origen))
+                .and(VueloSpecification.porDestinoGeneral(destino))
+                .and(VueloSpecification.porFechaSalidaDesde(fechaSalida))
+                .and(VueloSpecification.porFechaLlegadaHasta(fechaLlegada))
+                .and(VueloSpecification.precioMenorOIgualA(precioMaximo))
+                .and(VueloSpecification.porEscala(escala))
+                .and(VueloSpecification.porEstado(estado));
+
+        return vueloRepository.findAll(spec);
+    }
 }
