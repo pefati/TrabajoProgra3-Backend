@@ -1,9 +1,6 @@
 package com.example.aereopuerto.service;
 
-import com.example.aereopuerto.Exceptions.EquipajeInvalidoException;
-import com.example.aereopuerto.Exceptions.PasajeInvalidoException;
-import com.example.aereopuerto.Exceptions.ReservaInvalidaException;
-import com.example.aereopuerto.Exceptions.VueloInvalidoException;
+import com.example.aereopuerto.Exceptions.*;
 import com.example.aereopuerto.dto.FacturaDTO;
 import com.example.aereopuerto.dto.PasajeDTO;
 import com.example.aereopuerto.model.*;
@@ -26,6 +23,7 @@ public class PasajeService {
     private final VueloRepository vueloRepository;
     private final EquipajeRepository  equipajeRepository;
     private final ReservaRepository reservaRepository;
+    private final AsientoRepository asientoRepository;
 
     @Cacheable(value = "pasajes", key = "#id")
     public Pasaje obtenerPasajePorId(Integer id) {
@@ -59,8 +57,17 @@ public class PasajeService {
         Reserva reserva = reservaRepository.findById(pasajeDTO.getReservaId())
                 .orElseThrow(() -> new ReservaInvalidaException("Reserva no encontrada"));
 
+        Asiento asiento = null;
+
+        if (pasajeDTO.getAsientoId() != null) {
+            asiento = asientoRepository.findById(pasajeDTO.getAsientoId())
+                    .orElseThrow(() ->
+                            new AsientoInvalidoException("Asiento no encontrado"));
+        }
+
+
+        pasajeExistente.setAsiento(asiento);
         pasajeExistente.setCodigoPasaje(pasajeDTO.getCodigoPasaje());
-        pasajeExistente.setAsiento(pasajeDTO.getAsiento());
         pasajeExistente.setClasesVuelo(pasajeDTO.getClasesVuelo());
         pasajeExistente.setVuelo(vuelo);
         pasajeExistente.setEquipaje(equipaje);

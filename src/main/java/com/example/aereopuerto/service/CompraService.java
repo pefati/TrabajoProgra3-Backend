@@ -1,8 +1,6 @@
 package com.example.aereopuerto.service;
 
-import com.example.aereopuerto.Exceptions.CarritoInvalidoException;
-import com.example.aereopuerto.Exceptions.EquipajeInvalidoException;
-import com.example.aereopuerto.Exceptions.VueloInvalidoException;
+import com.example.aereopuerto.Exceptions.*;
 import com.example.aereopuerto.auth.entity.User;
 import com.example.aereopuerto.dto.CompraDTO;
 import com.example.aereopuerto.model.*;
@@ -14,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,16 +27,18 @@ public class CompraService {
     private final FacturaRepository facturaRepository;
     private final EquipajeRepository equipajeRepository;
     private final AsistenciaRepository asistenciaRepository;
+    private final AsientoRepository asientoRepository;
 
 
     public void confirmarCompra(CompraDTO dto, User usuarioAutenticado) {
         Carrito carrito = obtenerCarrito(usuarioAutenticado.getPersona().getId());
         validarCarrito(carrito);
         validarDisponibilidad(carrito);
+        validarAsientos(dto.getAsientosSeleccionados());
         Equipaje equipaje = obtenerEquipaje(dto.getEquipajeId());
         AsistenciaAlViajero asistencia = obtenerAsistencia(dto.getAsistenciaId());
         Reserva reserva = crearReserva(carrito);
-        List<Pasaje> pasajes = generarPasajes(carrito, reserva, equipaje, asistencia);
+        List<Pasaje> pasajes = generarPasajes(carrito, reserva, equipaje, asistencia,dto.getAsientosSeleccionados());
         guardarPasajes(pasajes);
         crearFactura(dto, reserva);
         vaciarCarrito(carrito);
@@ -47,6 +48,23 @@ public class CompraService {
         return carritoRepository.findByPersonaId(personaId)
                 .orElseThrow(() -> new CarritoInvalidoException("Carrito no encontrado"));
     }
+
+    private void validarAsientos(List<Integer> asientosIds) {
+
+        if(asientosIds == null || asientosIds.isEmpty()) {
+            return;
+        }
+        for(Integer id : asientosIds) {
+            Asiento asiento = asientoRepository.findById(id)
+                    .orElseThrow(() ->
+                            new AsientoInvalidoException("Asiento inexistente"));
+
+            if(asiento.getOcupado()) {
+                throw new AsientoInvalidoException("Asiento ocupado");
+            }
+        }
+    }
+
 
     private void validarCarrito(Carrito carrito) {
         if (carrito.getItems() == null || carrito.getItems().isEmpty()) {
@@ -76,7 +94,7 @@ public class CompraService {
     private AsistenciaAlViajero obtenerAsistencia(Integer asistenciaId) {
         if (asistenciaId == null) return null;
         return asistenciaRepository.findById(asistenciaId)
-                .orElseThrow(() -> new RuntimeException("Asistencia no encontrada"));
+                .orElseThrow(() -> new AsistenciaInvalidaException("Asistencia no encontrada"));
     }
 
     private Reserva crearReserva(Carrito carrito) {
@@ -106,13 +124,31 @@ public class CompraService {
             Carrito carrito,
             Reserva reserva,
             Equipaje equipaje,
-            AsistenciaAlViajero asistencia) {
+            AsistenciaAlViajero asistencia,
+            List<Integer> asientosSeleccionados) {
 
-        List<Pasaje> pasajes = new java.util.ArrayList<>();
+        List<Pasaje> pasajes = new ArrayList<>();
+
+        int indiceAsiento = 0;
 
         for (CarritoItem item : carrito.getItems()) {
 
             for (int i = 0; i < item.getCantidad(); i++) {
+
+                Asiento asiento = null;
+
+                if (asientosSeleccionados != null
+                        && indiceAsiento < asientosSeleccionados.size()) {
+
+                    asiento = asientoRepository
+                            .findById(asientosSeleccionados.get(indiceAsiento))
+                            .orElseThrow(() ->
+                                    new AsientoInvalidoException("Asiento no encontrado"));
+
+                    asiento.setOcupado(true);
+
+                    indiceAsiento++;
+                }
 
                 Pasaje p = Pasaje.builder()
                         .codigoPasaje(UUID.randomUUID().toString())
@@ -120,6 +156,8 @@ public class CompraService {
                         .vuelo(item.getVuelo())
                         .reserva(reserva)
                         .equipaje(equipaje)
+                        .asistenciaAlViajero(asistencia)
+                        .asiento(asiento)
                         .build();
 
                 pasajes.add(p);

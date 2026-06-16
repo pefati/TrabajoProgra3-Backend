@@ -74,7 +74,7 @@ public class FavoritoService {
         return dto;
     }
 
-    @CacheEvict(value = "favoritos", key = "#result.personaId")
+    //@CacheEvict(value = "favoritos", key = "#result.personaId")
     public FavoritoDTO addFavoritoPorToken(String email, Integer vueloId) {
         Persona persona = obtenerPersonaPorEmail(email);
 
