@@ -28,7 +28,19 @@ public class VueloSpecification {
         };
     }
 
-    public static Specification<Vuelo> porFechaSalidaDesde(LocalDateTime fechaSalida) {
+    public static Specification<Vuelo> porPaisDestino(String PaisDestino) {
+        return (root, query, criteriaBuilder) -> {
+            if (PaisDestino == null || PaisDestino.trim().isEmpty()) return null;
+            return criteriaBuilder.like(
+                    criteriaBuilder.lower(root.get("aeropuertoDestino").get("pais")),
+                    "%" + PaisDestino.toLowerCase() + "%"
+            );
+        };
+
+    }
+
+
+        public static Specification<Vuelo> porFechaSalidaDesde(LocalDateTime fechaSalida) {
         return (root, query, criteriaBuilder) -> {
             if (fechaSalida == null) return null;
             return criteriaBuilder.greaterThanOrEqualTo(root.get("fechaSalida"), fechaSalida);
