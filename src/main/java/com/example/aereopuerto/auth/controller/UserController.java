@@ -29,4 +29,10 @@ public class UserController {
         userService.cambiarRol(userId, Role.ROLE_ADMIN);
         return ResponseEntity.ok("El usuario ahora es administrador");
     }
+
+    @PatchMapping("/hacerusuario/{userId}")
+    public ResponseEntity<String> hacerUsuario(@PathVariable Integer userId) {
+        userService.cambiarRol(userId, Role.ROLE_USUARIO);
+        return ResponseEntity.ok("El usuario ahora es usuario regular");
+    }
 }
