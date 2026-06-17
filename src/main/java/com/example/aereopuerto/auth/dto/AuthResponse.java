@@ -16,6 +16,7 @@ public class AuthResponse {
     private Boolean perfilCompleto;
 
     private Boolean requires2fa;
+    private String role;
 
     public AuthResponse(String nuevoToken) {
         this.token = nuevoToken;

@@ -242,7 +242,9 @@ public class AuthService {
         user.setTelefono(request.getTelefono());
 
         user.setPerfilCompleto(true);
-        user.setRole(Role.ROLE_USUARIO);
+        if (user.getRole() == Role.ROLE_INCOMPLETO) {
+            user.setRole(Role.ROLE_USUARIO);
+        }
 
         personaRepository.save(persona);
         userRepository.save(user);
@@ -254,6 +256,7 @@ public class AuthService {
                 .userId(user.getId())
                 .perfilCompleto(true)
                 .requires2fa(false)
+                .role(user.getRole().name())
                 .build());
     }
 
