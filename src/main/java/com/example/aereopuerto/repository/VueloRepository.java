@@ -19,7 +19,7 @@ public interface VueloRepository extends JpaRepository<Vuelo, Integer>, JpaSpeci
     AND v.fechaSalida = :fechaSalida
     AND v.id <> :excludeId
     AND (
-        (v.horaSalida < :horaLlegada AND v.horaLlegada > :horaSalida)
+        (v.horaSalida <= :horaLlegada AND v.horaLlegada >= :horaSalida)
     )
 """)
     boolean existeConflictoHorario(

@@ -102,6 +102,12 @@ public class VueloService {
             LocalTime horaLlegada,
             Integer excludeId) {
 
+        if (!horaLlegada.isAfter(horaSalida)) {
+            throw new VueloInvalidoException(
+                    "La hora de llegada debe ser posterior a la hora de salida."
+            );
+        }
+
         boolean tieneConflicto = vueloRepository.existeConflictoHorario(
                 avionId, fechaSalida, horaSalida, horaLlegada, excludeId
         );
