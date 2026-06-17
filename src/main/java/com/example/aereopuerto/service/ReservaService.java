@@ -3,6 +3,7 @@ package com.example.aereopuerto.service;
 import com.example.aereopuerto.Exceptions.PersonaInvalidaException;
 import com.example.aereopuerto.Exceptions.ReservaInvalidaException;
 import com.example.aereopuerto.Specifications.ReservaSpecification;
+import com.example.aereopuerto.auth.entity.Role;
 import com.example.aereopuerto.auth.entity.User;
 import com.example.aereopuerto.auth.repository.UserRepository;
 import com.example.aereopuerto.dto.ReservaDTO;
@@ -113,7 +114,9 @@ public class ReservaService {
     public void cancelarReservaPorUsuario(Integer id, User usuarioAutenticado) {
         Reserva reserva = reservaRepository.findById(id)
                 .orElseThrow(() -> new ReservaInvalidaException("Reserva no encontrada"));
-        if (!reserva.getPersona().getId().equals(usuarioAutenticado.getPersona().getId())) {
+        boolean esAdminOEmpleado = usuarioAutenticado.getRole() == Role.ROLE_ADMIN
+                || usuarioAutenticado.getRole() == Role.ROLE_EMPLEADO;
+        if (!esAdminOEmpleado && !reserva.getPersona().getId().equals(usuarioAutenticado.getPersona().getId())) {
             throw new ReservaInvalidaException("La reserva no pertenece al usuario autenticado.");
         }
         cancelarReserva(id);

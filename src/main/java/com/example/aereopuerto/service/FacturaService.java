@@ -9,10 +9,6 @@ import com.example.aereopuerto.repository.FacturaRepository;
 import com.example.aereopuerto.repository.ReservaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,29 +21,22 @@ public class FacturaService {
     private final FacturaRepository facturaRepository;
     private final ReservaRepository reservaRepository;
 
-    @Cacheable(value = "facturas", key = "#id")
     public Factura obtenerFacturaPorId(Integer id) {
         return facturaRepository.findById(id).orElseThrow(() -> new FacturaInvalidaException("Factura no encontrada. ID: " + id));
     }
 
-    @Cacheable(value = "facturas", key = "'todos'")
     public List<Factura> obtenerTodasLasFacturas() {
         return facturaRepository.findAll();
     }
 
-    @Cacheable(value = "facturas", key = "#persona.id")
     public List<Factura> obtenerFacturasPorPersona(Persona persona) {
         return facturaRepository.findByReservaPersona(persona);
     }
 
-    @CachePut(value = "facturas", key = "#result.id")
-    @CacheEvict(value = "facturas", key = "'todos'")
     public Factura crearFactura(Factura factura) {
         return facturaRepository.save(factura);
     }
 
-    @CachePut(value = "facturas", key = "#result.id")
-    @CacheEvict(value = "facturas", key = "'todos'")
     public Factura actualizarFactura(Integer id, FacturaDTO facturaDTO) {
 
         Factura f = facturaRepository.findById(id)
@@ -66,15 +55,7 @@ public class FacturaService {
         return facturaRepository.save(f);
     }
 
-    @Caching(evict = {
-            @CacheEvict(value = "facturas", key = "#id"),
-            @CacheEvict(value = "facturas", key = "'todos'")
-    })
     public void eliminarFactura(Integer id) {
         facturaRepository.deleteById(id);
-    }
-
-    @CacheEvict(value = "facturas", key = "'todos'")
-    public void invalidarListaDeFacturas() {
     }
 }

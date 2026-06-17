@@ -34,7 +34,7 @@ public class Reserva implements Serializable {
     @Column(nullable = false, name= "cantidad_pasajes")
     private Integer cantidadPasajes;
 
-    @Column(nullable = false, name = "estado")
+    @Column(nullable = false, name = "estado", length = 20)
     @Enumerated(EnumType.STRING)
     private EstadoReserva estadoReserva;
 
