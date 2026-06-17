@@ -2,6 +2,7 @@ package com.example.aereopuerto.controller;
 
 import com.example.aereopuerto.dto.AvionDTO;
 import com.example.aereopuerto.model.Avion;
+import com.example.aereopuerto.model.enums.estadoAvion;
 import com.example.aereopuerto.service.AvionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -54,4 +55,27 @@ public class AvionController {
         avionService.eliminarAvion(id);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "Filtrar avion", description = "Filtra los aviones segun los criterios enviados.")
+    @GetMapping("/filtraraviones")
+    public ResponseEntity<List<Avion>> filtrarAviones(
+            @RequestParam(required = false) String identificador,
+            @RequestParam(required = false) String modelo,
+            @RequestParam(required = false) estadoAvion estado,
+            @RequestParam(required = false) Integer capacidadPasajerosMin,
+            @RequestParam(required = false) Integer capacidadPasajerosMax,
+            @RequestParam(required = false) Float capacidadBodegaMin,
+            @RequestParam(required = false) Float capacidadBodegaMax) {
+
+        return ResponseEntity.ok(avionService.buscarAvionesConFiltros(
+                identificador,
+                modelo,
+                estado,
+                capacidadPasajerosMin,
+                capacidadPasajerosMax,
+                capacidadBodegaMin,
+                capacidadBodegaMax
+        ));
+    }
+
 }
