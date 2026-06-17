@@ -1,6 +1,7 @@
 package com.example.aereopuerto.service;
 
 import com.example.aereopuerto.Exceptions.AeropuertoInvalidoException;
+import com.example.aereopuerto.Specifications.AeropuertoSpecification;
 import com.example.aereopuerto.dto.AeropuertoDTO;
 import com.example.aereopuerto.model.Aeropuerto;
 import com.example.aereopuerto.repository.AeropuertoRepository;
@@ -10,6 +11,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -81,6 +83,21 @@ public class AeropuertoService {
     })
     public void eliminarAeropuerto(Integer id) {
         aeropuertoRepository.deleteById(id);
+    }
+
+    public List<Aeropuerto> buscarAeropuertosConFiltros(
+            String nombre,
+            String codigoIata,
+            String ciudad,
+            String pais) {
+
+        Specification<Aeropuerto> spec = Specification
+                .where(AeropuertoSpecification.porNombre(nombre))
+                .and(AeropuertoSpecification.porCodigoIata(codigoIata))
+                .and(AeropuertoSpecification.porCiudad(ciudad))
+                .and(AeropuertoSpecification.porPais(pais));
+
+        return aeropuertoRepository.findAll(spec);
     }
 
     @CacheEvict(value = "aeropuertos", key = "'todos'")
