@@ -27,6 +27,7 @@ import java.io.Serializable;
         @Enumerated(EnumType.STRING)
         private TipoEquipaje tipo;
 
+        private Double precio;
 
     }
 
