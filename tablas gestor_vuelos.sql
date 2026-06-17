@@ -89,12 +89,6 @@ CREATE TABLE equipaje (
         'MANO',
         'CABINA',
         'BODEGA'
-    ) NOT NULL,
-    estado ENUM(
-        'DESPACHADO',
-        'ENTREGADO',
-        'DAÑADO',
-        'EXTRAVIADO'
     ) NOT NULL
 );
 
