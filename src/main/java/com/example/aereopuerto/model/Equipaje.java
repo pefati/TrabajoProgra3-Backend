@@ -27,8 +27,6 @@ import java.io.Serializable;
         @Enumerated(EnumType.STRING)
         private TipoEquipaje tipo;
 
-        @Enumerated(EnumType.STRING)
-        private EstadoEquipaje estado;
 
     }
 
