@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 public class CompraDTO {
     private Integer personaId;
-    private Integer equipajeId;
+    private List<Integer> equipajeId;
     private Integer asistenciaId;
     private String cuil;
     private String situacionFiscal;

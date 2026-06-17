@@ -13,6 +13,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -51,8 +52,13 @@ public class PasajeService {
         Vuelo vuelo = vueloRepository.findById(pasajeDTO.getVueloId())
                 .orElseThrow(() -> new VueloInvalidoException("Vuelo no encontrado"));
 
-        Equipaje equipaje = equipajeRepository.findById(pasajeDTO.getEquipajeId())
-                .orElseThrow(() -> new EquipajeInvalidoException("Equipaje no encontrado"));
+        List<Equipaje> equipajes = new ArrayList<>();
+        if (pasajeDTO.getEquipajeIds() != null) {
+            for (Integer e : pasajeDTO.getEquipajeIds()) {
+                equipajes.add(equipajeRepository.findById(e)
+                        .orElseThrow(() -> new EquipajeInvalidoException("Equipaje no encontrado")));
+            }
+        }
 
         Reserva reserva = reservaRepository.findById(pasajeDTO.getReservaId())
                 .orElseThrow(() -> new ReservaInvalidaException("Reserva no encontrada"));
@@ -70,7 +76,7 @@ public class PasajeService {
         pasajeExistente.setCodigoPasaje(pasajeDTO.getCodigoPasaje());
         pasajeExistente.setClasesVuelo(pasajeDTO.getClasesVuelo());
         pasajeExistente.setVuelo(vuelo);
-        pasajeExistente.setEquipaje(equipaje);
+        pasajeExistente.setEquipajes(equipajes);
         pasajeExistente.setReserva(reserva);
 
         return pasajeRepository.save(pasajeExistente);
