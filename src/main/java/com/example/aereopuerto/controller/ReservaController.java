@@ -92,6 +92,14 @@ public class ReservaController {
         return ResponseEntity.ok("Reserva cancelada correctamente");
     }
 
+    @Operation(summary = "Hacer check-in", description = "Marca una reserva como check-in realizado.")
+    @PatchMapping("/{id}/checkin")
+    @PreAuthorize("hasAnyRole('EMPLEADO', 'ADMIN')")
+    public ResponseEntity<String> hacerCheckin(@PathVariable Integer id) {
+        reservaService.hacerCheckin(id);
+        return ResponseEntity.ok("Check-in realizado correctamente");
+    }
+
     @Operation(summary = "Eliminar reserva", description = "Elimina una reserva.")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('EMPLEADO', 'ADMIN')")

@@ -11,13 +11,21 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.http.MediaType;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
@@ -45,15 +53,11 @@ public class SecurityConfig {
                                                 "/api/reservas/filtrar",
                                                 "/api/asistenciasAlViajero",
                                                 "/api/equipajes",
-                                                "/api/facturas",
                                                 "/api/pasajes",
                                                 "/api/pasajes/{id}",
                                                 "/api/personas",
                                                 "/api/personas/{id}",
-                                                "/api/personas/filtrar",
-                                                "/api/facturas",
-                                                "/api/facturas/{id}"
-
+                                                "/api/personas/filtrar"
 
                         ).hasRole("ADMIN")
 
@@ -102,9 +106,42 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(authenticationEntryPoint())
+                        .accessDeniedHandler(accessDeniedHandler()));
 
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return (request, response, authException) -> {
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("status", 401);
+            body.put("error", "Unauthorized");
+            body.put("message", "No autenticado");
+            body.put("path", request.getRequestURI());
+            body.put("timestamp", LocalDateTime.now().toString());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(body));
+        };
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return (request, response, accessDeniedException) -> {
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("status", 403);
+            body.put("error", "Forbidden");
+            body.put("message", "No tenés permisos para acceder a este recurso");
+            body.put("path", request.getRequestURI());
+            body.put("timestamp", LocalDateTime.now().toString());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(body));
+        };
     }
 
     @Bean

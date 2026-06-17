@@ -1,115 +1,94 @@
 package com.example.aereopuerto.Exceptions;
 
+import com.example.aereopuerto.dto.ErrorResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
+
+import java.time.LocalDateTime;
 
 @RestControllerAdvice
 public class GlobalExceptions {
 
-
-    @ExceptionHandler(AsignacionInvalidaException.class)
-    public ResponseEntity<String> AsignacionInvalidaException(AsignacionInvalidaException ex) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
-    }
-    @ExceptionHandler(AvionInvalidoException.class)
-    public ResponseEntity<String> AvionInvalidoException(AvionInvalidoException ex) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
-    }
-    @ExceptionHandler(PersonaInvalidaException.class)
-    public ResponseEntity<String> PersonaInvalidoException(PersonaInvalidaException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
+    //mejorar rspuesta a errores
+    private ResponseEntity<ErrorResponse> build(HttpStatus status, String message, HttpServletRequest request) {
+        return ResponseEntity.status(status).body(new ErrorResponse(
+                status.value(), status.getReasonPhrase(), message,
+                request != null ? request.getRequestURI() : null, LocalDateTime.now()));
     }
 
-    @ExceptionHandler(FacturaInvalidaException.class)
-    public ResponseEntity<String> FacturaInvalidaException(FacturaInvalidaException ex) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
+    @ExceptionHandler({IllegalArgumentException.class, PersonaInvalidaException.class,
+            ReservaInvalidaException.class, VueloInvalidoException.class,
+            CarritoInvalidoException.class, FavoritoInvalidoException.class})
+    public ResponseEntity<ErrorResponse> badRequest(RuntimeException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
     }
 
-    @ExceptionHandler(ReservaInvalidaException.class)
-    public ResponseEntity<String> ReservaInvalidaException(ReservaInvalidaException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
-    }
-    @ExceptionHandler(VueloInvalidoException.class)
-    public ResponseEntity<String> VueloInvalidoException(VueloInvalidoException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> malformedJson(HttpMessageNotReadableException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "Formato de JSON inválido: " + ex.getMessage(), request);
     }
 
-    @ExceptionHandler(CarritoInvalidoException.class)
-    public ResponseEntity<String> CarritoInvalidoException(CarritoInvalidoException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> validationError(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        String msg = ex.getBindingResult().getFieldErrors().stream()
+                .map(e -> e.getField() + ": " + e.getDefaultMessage())
+                .reduce((a, b) -> a + "; " + b)
+                .orElse("Error de validación");
+        return build(HttpStatus.BAD_REQUEST, msg, request);
     }
 
-    @ExceptionHandler(FavoritoInvalidoException.class)
-    public ResponseEntity<String> FavoritoInvalidoException(FavoritoInvalidoException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponse> missingParam(MissingServletRequestParameterException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "Falta el parámetro: " + ex.getParameterName(), request);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> unauthorized(AuthenticationException ex, HttpServletRequest request) {
+        return build(HttpStatus.UNAUTHORIZED, "No autenticado", request);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> forbidden(AccessDeniedException ex, HttpServletRequest request) {
+        return build(HttpStatus.FORBIDDEN, "No tenés permisos para acceder a este recurso", request);
+    }
+
+    @ExceptionHandler({AsignacionInvalidaException.class, AvionInvalidoException.class,
+            FacturaInvalidaException.class, AeropuertoInvalidoException.class,
+            PasajeInvalidoException.class, EquipajeInvalidoException.class,
+            AsistenciaInvalidaException.class, AsientoInvalidoException.class})
+    public ResponseEntity<ErrorResponse> notFound(RuntimeException ex, HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<ErrorResponse> noHandler(NoHandlerFoundException ex, HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, "Ruta no encontrada: " + ex.getRequestURL(), request);
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ErrorResponse> methodNotAllowed(HttpRequestMethodNotSupportedException ex, HttpServletRequest request) {
+        return build(HttpStatus.METHOD_NOT_ALLOWED, "Método no permitido: " + ex.getMethod(), request);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<java.util.Map<String, String>> DataIntegrityViolation(DataIntegrityViolationException ex) {
-        String msg = "Ya existe un registro con esos datos. Verificá que el número de documento no esté en uso.";
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(java.util.Map.of("message", msg));
+    public ResponseEntity<ErrorResponse> conflict(DataIntegrityViolationException ex, HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, "Ya existe un registro con esos datos", request);
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> AllErrors(RuntimeException ex) {
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(AeropuertoInvalidoException.class)
-    public ResponseEntity<String> AeropuertoInvalidoException(AeropuertoInvalidoException ex) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(PasajeInvalidoException.class)
-    public ResponseEntity<String> PasajeInvalidoException(PasajeInvalidoException ex) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(EquipajeInvalidoException.class)
-    public ResponseEntity<String> EquipajeInvalidoException(EquipajeInvalidoException ex) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(AsistenciaInvalidaException.class)
-    public ResponseEntity<String> AsistenciaInvalidoException(AsistenciaInvalidaException ex) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(AsientoInvalidoException.class)
-    public ResponseEntity<String> AsientoInvalidoException(AsientoInvalidoException ex) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> allErrors(Exception ex, HttpServletRequest request) {
+        return build(HttpStatus.INTERNAL_SERVER_ERROR,
+                "Error interno del servidor: " + ex.getMessage(), request);
     }
 }

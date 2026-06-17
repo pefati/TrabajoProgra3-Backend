@@ -35,7 +35,7 @@ public class FacturaService {
         return facturaRepository.findAll();
     }
 
-    @Cacheable(value = "facturas", key = "#id")
+    @Cacheable(value = "facturas", key = "#persona.id")
     public List<Factura> obtenerFacturasPorPersona(Persona persona) {
         return facturaRepository.findByReservaPersona(persona);
     }

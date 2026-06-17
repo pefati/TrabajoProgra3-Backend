@@ -179,4 +179,15 @@ public class ReservaService {
     @CacheEvict(value = "reservas", key = "'todos'")
     public void invalidarListaDeReservas() {
     }
+
+    @CacheEvict(value = "reservas", allEntries = true)
+    public void hacerCheckin(Integer id) {
+        Reserva reserva = reservaRepository.findById(id)
+                .orElseThrow(() -> new ReservaInvalidaException("Reserva no encontrada"));
+        if (reserva.getEstadoReserva() == EstadoReserva.CANCELADA) {
+            throw new IllegalArgumentException("No se puede hacer check-in de una reserva cancelada");
+        }
+        reserva.setEstadoReserva(EstadoReserva.ACTIVO);
+        reservaRepository.save(reserva);
+    }
 }
