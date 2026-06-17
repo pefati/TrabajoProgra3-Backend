@@ -34,7 +34,7 @@ public class CompraService {
         Carrito carrito = obtenerCarrito(usuarioAutenticado.getPersona().getId());
         validarCarrito(carrito);
         validarDisponibilidad(carrito);
-        validarAsientos(dto.getAsientosSeleccionados());
+        validarAsientos(carrito,dto.getAsientosSeleccionados());
         Equipaje equipaje = obtenerEquipaje(dto.getEquipajeId());
         AsistenciaAlViajero asistencia = obtenerAsistencia(dto.getAsistenciaId());
         Reserva reserva = crearReserva(carrito);
@@ -49,17 +49,32 @@ public class CompraService {
                 .orElseThrow(() -> new CarritoInvalidoException("Carrito no encontrado"));
     }
 
-    private void validarAsientos(List<Integer> asientosIds) {
+    private void validarAsientos(
+            Carrito carrito,
+            List<Integer> asientosIds) {
 
-        if(asientosIds == null || asientosIds.isEmpty()) {
+        if (asientosIds == null || asientosIds.isEmpty()) {
             return;
         }
-        for(Integer id : asientosIds) {
+
+        int cantidadPasajes = carrito.getItems()
+                .stream()
+                .mapToInt(CarritoItem::getCantidad)
+                .sum();
+
+        if (asientosIds.size() > cantidadPasajes) {
+            throw new AsientoInvalidoException(
+                    "No puede seleccionar más asientos que pasajes");
+        }
+
+
+        for (Integer id : asientosIds) {
+
             Asiento asiento = asientoRepository.findById(id)
                     .orElseThrow(() ->
                             new AsientoInvalidoException("Asiento inexistente"));
 
-            if(asiento.getOcupado()) {
+            if (Boolean.TRUE.equals(asiento.getOcupado())) {
                 throw new AsientoInvalidoException("Asiento ocupado");
             }
         }
