@@ -1,9 +1,11 @@
 package com.example.aereopuerto.controller;
 
+import com.example.aereopuerto.dto.AeropuertoDTO;
 import com.example.aereopuerto.model.Aeropuerto;
 import com.example.aereopuerto.service.AeropuertoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,14 +37,16 @@ public class AeropuertoController {
 
     @Operation(summary = "Crear aeropuerto", description = "Registra un nuevo aeropuerto.")
     @PostMapping
-    public ResponseEntity<Aeropuerto> crearAeropuerto(@RequestBody Aeropuerto aeropuerto) {
+    public ResponseEntity<Aeropuerto> crearAeropuerto(@Valid @RequestBody AeropuertoDTO aeropuerto) {
         Aeropuerto nuevo = aeropuertoService.crearAeropuerto(aeropuerto);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
     }
 
-    @Operation(summary = "Actualizar aeropuerto", description = "Actualiza la información de un aeropuerto existente.")
+    @Operation(summary = "Actualizar aeropuerto", description = "Registra cambios en un aeropuerto.")
     @PutMapping("/{id}")
-    public ResponseEntity<Aeropuerto> actualizarAeropuerto(@PathVariable Integer id, @RequestBody Aeropuerto aeropuerto) {
+    public ResponseEntity<Aeropuerto> actualizarAeropuerto(
+            @PathVariable Integer id,
+            @Valid @RequestBody AeropuertoDTO aeropuerto) {
         return ResponseEntity.ok(aeropuertoService.EditarAeropuerto(id, aeropuerto));
     }
 
