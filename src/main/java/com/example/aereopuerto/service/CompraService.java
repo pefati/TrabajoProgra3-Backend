@@ -35,10 +35,16 @@ public class CompraService {
         validarCarrito(carrito);
         validarDisponibilidad(carrito);
         validarAsientos(carrito,dto.getAsientosSeleccionados());
-        Equipaje equipaje = obtenerEquipaje(dto.getEquipajeId());
+        List<Equipaje> equipajes = new ArrayList<>();
+        if (dto.getEquipajeId() != null) {
+            for (Integer id : dto.getEquipajeId()) {
+                equipajes.add(equipajeRepository.findById(id)
+                        .orElseThrow(() -> new EquipajeInvalidoException("Equipaje no encontrado")));
+            }
+        }
         AsistenciaAlViajero asistencia = obtenerAsistencia(dto.getAsistenciaId());
         Reserva reserva = crearReserva(carrito);
-        List<Pasaje> pasajes = generarPasajes(carrito, reserva, equipaje, asistencia,dto.getAsientosSeleccionados());
+        List<Pasaje> pasajes = generarPasajes(carrito, reserva, equipajes, asistencia,dto.getAsientosSeleccionados());
         guardarPasajes(pasajes);
         crearFactura(dto, reserva);
         vaciarCarrito(carrito);
@@ -100,12 +106,12 @@ public class CompraService {
         }
     }
 
-    private Equipaje obtenerEquipaje(Integer equipajeId) {
+    /*private Equipaje obtenerEquipaje(Integer equipajeId) {
 
         if (equipajeId == null) return null;
         return equipajeRepository.findById(equipajeId)
                 .orElseThrow(() -> new EquipajeInvalidoException("Equipaje no encontrado"));
-    }
+    }*/
 
     private AsistenciaAlViajero obtenerAsistencia(Integer asistenciaId) {
         if (asistenciaId == null) return null;
@@ -139,7 +145,7 @@ public class CompraService {
     private List<Pasaje> generarPasajes(
             Carrito carrito,
             Reserva reserva,
-            Equipaje equipaje,
+            List<Equipaje> equipajes,
             AsistenciaAlViajero asistencia,
             List<Integer> asientosSeleccionados) {
 
@@ -171,7 +177,7 @@ public class CompraService {
                         .clasesVuelo(item.getClaseVuelo())
                         .vuelo(item.getVuelo())
                         .reserva(reserva)
-                        .equipaje(equipaje)
+                        .equipajes(equipajes)
                         .asistenciaAlViajero(asistencia)
                         .asiento(asiento)
                         .build();

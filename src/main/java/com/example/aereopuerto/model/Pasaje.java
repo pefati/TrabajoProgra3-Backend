@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import javax.print.attribute.standard.MediaSize;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Data
@@ -37,9 +38,13 @@ public class Pasaje implements Serializable {
     @JoinColumn(name = "vuelo_id", nullable = false)
     private Vuelo vuelo;
 
-    @ManyToOne
-    @JoinColumn(name= "equipaje_id")
-    private Equipaje equipaje;
+    @ManyToMany
+    @JoinTable(
+            name = "pasaje_equipaje",
+            joinColumns = @JoinColumn(name = "pasaje_id"),
+            inverseJoinColumns = @JoinColumn(name = "equipaje_id")
+    )
+    private List<Equipaje> equipajes;
 
     @ManyToOne
     @JoinColumn(name= "asistencia_id")

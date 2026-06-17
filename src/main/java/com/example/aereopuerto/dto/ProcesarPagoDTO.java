@@ -13,7 +13,7 @@ public class ProcesarPagoDTO {
     private String payerEmail;
     private String payerDocType;
     private String payerDocNumber;
-    private Integer equipajeId;
+    private List<Integer> equipajeId;
     private Integer asistenciaId;
     private String cuil;
     private String situacionFiscal;
