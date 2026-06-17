@@ -21,7 +21,9 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -42,6 +44,13 @@ public class VueloService {
     @CachePut(value = "vuelos", key = "#result.id")
     @CacheEvict(value = "vuelos", key = "'todos'")
     public Vuelo crearVuelo(Vuelo vuelo) {
+        validarDisponibilidadAvion(
+                vuelo.getAvion().getId(),
+                vuelo.getFechaSalida(),
+                vuelo.getHoraSalida(),
+                vuelo.getHoraLlegada(),
+                -1 // -1 porque no hay ID a excluir al crear
+        );
         return vueloRepository.save(vuelo);
     }
 
@@ -64,6 +73,14 @@ public class VueloService {
                 .orElseThrow(() -> new AvionInvalidoException(
                         "Avión no encontrado. ID: " + vueloDTO.getAvionId()));
 
+        validarDisponibilidadAvion(
+                vueloDTO.getAvionId(),
+                vueloDTO.getFechaSalida(),
+                vueloDTO.getHoraSalida(),
+                vueloDTO.getHoraLlegada(),
+                id
+        );
+
         vuelo.setAeropuertoOrigen(origen);
         vuelo.setAeropuertoDestino(destino);
         vuelo.setAvion(avion);
@@ -76,6 +93,24 @@ public class VueloService {
         vuelo.setEscala(vueloDTO.getEscala());
 
         return vueloRepository.save(vuelo);
+    }
+
+    private void validarDisponibilidadAvion(
+            Integer avionId,
+            LocalDate fechaSalida,
+            LocalTime horaSalida,
+            LocalTime horaLlegada,
+            Integer excludeId) {
+
+        boolean tieneConflicto = vueloRepository.existeConflictoHorario(
+                avionId, fechaSalida, horaSalida, horaLlegada, excludeId
+        );
+
+        if (tieneConflicto) {
+            throw new AvionInvalidoException(
+                    "El avión ya tiene un vuelo asignado en ese horario para la fecha " + fechaSalida
+            );
+        }
     }
 
     @Caching(evict = {
