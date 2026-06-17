@@ -151,12 +151,17 @@ public class VueloService {
         }
 
         boolean tieneConflicto = vueloRepository.existeConflictoHorario(
-                avionId, fechaSalida, horaSalida, horaLlegada, excludeId
+                avionId,
+                fechaSalida,
+                horaSalida,
+                fechaLlegada,
+                horaLlegada,
+                excludeId
         );
 
         if (tieneConflicto) {
             throw new AvionInvalidoException(
-                    "El avión ya tiene un vuelo asignado en ese horario para la fecha " + fechaSalida
+                    "El avión ya tiene un vuelo asignado en ese horario."
             );
         }
     }
