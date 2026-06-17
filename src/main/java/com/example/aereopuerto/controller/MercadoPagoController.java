@@ -82,6 +82,7 @@ public class MercadoPagoController {
             String mpStatus = (String) payment.get("status");
             String paymentId = payment.get("id") != null ? String.valueOf(payment.get("id")) : null;
 
+            String bookingCode = null;
             if ("approved".equals(mpStatus)) {
                 CompraDTO compraDTO = new CompraDTO();
                 compraDTO.setEquipajeId(dto.getEquipajeId());
@@ -90,12 +91,13 @@ public class MercadoPagoController {
                 compraDTO.setSituacionFiscal(dto.getSituacionFiscal());
                 compraDTO.setMetodoPago(MetodosDePago.MERCADOPAGO);
                 compraDTO.setAsientosSeleccionados(dto.getAsientosSeleccionados());
-                compraService.confirmarCompra(compraDTO, user);
+                bookingCode = compraService.confirmarCompra(compraDTO, user);
             }
 
             return ResponseEntity.ok(Map.of(
                     "status", mpStatus != null ? mpStatus : "rejected",
                     "paymentId", paymentId != null ? paymentId : "",
+                    "bookingCode", bookingCode != null ? bookingCode : "",
                     "message", obtenerMensajeStatus(mpStatus)
             ));
         } catch (Exception e) {

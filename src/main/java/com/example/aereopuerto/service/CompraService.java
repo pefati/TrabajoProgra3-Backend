@@ -30,7 +30,7 @@ public class CompraService {
     private final AsientoRepository asientoRepository;
 
 
-    public void confirmarCompra(CompraDTO dto, User usuarioAutenticado) {
+    public String confirmarCompra(CompraDTO dto, User usuarioAutenticado) {
         Carrito carrito = obtenerCarrito(usuarioAutenticado.getPersona().getId());
         validarCarrito(carrito);
         validarDisponibilidad(carrito);
@@ -42,6 +42,7 @@ public class CompraService {
         guardarPasajes(pasajes);
         crearFactura(dto, reserva);
         vaciarCarrito(carrito);
+        return "AC-" + reserva.getId();
     }
 
     private Carrito obtenerCarrito(Integer personaId) {

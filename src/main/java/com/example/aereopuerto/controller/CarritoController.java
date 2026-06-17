@@ -58,6 +58,15 @@ public class CarritoController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Actualizar cantidad de un item", description = "Actualiza la cantidad de pasajes de un item en el carrito.")
+    @PatchMapping("/items/{itemId}")
+    public ResponseEntity<CarritoItemDTO> updateItemQuantity(
+            @PathVariable Integer itemId,
+            @RequestParam int cantidad,
+            Authentication authentication) {
+        return ResponseEntity.ok(carritoService.updateItemQuantityPorToken(authentication.getName(), itemId, cantidad));
+    }
+
     @Operation(summary = "Limpiar todo el carrito", description = "Limpia todo el carrito de una persona")
     @DeleteMapping("/{carritoId}/clear")
     public ResponseEntity<Void> clearCarrito(@PathVariable Integer carritoId, Authentication authentication) {

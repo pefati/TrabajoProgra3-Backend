@@ -44,6 +44,16 @@ public class CarritoService {
             throw new CarritoInvalidoException("La cantidad debe ser mayor a 0.");
         }
 
+        var existing = carrito.getItems().stream()
+                .filter(i -> i.getVuelo().getId().equals(vueloId) && i.getClaseVuelo() == clase)
+                .findFirst();
+
+        if (existing.isPresent()) {
+            CarritoItem item = existing.get();
+            item.setCantidad(item.getCantidad() + cantidad);
+            return mapItemToDTO(carritoItemRepository.save(item));
+        }
+
         CarritoItem item = CarritoItem.builder()
                 .carrito(carrito)
                 .vuelo(vuelo)
@@ -51,6 +61,20 @@ public class CarritoService {
                 .claseVuelo(clase)
                 .build();
 
+        return mapItemToDTO(carritoItemRepository.save(item));
+    }
+
+    public CarritoItemDTO updateItemQuantity(Integer personaId, Integer itemId, int cantidad) {
+        if (cantidad <= 0) {
+            throw new CarritoInvalidoException("La cantidad debe ser mayor a 0.");
+        }
+        Carrito carrito = createOrFindCarrito(personaId);
+        CarritoItem item = carritoItemRepository.findById(itemId)
+                .orElseThrow(() -> new CarritoInvalidoException("Item del carrito no encontrado con id: " + itemId));
+        if (!item.getCarrito().getPersona().getId().equals(personaId)) {
+            throw new CarritoInvalidoException("El item no pertenece al usuario autenticado.");
+        }
+        item.setCantidad(cantidad);
         return mapItemToDTO(carritoItemRepository.save(item));
     }
 
@@ -98,6 +122,10 @@ public class CarritoService {
 
     public CarritoItemDTO addItemPorToken(String email, Integer vueloId, int cantidad, ClasesVuelo clase) {
         return addItem(obtenerPersonaPorEmail(email).getId(), vueloId, cantidad, clase);
+    }
+
+    public CarritoItemDTO updateItemQuantityPorToken(String email, Integer itemId, int cantidad) {
+        return updateItemQuantity(obtenerPersonaPorEmail(email).getId(), itemId, cantidad);
     }
 
     public void removeItemPorToken(String email, Integer itemId) {
