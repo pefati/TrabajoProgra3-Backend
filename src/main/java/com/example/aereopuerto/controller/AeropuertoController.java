@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -55,6 +56,25 @@ public class AeropuertoController {
     public ResponseEntity<Void> eliminarAeropuerto(@PathVariable Integer id) {
        aeropuertoService.eliminarAeropuerto(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Filtrar reservas de su totalidad", description = "Aplica los filtros deseados a la totalidad de las reservas .")
+    @GetMapping("/filtrar")
+    @PreAuthorize("hasAnyRole('EMPLEADO', 'ADMIN')")
+    public ResponseEntity<List<Aeropuerto>> buscarAeropuertos(
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) String codigoIata,
+            @RequestParam(required = false) String ciudad,
+            @RequestParam(required = false) String pais) {
+
+        return ResponseEntity.ok(
+                aeropuertoService.buscarAeropuertosConFiltros(
+                        nombre,
+                        codigoIata,
+                        ciudad,
+                        pais
+                )
+        );
     }
 
 }
