@@ -1,6 +1,7 @@
 package com.example.aereopuerto.service;
 
 import com.example.aereopuerto.Exceptions.AeropuertoInvalidoException;
+import com.example.aereopuerto.dto.AeropuertoDTO;
 import com.example.aereopuerto.model.Aeropuerto;
 import com.example.aereopuerto.repository.AeropuertoRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,21 +34,45 @@ public class AeropuertoService {
 
     @CachePut(value = "aeropuertos", key = "#result.id")
     @CacheEvict(value = "aeropuertos", key = "'todos'")
-    public Aeropuerto crearAeropuerto(Aeropuerto aeropuerto) {
+    public Aeropuerto crearAeropuerto(AeropuertoDTO dto) {
+        validarCodigoIataUnico(dto.getCodigoIata(), null);
+
+        Aeropuerto aeropuerto = Aeropuerto.builder()
+                .nombre(dto.getNombre())
+                .codigoIata(dto.getCodigoIata().toUpperCase())
+                .ciudad(dto.getCiudad())
+                .pais(dto.getPais())
+                .build();
 
         return aeropuertoRepository.save(aeropuerto);
     }
 
     @CachePut(value = "aeropuertos", key = "#result.id")
     @CacheEvict(value = "aeropuertos", key = "'todos'")
-    public Aeropuerto EditarAeropuerto(Integer id, Aeropuerto aeropuerto) {
-        Aeropuerto a= aeropuertoRepository.findById(id).orElseThrow(() -> new AeropuertoInvalidoException("Aeropuerto no encontrado. ID: " + id));
-        a.setCiudad(aeropuerto.getCiudad());
-        a.setPais(aeropuerto.getPais());
-        a.setNombre(aeropuerto.getNombre());
-        a.setCodigoIata(aeropuerto.getCodigoIata());
+    public Aeropuerto EditarAeropuerto(Integer id, AeropuertoDTO dto) {
+        Aeropuerto a = aeropuertoRepository.findById(id)
+                .orElseThrow(() -> new AeropuertoInvalidoException("Aeropuerto no encontrado. ID: " + id));
+
+        validarCodigoIataUnico(dto.getCodigoIata(), id);
+
+        a.setNombre(dto.getNombre());
+        a.setCodigoIata(dto.getCodigoIata().toUpperCase());
+        a.setCiudad(dto.getCiudad());
+        a.setPais(dto.getPais());
 
         return aeropuertoRepository.save(a);
+    }
+
+    // Valida que el código IATA no esté en uso por otro aeropuerto
+    private void validarCodigoIataUnico(String codigoIata, Integer excludeId) {
+        aeropuertoRepository.findByCodigoIata(codigoIata.toUpperCase())
+                .ifPresent(existing -> {
+                    if (!existing.getId().equals(excludeId)) {
+                        throw new AeropuertoInvalidoException(
+                                "Ya existe un aeropuerto con el código IATA: " + codigoIata.toUpperCase()
+                        );
+                    }
+                });
     }
 
     @Caching(evict = {
