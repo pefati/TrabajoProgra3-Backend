@@ -43,7 +43,7 @@ public class CompraService {
             }
         }
         AsistenciaAlViajero asistencia = obtenerAsistencia(dto.getAsistenciaId());
-        Reserva reserva = crearReserva(carrito);
+        Reserva reserva = crearReserva(carrito, equipajes, asistencia);
         List<Pasaje> pasajes = generarPasajes(carrito, reserva, equipajes, asistencia,dto.getAsientosSeleccionados());
         guardarPasajes(pasajes);
         crearFactura(dto, reserva);
@@ -119,17 +119,20 @@ public class CompraService {
                 .orElseThrow(() -> new AsistenciaInvalidaException("Asistencia no encontrada"));
     }
 
-    private Reserva crearReserva(Carrito carrito) {
+    private Reserva crearReserva(Carrito carrito, List<Equipaje> equipajes, AsistenciaAlViajero asistencia) {
 
-        int totalPasajes = carrito.getItems()
-                .stream()
-                .mapToInt(CarritoItem::getCantidad)
-                .sum();
+        int totalPasajes = carrito.getItems().stream()
+                .mapToInt(CarritoItem::getCantidad).sum();
 
-        double total = carrito.getItems()
-                .stream()
-                .mapToDouble(i -> i.getVuelo().getPrecioVuelo() * i.getCantidad())
-                .sum();
+        double totalVuelo = carrito.getItems().stream()
+                .mapToDouble(i -> i.getVuelo().getPrecioVuelo() * i.getCantidad()).sum();
+
+        double totalEquipaje = equipajes.stream()
+                .mapToDouble(e -> e.getPrecio() * totalPasajes).sum();
+
+        double totalAsistencia = asistencia != null ? asistencia.getPrecio() * totalPasajes : 0;
+
+        double total = totalVuelo + totalEquipaje + totalAsistencia;
 
         Reserva reserva = Reserva.builder()
                 .persona(carrito.getPersona())
