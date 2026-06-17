@@ -8,6 +8,6 @@ public enum estadoAvion {
     @JsonCreator
     public static estadoAvion fromString(String value) {
         if (value == null) return null;
-        return estadoAvion.valueOf(value.toLowerCase());
+        return estadoAvion.valueOf(value.toUpperCase());
     }
 }
