@@ -45,7 +45,6 @@ public class EquipajeService {
 
         e.setPeso(equipaje.getPeso());
         e.setTipo(equipaje.getTipo());
-        e.setEstado(equipaje.getEstado());
 
         return equipajeRepository.save(e);
     }
