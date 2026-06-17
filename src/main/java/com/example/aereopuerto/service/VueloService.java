@@ -47,9 +47,10 @@ public class VueloService {
         validarDisponibilidadAvion(
                 vuelo.getAvion().getId(),
                 vuelo.getFechaSalida(),
+                vuelo.getFechaLlegada(), // agregás este
                 vuelo.getHoraSalida(),
                 vuelo.getHoraLlegada(),
-                -1 // -1 porque no hay ID a excluir al crear
+                -1
         );
 
         validarDatosVuelo(vuelo);
@@ -79,6 +80,7 @@ public class VueloService {
         validarDisponibilidadAvion(
                 vueloDTO.getAvionId(),
                 vueloDTO.getFechaSalida(),
+                vueloDTO.getFechaLlegada(), // agregás este
                 vueloDTO.getHoraSalida(),
                 vueloDTO.getHoraLlegada(),
                 id
@@ -134,13 +136,17 @@ public class VueloService {
     private void validarDisponibilidadAvion(
             Integer avionId,
             LocalDate fechaSalida,
+            LocalDate fechaLlegada,
             LocalTime horaSalida,
             LocalTime horaLlegada,
             Integer excludeId) {
 
-        if (!horaLlegada.isAfter(horaSalida)) {
+        LocalDateTime salidaDateTime = LocalDateTime.of(fechaSalida, horaSalida);
+        LocalDateTime llegadaDateTime = LocalDateTime.of(fechaLlegada, horaLlegada);
+
+        if (!llegadaDateTime.isAfter(salidaDateTime)) {
             throw new VueloInvalidoException(
-                    "La hora de llegada debe ser posterior a la hora de salida."
+                    "La fecha y hora de llegada debe ser posterior a la fecha y hora de salida."
             );
         }
 
