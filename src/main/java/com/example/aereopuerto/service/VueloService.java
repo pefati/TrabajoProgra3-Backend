@@ -95,6 +95,37 @@ public class VueloService {
         return vueloRepository.save(vuelo);
     }
 
+    private void validarDatosVuelo(Vuelo vuelo) {
+
+        // Precio mayor a 0
+        if (vuelo.getPrecioVuelo() == null || vuelo.getPrecioVuelo() <= 0) {
+            throw new VueloInvalidoException(
+                    "El precio del vuelo debe ser mayor a 0.");
+        }
+
+        // Aeropuertos distintos
+        if (vuelo.getAeropuertoOrigen().getId()
+                .equals(vuelo.getAeropuertoDestino().getId())) {
+
+            throw new VueloInvalidoException(
+                    "El aeropuerto de origen y destino deben ser distintos.");
+        }
+
+        // Fecha de llegada igual o posterior a la de salida
+        if (vuelo.getFechaLlegada().isBefore(vuelo.getFechaSalida())) {
+            throw new VueloInvalidoException(
+                    "La fecha de llegada no puede ser anterior a la fecha de salida.");
+        }
+
+        // Si son el mismo día, la hora de llegada debe ser posterior
+        if (vuelo.getFechaSalida().equals(vuelo.getFechaLlegada())
+                && !vuelo.getHoraLlegada().isAfter(vuelo.getHoraSalida())) {
+
+            throw new VueloInvalidoException(
+                    "La hora de llegada debe ser posterior a la hora de salida.");
+        }
+    }
+
     private void validarDisponibilidadAvion(
             Integer avionId,
             LocalDate fechaSalida,
