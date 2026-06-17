@@ -51,6 +51,9 @@ public class VueloService {
                 vuelo.getHoraLlegada(),
                 -1 // -1 porque no hay ID a excluir al crear
         );
+
+        validarDatosVuelo(vuelo);
+
         return vueloRepository.save(vuelo);
     }
 
@@ -91,6 +94,8 @@ public class VueloService {
         vuelo.setEstado(vueloDTO.getEstado());
         vuelo.setPrecioVuelo(vueloDTO.getPrecioVuelo());
         vuelo.setEscala(vueloDTO.getEscala());
+
+        validarDatosVuelo(vuelo);
 
         return vueloRepository.save(vuelo);
     }
