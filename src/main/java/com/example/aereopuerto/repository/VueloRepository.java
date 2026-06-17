@@ -16,16 +16,18 @@ public interface VueloRepository extends JpaRepository<Vuelo, Integer>, JpaSpeci
     @Query("""
     SELECT COUNT(v) > 0 FROM Vuelo v
     WHERE v.avion.id = :avionId
-    AND v.fechaSalida = :fechaSalida
     AND v.id <> :excludeId
     AND (
-        (v.horaSalida <= :horaLlegada AND v.horaLlegada >= :horaSalida)
+        FUNCTION('TIMESTAMP', v.fechaSalida, v.horaSalida) < FUNCTION('TIMESTAMP', :fechaLlegada, :horaLlegada)
+        AND
+        FUNCTION('TIMESTAMP', v.fechaLlegada, v.horaLlegada) > FUNCTION('TIMESTAMP', :fechaSalida, :horaSalida)
     )
 """)
     boolean existeConflictoHorario(
             @Param("avionId") Integer avionId,
             @Param("fechaSalida") LocalDate fechaSalida,
             @Param("horaSalida") LocalTime horaSalida,
+            @Param("fechaLlegada") LocalDate fechaLlegada,
             @Param("horaLlegada") LocalTime horaLlegada,
             @Param("excludeId") Integer excludeId
     );
