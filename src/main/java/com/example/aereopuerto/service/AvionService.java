@@ -39,6 +39,7 @@ public class AvionService {
     @CachePut(value = "aviones", key = "#result.id")
     @CacheEvict(value = "aviones", key = "'todos'")
     public Avion crearAvion(Avion avion) {
+        validarAvion(avion);
         return avionRepository.save(avion);
     }
 
@@ -52,7 +53,35 @@ public class AvionService {
         a.setEstado(av.getEstado());
         a.setModelo(av.getModelo());
 
+        validarAvion(a);
+
         return avionRepository.save(a);
+    }
+
+    private void validarAvion(Avion avion) {
+
+        // Capacidad de pasajeros positiva
+        if (avion.getCapacidadPasajeros() == null || avion.getCapacidadPasajeros() <= 0) {
+            throw new AvionInvalidoException(
+                    "La capacidad de pasajeros debe ser mayor a 0.");
+        }
+
+        // Capacidad de bodega positiva
+        if (avion.getCapacidadBodega() == null || avion.getCapacidadBodega() <= 0) {
+            throw new AvionInvalidoException(
+                    "La capacidad de bodega debe ser mayor a 0.");
+        }
+
+        // Formato LV-A001
+        String identificador = avion.getIdentificador();
+
+        if (identificador == null ||
+                !identificador.matches("^LV-A\\d+$")) {
+
+            throw new AvionInvalidoException(
+                    "El identificador debe comenzar con LV-A seguido de números. Ej: LV-A1, LV-A25, LV-A001.");
+        }
+
     }
 
 
