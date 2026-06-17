@@ -86,14 +86,11 @@ public class VueloController {
     })
     @GetMapping("/filtrar")
     public ResponseEntity<List<Vuelo>> buscarVuelos(
-            @Parameter(description = "Ciudad de origen (búsqueda parcial, sin distinción de mayúsculas)")
+            @Parameter(description = "Ciudad, país o código IATA de origen (búsqueda parcial, sin distinción de mayúsculas)")
             @RequestParam(required = false) String origen,
 
-            @Parameter(description = "Ciudad de destino (búsqueda parcial, sin distinción de mayúsculas)")
+            @Parameter(description = "Ciudad, país o código IATA de destino (búsqueda parcial, sin distinción de mayúsculas)")
             @RequestParam(required = false) String destino,
-
-            @Parameter(description = "pais de destino (búsqueda parcial, sin distinción de mayúsculas)")
-            @RequestParam(required = false) String paisDestino,
 
             @Parameter(description = "Fecha/hora mínima de salida (yyyy-MM-dd'T'HH:mm:ss)")
             @RequestParam(required = false)
@@ -119,10 +116,11 @@ public class VueloController {
                 fechaLlegada,
                 precioMaximo,
                 escala,
-                estado,
-                paisDestino
+                estado
         );
 
         return ResponseEntity.ok(vuelos);
     }
+
+
 }
