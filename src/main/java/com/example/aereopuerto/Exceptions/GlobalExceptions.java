@@ -93,7 +93,7 @@ public class GlobalExceptions {
     }
 
     @ExceptionHandler(EquipajeInvalidoException.class)
-    public ResponseEntity<String> EquipajeInvalidoException(PasajeInvalidoException ex) {
+    public ResponseEntity<String> EquipajeInvalidoException(EquipajeInvalidoException ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(ex.getMessage());

@@ -38,11 +38,11 @@ public class Pasaje implements Serializable {
     private Vuelo vuelo;
 
     @ManyToOne
-    @JoinColumn(name= "equipaje_id", nullable = false)
+    @JoinColumn(name= "equipaje_id")
     private Equipaje equipaje;
 
     @ManyToOne
-    @JoinColumn(name= "asistencia_id", nullable = false)
+    @JoinColumn(name= "asistencia_id")
     private AsistenciaAlViajero asistenciaAlViajero;
 
     @ManyToOne

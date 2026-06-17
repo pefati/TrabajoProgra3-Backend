@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 public enum MetodosDePago {
     TARJETA_CREDITO,
     TARJETA_DEBITO,
-    TRANSFERENCIA;
+    TRANSFERENCIA,
+    MERCADOPAGO;
 
     @JsonCreator
     public static MetodosDePago fromString(String value) {

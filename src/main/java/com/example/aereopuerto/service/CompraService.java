@@ -188,4 +188,15 @@ public class CompraService {
         carrito.getItems().clear();
         carritoRepository.save(carrito);
     }
+
+    public double calcularTotalCarrito(Integer personaId) {
+        Carrito carrito = obtenerCarrito(personaId);
+        return carrito.getItems().stream()
+                .mapToDouble(i -> i.getVuelo().getPrecioVuelo() * i.getCantidad())
+                .sum();
+    }
+
+    public void confirmarPagoMP(String externalReference, String paymentId) {
+        // aca dsp agregamos logica cuando solucionemos problema credenciales
+    }
 }

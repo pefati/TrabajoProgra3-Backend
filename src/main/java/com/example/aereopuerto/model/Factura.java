@@ -38,7 +38,7 @@ public class Factura implements Serializable{
     @Column(nullable = false, name = "fecha_emision")
     private LocalDateTime fechaEmision;
 
-    @Column(nullable = false, name = "metodo_pago")
+    @Column(nullable = false, name = "metodo_pago", length = 20)
     @Enumerated(EnumType.STRING)
     private MetodosDePago metodoDePago;
 

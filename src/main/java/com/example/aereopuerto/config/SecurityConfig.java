@@ -36,6 +36,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register", "/api/auth/verify-2fa", "/api/auth/logout").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/auth/verify").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/vuelos/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/mercadopago/webhook").permitAll()
 
                         .requestMatchers("/api/auth/completarPerfil", "/api/auth/toggle-2fa").hasAnyAuthority("ROLE_INCOMPLETO", "ROLE_USUARIO", "ROLE_EMPLEADO", "ROLE_ADMIN")
 
