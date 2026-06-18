@@ -55,7 +55,7 @@ public class CarritoController {
     @PostMapping("/items")
     public ResponseEntity<CarritoItemDTO> addItemToCarrito(
             @RequestParam Integer vueloId,
-            @RequestParam int cantidad,
+            @RequestParam Integer cantidad,
             @RequestParam ClasesVuelo clase,
             Authentication authentication) {
             
@@ -87,7 +87,7 @@ public class CarritoController {
     @PatchMapping("/items/{itemId}")
     public ResponseEntity<CarritoItemDTO> updateItemQuantity(
             @PathVariable Integer itemId,
-            @RequestParam int cantidad,
+            @RequestParam Integer cantidad,
             Authentication authentication) {
         return ResponseEntity.ok(carritoService.updateItemQuantityPorToken(authentication.getName(), itemId, cantidad));
     }
@@ -111,7 +111,7 @@ public class CarritoController {
     public ResponseEntity<CarritoItemDTO> addItemToCarritoPorPersona(
             @PathVariable Integer personaId,
             @RequestParam Integer vueloId,
-            @RequestParam int cantidad,
+            @RequestParam Integer cantidad,
             @RequestParam ClasesVuelo clase) {
         return ResponseEntity.status(HttpStatus.CREATED).body(carritoService.addItem(personaId, vueloId, cantidad, clase));
     }

@@ -31,11 +31,7 @@ public class ReservaController {
     @Autowired
     private final ReservaService reservaService;
 
-    @Operation(
-            summary = "Ver mis reservas",
-            description = "Devuelve todas las reservas del cliente autenticado. Requiere JWT válido.",
-            security = @SecurityRequirement(name = "bearerAuth")
-    )
+    @Operation(summary = "Ver mis reservas", description = "Devuelve todas las reservas del cliente autenticado. Requiere JWT válido.", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Reservas obtenidas exitosamente"),
             @ApiResponse(responseCode = "401", description = "No autenticado")
@@ -87,7 +83,8 @@ public class ReservaController {
 
     @Operation(summary = "Cancelar reserva", description = "Cancela una reserva existente.")
     @PatchMapping("/cancelar/{id}")
-    public ResponseEntity<String> cancelarReservaDesdeFrontend(@PathVariable Integer id, @AuthenticationPrincipal User usuarioAutenticado) {
+    public ResponseEntity<String> cancelarReservaDesdeFrontend(@PathVariable Integer id,
+            @AuthenticationPrincipal User usuarioAutenticado) {
         reservaService.cancelarReservaPorUsuario(id, usuarioAutenticado);
         return ResponseEntity.ok("Reserva cancelada correctamente");
     }
@@ -124,12 +121,8 @@ public class ReservaController {
                 email, estado, fechaDesde, fechaHasta, valorMinimo, valorMaximo, cantidadPasajes));
     }
 
-
-    //La idea sería que usuario solo pueda filtrar dentro de SUS reservas
-    @Operation(
-            summary = "Filtrar reservas",
-            description = "Permite filtrar reservas por email, estado, fechas, valor y cantidad de pasajes. Todos los filtros son opcionales."
-    )
+    // La idea sería que usuario solo pueda filtrar dentro de SUS reservas
+    @Operation(summary = "Filtrar reservas", description = "Permite filtrar reservas por email, estado, fechas, valor y cantidad de pasajes. Todos los filtros son opcionales.")
     @ApiResponse(responseCode = "200", description = "Resultados obtenidos correctamente")
     @GetMapping("/mis-reservas/filtrar")
     public ResponseEntity<List<Reserva>> filtrarMisReservas(
@@ -142,7 +135,8 @@ public class ReservaController {
             @RequestParam(required = false) Integer cantidadPasajes) {
 
         return ResponseEntity.ok(reservaService.buscarMisReservasConFiltros(
-                usuarioAutenticado.getPersona(), estado, fechaDesde, fechaHasta, valorMinimo, valorMaximo, cantidadPasajes));
+                usuarioAutenticado.getPersona(), estado, fechaDesde, fechaHasta, valorMinimo, valorMaximo,
+                cantidadPasajes));
     }
 
 }

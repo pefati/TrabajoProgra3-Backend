@@ -35,13 +35,13 @@ public class CompraService {
     private final ReservaService reservaService;
 
     @Value("${tarifas.impuesto:0.15}")
-    private double tasaImpuesto;
+    private Double tasaImpuesto;
 
     public String confirmarCompra(CompraDTO dto, User usuarioAutenticado) {
         Carrito carrito = obtenerCarrito(usuarioAutenticado.getPersona().getId());
         validarCarrito(carrito);
         validarDisponibilidad(carrito);
-        validarAsientos(carrito,dto.getAsientosSeleccionados());
+        validarAsientos(carrito, dto.getAsientosSeleccionados());
         List<Equipaje> equipajes = new ArrayList<>();
         if (dto.getEquipajeId() != null) {
             for (Integer id : dto.getEquipajeId()) {
@@ -50,10 +50,10 @@ public class CompraService {
             }
         }
         AsistenciaAlViajero asistencia = obtenerAsistencia(dto.getAsistenciaId());
-        double asientoExtra = dto.getAsientoExtra() != null ? dto.getAsientoExtra() : 0;
-        double servicioExtra = dto.getServicioExtra() != null ? dto.getServicioExtra() : 0;
+        Double asientoExtra = dto.getAsientoExtra() != null ? dto.getAsientoExtra() : 0;
+        Double servicioExtra = dto.getServicioExtra() != null ? dto.getServicioExtra() : 0;
         Reserva reserva = crearReserva(carrito, equipajes, asistencia, asientoExtra, servicioExtra);
-        List<Pasaje> pasajes = generarPasajes(carrito, reserva, equipajes, asistencia,dto.getAsientosSeleccionados());
+        List<Pasaje> pasajes = generarPasajes(carrito, reserva, equipajes, asistencia, dto.getAsientosSeleccionados());
         guardarPasajes(pasajes);
         crearFactura(dto, reserva);
         vaciarCarrito(carrito);
@@ -84,19 +84,16 @@ public class CompraService {
                     "No puede seleccionar más asientos que pasajes");
         }
 
-
         for (Integer id : asientosIds) {
 
             Asiento asiento = asientoRepository.findById(id)
-                    .orElseThrow(() ->
-                            new AsientoInvalidoException("Asiento inexistente"));
+                    .orElseThrow(() -> new AsientoInvalidoException("Asiento inexistente"));
 
             if (Boolean.TRUE.equals(asiento.getOcupado())) {
                 throw new AsientoInvalidoException("Asiento ocupado");
             }
         }
     }
-
 
     private void validarCarrito(Carrito carrito) {
         if (carrito.getItems() == null || carrito.getItems().isEmpty()) {
@@ -119,34 +116,38 @@ public class CompraService {
         }
     }
 
-    /*private Equipaje obtenerEquipaje(Integer equipajeId) {
-
-        if (equipajeId == null) return null;
-        return equipajeRepository.findById(equipajeId)
-                .orElseThrow(() -> new EquipajeInvalidoException("Equipaje no encontrado"));
-    }*/
+    /*
+     * private Equipaje obtenerEquipaje(Integer equipajeId) {
+     * 
+     * if (equipajeId == null) return null;
+     * return equipajeRepository.findById(equipajeId)
+     * .orElseThrow(() -> new EquipajeInvalidoException("Equipaje no encontrado"));
+     * }
+     */
 
     private AsistenciaAlViajero obtenerAsistencia(Integer asistenciaId) {
-        if (asistenciaId == null) return null;
+        if (asistenciaId == null)
+            return null;
         return asistenciaRepository.findById(asistenciaId)
                 .orElseThrow(() -> new AsistenciaInvalidaException("Asistencia no encontrada"));
     }
 
-    private Reserva crearReserva(Carrito carrito, List<Equipaje> equipajes, AsistenciaAlViajero asistencia, double asientoExtra, double servicioExtra) {
+    private Reserva crearReserva(Carrito carrito, List<Equipaje> equipajes, AsistenciaAlViajero asistencia,
+            Double asientoExtra, Double servicioExtra) {
 
         int totalPasajes = carrito.getItems().stream()
                 .mapToInt(CarritoItem::getCantidad).sum();
 
-        double totalVuelo = carrito.getItems().stream()
+        Double totalVuelo = carrito.getItems().stream()
                 .mapToDouble(i -> i.getVuelo().getPrecioVuelo() * i.getCantidad()).sum();
 
-        double totalEquipaje = equipajes.stream()
+        Double totalEquipaje = equipajes.stream()
                 .mapToDouble(Equipaje::getPrecio).sum();
 
-        double totalAsistencia = asistencia != null ? asistencia.getPrecio() : 0;
+        Double totalAsistencia = asistencia != null ? asistencia.getPrecio() : 0;
 
-        double impuestos = totalVuelo * tasaImpuesto;
-        double total = totalVuelo + totalEquipaje + totalAsistencia + asientoExtra + servicioExtra + impuestos;
+        Double impuestos = totalVuelo * tasaImpuesto;
+        Double total = totalVuelo + totalEquipaje + totalAsistencia + asientoExtra + servicioExtra + impuestos;
 
         Reserva reserva = Reserva.builder()
                 .persona(carrito.getPersona())
@@ -181,8 +182,7 @@ public class CompraService {
 
                     asiento = asientoRepository
                             .findById(asientosSeleccionados.get(indiceAsiento))
-                            .orElseThrow(() ->
-                                    new AsientoInvalidoException("Asiento no encontrado"));
+                            .orElseThrow(() -> new AsientoInvalidoException("Asiento no encontrado"));
 
                     asiento.setOcupado(true);
 
@@ -228,7 +228,7 @@ public class CompraService {
         carritoRepository.save(carrito);
     }
 
-    public double calcularTotalCarrito(Integer personaId) {
+    public Double calcularTotalCarrito(Integer personaId) {
         Carrito carrito = obtenerCarrito(personaId);
         return carrito.getItems().stream()
                 .mapToDouble(i -> i.getVuelo().getPrecioVuelo() * i.getCantidad())

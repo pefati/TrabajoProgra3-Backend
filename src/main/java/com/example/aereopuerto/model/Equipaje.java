@@ -6,28 +6,28 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-    @Setter
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    @Entity
-    @Table(name = "equipaje")
-    public class Equipaje implements Serializable {
 
-        private static final long serialVersionUID = 1L;
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Entity
+@Table(name = "equipaje")
+public class Equipaje implements Serializable {
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "equipaje_id")
-        private Integer id;
+    private static final long serialVersionUID = 1L;
 
-        private Float peso;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "equipaje_id")
+    private Integer id;
 
-        @Enumerated(EnumType.STRING)
-        private TipoEquipaje tipo;
+    private Double peso;
 
-        private Double precio;
+    @Enumerated(EnumType.STRING)
+    private TipoEquipaje tipo;
 
-    }
+    private Double precio;
 
+}

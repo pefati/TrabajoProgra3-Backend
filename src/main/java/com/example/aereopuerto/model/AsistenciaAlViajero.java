@@ -34,5 +34,3 @@ public class AsistenciaAlViajero implements Serializable {
     private Double precio;
 
 }
-
-

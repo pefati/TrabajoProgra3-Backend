@@ -27,8 +27,8 @@ public class Asiento {
     private Double precioExtra;
 
     @ManyToOne
-    @JoinColumn(name = "vuelo_id")
-    private Vuelo vuelo;
+    @JoinColumn(name = "avion_id")
+    private Avion avion;
 
     private Boolean ocupado;
 }

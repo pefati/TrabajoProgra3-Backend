@@ -16,9 +16,9 @@ public class AsientoService {
     private final AsientoRepository asientoRepository;
 
 
-    public List<AsientoDTO> obtenerAsientosPorVuelo(Integer vueloId) {
+    public List<AsientoDTO> obtenerAsientosPorAvion(Integer avionId) {
 
-        List<Asiento> asientos = asientoRepository.findByVueloId(vueloId);
+        List<Asiento> asientos = asientoRepository.findByAvionId(avionId);
 
         return asientos.stream()
                 .map(this::toDTO)
@@ -44,8 +44,8 @@ public class AsientoService {
         dto.setOcupado(asiento.getOcupado());
         dto.setPrecioExtra(asiento.getPrecioExtra());
 
-        if (asiento.getVuelo() != null) {
-            dto.setVueloId(asiento.getVuelo().getId());
+        if (asiento.getAvion() != null) {
+            dto.setAvionId(asiento.getAvion().getId());
         }
 
         return dto;

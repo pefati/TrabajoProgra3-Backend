@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface AsientoRepository extends JpaRepository<Asiento, Integer> {
-    List<Asiento> findByVueloId(Integer vueloId);
+    List<Asiento> findByAvionId(Integer avionId);
 }

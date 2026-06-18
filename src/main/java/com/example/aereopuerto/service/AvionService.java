@@ -84,7 +84,6 @@ public class AvionService {
 
     }
 
-
     @Caching(evict = {
             @CacheEvict(value = "aviones", key = "#id"),
             @CacheEvict(value = "aviones", key = "'todos'")
@@ -93,15 +92,14 @@ public class AvionService {
         avionRepository.deleteById(id);
     }
 
-
     public List<Avion> buscarAvionesConFiltros(
             String identificador,
             String modelo,
             estadoAvion estado,
             Integer capacidadPasajerosMin,
             Integer capacidadPasajerosMax,
-            Float capacidadBodegaMin,
-            Float capacidadBodegaMax) {
+            Double capacidadBodegaMin,
+            Double capacidadBodegaMax) {
 
         Specification<Avion> spec = Specification
                 .where(AvionSpecification.porIdentificador(identificador))

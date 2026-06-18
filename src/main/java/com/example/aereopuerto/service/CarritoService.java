@@ -35,7 +35,7 @@ public class CarritoService {
         return mapToDTO(carrito);
     }
 
-    public CarritoItemDTO addItem(Integer personaId, Integer vueloId, int cantidad, ClasesVuelo clase) {
+    public CarritoItemDTO addItem(Integer personaId, Integer vueloId, Integer cantidad, ClasesVuelo clase) {
         Carrito carrito = createOrFindCarrito(personaId);
 
         Vuelo vuelo = vueloRepository.findById(vueloId)
@@ -69,7 +69,7 @@ public class CarritoService {
         return mapItemToDTO(carritoItemRepository.save(item));
     }
 
-    public CarritoItemDTO updateItemQuantity(Integer personaId, Integer itemId, int cantidad) {
+    public CarritoItemDTO updateItemQuantity(Integer personaId, Integer itemId, Integer cantidad) {
         if (cantidad <= 0) {
             throw new CarritoInvalidoException("La cantidad debe ser mayor a 0.");
         }
@@ -125,11 +125,11 @@ public class CarritoService {
         return getCarritoByPersonaId(obtenerPersonaPorEmail(email).getId());
     }
 
-    public CarritoItemDTO addItemPorToken(String email, Integer vueloId, int cantidad, ClasesVuelo clase) {
+    public CarritoItemDTO addItemPorToken(String email, Integer vueloId, Integer cantidad, ClasesVuelo clase) {
         return addItem(obtenerPersonaPorEmail(email).getId(), vueloId, cantidad, clase);
     }
 
-    public CarritoItemDTO updateItemQuantityPorToken(String email, Integer itemId, int cantidad) {
+    public CarritoItemDTO updateItemQuantityPorToken(String email, Integer itemId, Integer cantidad) {
         return updateItemQuantity(obtenerPersonaPorEmail(email).getId(), itemId, cantidad);
     }
 

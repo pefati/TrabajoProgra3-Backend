@@ -7,6 +7,6 @@ public class AsientoDTO {
     private Integer id;
     private String codigo;
     private Double precioExtra;
-    private Integer vueloId;
+    private Integer avionId;
     private Boolean ocupado;
 }

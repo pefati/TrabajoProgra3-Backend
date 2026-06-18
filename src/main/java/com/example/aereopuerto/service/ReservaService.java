@@ -40,7 +40,8 @@ public class ReservaService {
 
     @Cacheable(value = "reservas", key = "#id")
     public Reserva obtenerReservaPorId(Integer id) {
-        return reservaRepository.findById(id).orElseThrow(() -> new ReservaInvalidaException("Reserva no encontrada. ID: " + id));
+        return reservaRepository.findById(id)
+                .orElseThrow(() -> new ReservaInvalidaException("Reserva no encontrada. ID: " + id));
     }
 
     @Cacheable(value = "reservas", key = "'todos'")
@@ -49,7 +50,7 @@ public class ReservaService {
         for (Reserva r : reservas) {
             if (r.getPersona() != null) {
                 userRepository.findByPersonaId(r.getPersona().getId())
-                    .ifPresent(u -> r.getPersona().setEmail(u.getEmail()));
+                        .ifPresent(u -> r.getPersona().setEmail(u.getEmail()));
             }
         }
         return reservas;
@@ -92,13 +93,11 @@ public class ReservaService {
     public void cancelarReserva(Integer id) {
 
         Reserva reserva = reservaRepository.findById(id)
-                .orElseThrow(() ->
-                        new ReservaInvalidaException("Reserva no encontrada"));
+                .orElseThrow(() -> new ReservaInvalidaException("Reserva no encontrada"));
 
         if (reserva.getEstadoReserva() == EstadoReserva.CANCELADA) {
             throw new IllegalArgumentException(
-                    "La reserva ya se encuentra cancelada"
-            );
+                    "La reserva ya se encuentra cancelada");
         }
 
         BigDecimal reembolso = politicaService.calcular(reserva);
@@ -110,8 +109,7 @@ public class ReservaService {
             System.out.println("Reembolso parcial de $" + reembolso + " para la reserva ID: " + id);
         }
 
-        List<Pasaje> pasajes =
-                pasajeRepository.findByReservaId(reserva.getId());
+        List<Pasaje> pasajes = pasajeRepository.findByReservaId(reserva.getId());
         pasajeRepository.deleteAll(pasajes);
         reserva.setEstadoReserva(EstadoReserva.CANCELADA);
         reservaRepository.save(reserva);

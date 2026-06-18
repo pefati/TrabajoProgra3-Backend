@@ -27,26 +27,24 @@ public class MercadoPagoService {
         return headers;
     }
 
-    public Map<String, Object> crearPreferencia(double total, String descripcion, List<String> items, User user, String externalReference, String backUrl) {
+    public Map<String, Object> crearPreferencia(Double total, String descripcion, List<String> items, User user,
+            String externalReference, String backUrl) {
         var backUrls = Map.of(
-            "success", backUrl,
-            "failure", backUrl,
-            "pending", backUrl
-        );
+                "success", backUrl,
+                "failure", backUrl,
+                "pending", backUrl);
 
         var body = Map.of(
-            "items", List.of(Map.of(
-                "title", descripcion,
-                "quantity", 1,
-                "currency_id", "ARS",
-                "unit_price", (float) total
-            )),
-            "payer", Map.of("email", user.getEmail()),
-            "external_reference", externalReference,
-            "back_urls", backUrls,
-            "auto_return", "approved",
-            "statement_descriptor", "AEROGEST"
-        );
+                "items", List.of(Map.of(
+                        "title", descripcion,
+                        "quantity", 1,
+                        "currency_id", "ARS",
+                        "unit_price", (Double) total)),
+                "payer", Map.of("email", user.getEmail()),
+                "external_reference", externalReference,
+                "back_urls", backUrls,
+                "auto_return", "approved",
+                "statement_descriptor", "AEROGEST");
 
         return restClient.post()
                 .uri("https://api.mercadopago.com/checkout/preferences")
@@ -64,10 +62,10 @@ public class MercadoPagoService {
                 .body(Map.class);
     }
 
-    public Map<String, Object> procesarPago(String token, double amount, int installments,
-                                              String paymentMethodId, String issuerId,
-                                              String payerEmail, String payerDocType,
-                                              String payerDocNumber) {
+    public Map<String, Object> procesarPago(String token, Double amount, Integer installments,
+            String paymentMethodId, String issuerId,
+            String payerEmail, String payerDocType,
+            String payerDocNumber) {
         // simulando pago de momentop
         Map<String, Object> mock = new HashMap<>();
         mock.put("status", "approved");

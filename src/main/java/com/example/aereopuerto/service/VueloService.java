@@ -42,7 +42,8 @@ public class VueloService {
     @Cacheable(value = "vuelos", key = "#id")
     public Vuelo obtenerVueloPorId(Integer id) {
         System.out.println("Buscando vuelo " + id);
-        return vueloRepository.findById(id).orElseThrow(() -> new VueloInvalidoException("Vuelo no encontrado. ID: " + id));
+        return vueloRepository.findById(id)
+                .orElseThrow(() -> new VueloInvalidoException("Vuelo no encontrado. ID: " + id));
     }
 
     @CachePut(value = "vuelos", key = "#result.id")
@@ -54,8 +55,7 @@ public class VueloService {
                 vuelo.getFechaLlegada(),
                 vuelo.getHoraSalida(),
                 vuelo.getHoraLlegada(),
-                -1
-        );
+                -1);
 
         validarDatosVuelo(vuelo);
 
@@ -87,8 +87,7 @@ public class VueloService {
                 vueloDTO.getFechaLlegada(), // agregás este
                 vueloDTO.getHoraSalida(),
                 vueloDTO.getHoraLlegada(),
-                id
-        );
+                id);
 
         vuelo.setAeropuertoOrigen(origen);
         vuelo.setAeropuertoDestino(destino);
@@ -156,8 +155,7 @@ public class VueloService {
 
         if (!llegadaDateTime.isAfter(salidaDateTime)) {
             throw new VueloInvalidoException(
-                    "La fecha y hora de llegada debe ser posterior a la fecha y hora de salida."
-            );
+                    "La fecha y hora de llegada debe ser posterior a la fecha y hora de salida.");
         }
 
         boolean tieneConflicto = vueloRepository.existeConflictoHorario(
@@ -166,13 +164,11 @@ public class VueloService {
                 horaSalida,
                 fechaLlegada,
                 horaLlegada,
-                excludeId
-        );
+                excludeId);
 
         if (tieneConflicto) {
             throw new AvionInvalidoException(
-                    "El avión ya tiene un vuelo asignado en ese horario."
-            );
+                    "El avión ya tiene un vuelo asignado en ese horario.");
         }
     }
 
@@ -224,7 +220,6 @@ public class VueloService {
         return filtrarConCapacidad(vuelos);
     }
 
-
     public List<Vuelo> buscarVuelosConFiltrosAvanzados(
             String origen,
             String destino,
@@ -249,7 +244,8 @@ public class VueloService {
     }
 
     private List<Vuelo> filtrarConCapacidad(List<Vuelo> vuelos) {
-        if (vuelos.isEmpty()) return vuelos;
+        if (vuelos.isEmpty())
+            return vuelos;
         List<Integer> ids = vuelos.stream().map(Vuelo::getId).toList();
         List<Object[]> counts = pasajeRepository.countGroupedByVueloIdIn(ids);
         Map<Integer, Long> vendidosMap = new HashMap<>();

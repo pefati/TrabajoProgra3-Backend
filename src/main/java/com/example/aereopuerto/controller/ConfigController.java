@@ -13,16 +13,15 @@ import java.util.Map;
 public class ConfigController {
 
     @Value("${tarifas.impuesto:0.15}")
-    private double tasaImpuesto;
+    private Double tasaImpuesto;
 
     @Value("${tarifas.servicio:0.025}")
-    private double tasaServicio;
+    private Double tasaServicio;
 
     @GetMapping("/tarifas")
     public ResponseEntity<Map<String, Double>> obtenerTarifas() {
         return ResponseEntity.ok(Map.of(
                 "tasaImpuesto", tasaImpuesto,
-                "tasaServicio", tasaServicio
-        ));
+                "tasaServicio", tasaServicio));
     }
 }

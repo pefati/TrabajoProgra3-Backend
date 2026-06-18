@@ -39,7 +39,7 @@ public class MercadoPagoController {
     public ResponseEntity<Map<String, Object>> crearPreferencia(
             @AuthenticationPrincipal User user,
             HttpServletRequest request) {
-        double total = compraService.calcularTotalCarrito(user.getPersona().getId());
+        Double total = compraService.calcularTotalCarrito(user.getPersona().getId());
         String origin = request.getHeader("Origin");
         if (origin == null || origin.isBlank()) {
             origin = "http://localhost:5173";
@@ -50,13 +50,11 @@ public class MercadoPagoController {
                 null,
                 user,
                 String.valueOf(user.getId()),
-                origin + "/pago.html"
-        );
+                origin + "/pago.html");
         String preferenceId = (String) pref.get("id");
         return ResponseEntity.ok(Map.of(
                 "preferenceId", preferenceId,
-                "publicKey", publicKey
-        ));
+                "publicKey", publicKey));
     }
 
     @Operation(summary = "Procesar pago de MercadoPago")
@@ -73,15 +71,13 @@ public class MercadoPagoController {
                     dto.getIssuerId(),
                     dto.getPayerEmail(),
                     dto.getPayerDocType(),
-                    dto.getPayerDocNumber()
-            );
+                    dto.getPayerDocNumber());
 
             if ("error".equals(payment.get("status"))) {
                 return ResponseEntity.ok(Map.of(
                         "status", "rejected",
                         "paymentId", "",
-                        "message", "Error al procesar el pago: " + payment.getOrDefault("error", "intentá de nuevo")
-                ));
+                        "message", "Error al procesar el pago: " + payment.getOrDefault("error", "intentá de nuevo")));
             }
 
             String mpStatus = (String) payment.get("status");
@@ -105,19 +101,18 @@ public class MercadoPagoController {
                     "status", mpStatus != null ? mpStatus : "rejected",
                     "paymentId", paymentId != null ? paymentId : "",
                     "bookingCode", bookingCode != null ? bookingCode : "",
-                    "message", obtenerMensajeStatus(mpStatus)
-            ));
+                    "message", obtenerMensajeStatus(mpStatus)));
         } catch (Exception e) {
             return ResponseEntity.ok(Map.of(
                     "status", "rejected",
                     "paymentId", "",
-                    "message", "Error interno: " + e.getMessage()
-            ));
+                    "message", "Error interno: " + e.getMessage()));
         }
     }
 
     private MetodosDePago mapPaymentMethod(String paymentMethodId) {
-        if (paymentMethodId == null) return MetodosDePago.MERCADOPAGO;
+        if (paymentMethodId == null)
+            return MetodosDePago.MERCADOPAGO;
         String id = paymentMethodId.toLowerCase();
         Map<String, MetodosDePago> mapping = new HashMap<>();
         mapping.put("visa", MetodosDePago.TARJETA_CREDITO);
@@ -133,10 +128,14 @@ public class MercadoPagoController {
     }
 
     private String obtenerMensajeStatus(String status) {
-        if ("approved".equals(status)) return "Pago aprobado";
-        if ("rejected".equals(status)) return "Pago rechazado";
-        if ("pending".equals(status)) return "Pago pendiente";
-        if ("in_process".equals(status)) return "Pago en proceso";
+        if ("approved".equals(status))
+            return "Pago aprobado";
+        if ("rejected".equals(status))
+            return "Pago rechazado";
+        if ("pending".equals(status))
+            return "Pago pendiente";
+        if ("in_process".equals(status))
+            return "Pago en proceso";
         return "Estado desconocido";
     }
 

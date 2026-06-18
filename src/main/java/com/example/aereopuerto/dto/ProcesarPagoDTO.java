@@ -6,8 +6,8 @@ import java.util.List;
 @Data
 public class ProcesarPagoDTO {
     private String token;
-    private double amount;
-    private int installments = 1;
+    private Double amount;
+    private Integer installments = 1;
     private String paymentMethodId;
     private String issuerId;
     private String payerEmail;

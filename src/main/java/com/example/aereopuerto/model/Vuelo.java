@@ -23,7 +23,8 @@ public class Vuelo implements Serializable {
 
     /**
      * SerialVersionUID es para objetos serializables
-     * Esto es para que redis pueda identificar el objeto y los cambios en el objeto en java
+     * Esto es para que redis pueda identificar el objeto y los cambios en el objeto
+     * en java
      * que si bien java lo hace auto, puede fallar, asiq se define
      */
     private static final long serialVersionUID = 1L;
@@ -45,7 +46,7 @@ public class Vuelo implements Serializable {
     @JoinColumn(name = "avion_id", nullable = false)
     private Avion avion;
 
-    @Column(nullable = false, name= "fecha_salida")
+    @Column(nullable = false, name = "fecha_salida")
     private LocalDate fechaSalida;
 
     @Column(nullable = false, name = "fecha_llegada")
