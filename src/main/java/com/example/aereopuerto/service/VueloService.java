@@ -180,6 +180,10 @@ public class VueloService {
         return vueloRepository.findAll();
     }
 
+    public List<Vuelo> obtenerVuelosCliente() {
+        return vueloRepository.findByEstadoNot(estadoVuelo.CANCELADO);
+    }
+
     @CacheEvict(value = "vuelos", key = "'todos'")
     public void invalidarListaDeVuelos() {
         System.out.println("Limpiando la cache");
@@ -226,6 +230,26 @@ public class VueloService {
                 .and(VueloSpecification.precioMenorOIgualA(precioMaximo))
                 .and(VueloSpecification.porEscala(escala))
                 .and(VueloSpecification.porEstado(estado));
+
+        return vueloRepository.findAll(spec);
+    }
+
+    public List<Vuelo> buscarVuelosCliente(
+            String origen,
+            String destino,
+            LocalDateTime fechaSalida,
+            LocalDateTime fechaLlegada,
+            Double precioMaximo,
+            Boolean escala) {
+
+        Specification<Vuelo> spec = Specification
+                .where(VueloSpecification.noCancelados())
+                .and(VueloSpecification.porOrigenGeneral(origen))
+                .and(VueloSpecification.porDestinoGeneral(destino))
+                .and(VueloSpecification.porFechaSalidaDesde(fechaSalida))
+                .and(VueloSpecification.porFechaLlegadaHasta(fechaLlegada))
+                .and(VueloSpecification.precioMenorOIgualA(precioMaximo))
+                .and(VueloSpecification.porEscala(escala));
 
         return vueloRepository.findAll(spec);
     }

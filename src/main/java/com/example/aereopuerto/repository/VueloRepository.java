@@ -1,6 +1,7 @@
 package com.example.aereopuerto.repository;
 
 import com.example.aereopuerto.model.Vuelo;
+import com.example.aereopuerto.model.enums.estadoVuelo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Repository
 public interface VueloRepository extends JpaRepository<Vuelo, Integer>, JpaSpecificationExecutor<Vuelo> {
@@ -31,5 +33,7 @@ public interface VueloRepository extends JpaRepository<Vuelo, Integer>, JpaSpeci
             @Param("horaLlegada") LocalTime horaLlegada,
             @Param("excludeId") Integer excludeId
     );
+
+    List<Vuelo> findByEstadoNot(estadoVuelo estado);
 
 }
