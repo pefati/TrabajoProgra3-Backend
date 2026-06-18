@@ -58,6 +58,8 @@ public class VueloService {
                 -1);
 
         validarDatosVuelo(vuelo);
+        validarCiudad(vuelo.getAeropuertoOrigen().getCiudad(), "origen");
+        validarCiudad(vuelo.getAeropuertoDestino().getCiudad(), "destino");
 
         return vueloRepository.save(vuelo);
     }
@@ -81,13 +83,6 @@ public class VueloService {
                 .orElseThrow(() -> new AvionInvalidoException(
                         "Avión no encontrado. ID: " + vueloDTO.getAvionId()));
 
-        validarDisponibilidadAvion(
-                vueloDTO.getAvionId(),
-                vueloDTO.getFechaSalida(),
-                vueloDTO.getFechaLlegada(), // agregás este
-                vueloDTO.getHoraSalida(),
-                vueloDTO.getHoraLlegada(),
-                id);
 
         vuelo.setAeropuertoOrigen(origen);
         vuelo.setAeropuertoDestino(destino);
@@ -100,7 +95,18 @@ public class VueloService {
         vuelo.setPrecioVuelo(vueloDTO.getPrecioVuelo());
         vuelo.setEscala(vueloDTO.getEscala());
 
+        validarDisponibilidadAvion(
+                vueloDTO.getAvionId(),
+                vueloDTO.getFechaSalida(),
+                vueloDTO.getFechaLlegada(), // agregás este
+                vueloDTO.getHoraSalida(),
+                vueloDTO.getHoraLlegada(),
+                id);
+
         validarDatosVuelo(vuelo);
+
+        validarCiudad(vuelo.getAeropuertoOrigen().getCiudad(), "origen");
+        validarCiudad(vuelo.getAeropuertoDestino().getCiudad(), "destino");
 
         return vueloRepository.save(vuelo);
     }
@@ -205,6 +211,10 @@ public class VueloService {
             estadoVuelo estado,
             String paisDestino) {
 
+        validarCiudad(ciudadOrigen, "origen");
+        validarCiudad(ciudadDestino, "destino");
+        validarCiudad(paisDestino, "país destino");
+
         Specification<Vuelo> spec = Specification
                 .where(VueloSpecification.noCancelados())
                 .and(VueloSpecification.porCiudadOrigen(ciudadOrigen))
@@ -228,6 +238,9 @@ public class VueloService {
             Double precioMaximo,
             Boolean escala,
             estadoVuelo estado) {
+
+        validarCiudad(origen, "origen");
+        validarCiudad(destino, "destino");
 
         Specification<Vuelo> spec = Specification
                 .where(VueloSpecification.noCancelados())
@@ -269,6 +282,9 @@ public class VueloService {
             Double precioMaximo,
             Boolean escala) {
 
+        validarCiudad(origen, "origen");
+        validarCiudad(destino, "destino");
+
         Specification<Vuelo> spec = Specification
                 .where(VueloSpecification.noCancelados())
                 .and(VueloSpecification.porOrigenGeneral(origen))
@@ -279,5 +295,16 @@ public class VueloService {
                 .and(VueloSpecification.porEscala(escala));
 
         return vueloRepository.findAll(spec);
+    }
+
+    private void validarCiudad(String ciudad, String campo) {
+        if (ciudad == null || ciudad.isBlank()) {
+            throw new VueloInvalidoException("El " + campo + " no puede estar vacío.");
+        }
+
+        if (!ciudad.matches("^[\\p{L}\\s]+$")) {
+            throw new VueloInvalidoException(
+                    "El " + campo + " solo puede contener letras y espacios.");
+        }
     }
 }
