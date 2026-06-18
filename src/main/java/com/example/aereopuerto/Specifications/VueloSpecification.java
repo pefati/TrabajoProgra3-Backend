@@ -43,7 +43,7 @@ public class VueloSpecification {
         return (root, query, criteriaBuilder) -> {
             if (fechaSalida == null)
                 return null;
-            return criteriaBuilder.greaterThanOrEqualTo(root.get("fechaSalida"), fechaSalida);
+            return criteriaBuilder.equal(root.get("fechaSalida"), fechaSalida);
         };
     }
 
