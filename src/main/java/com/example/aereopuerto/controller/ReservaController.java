@@ -126,7 +126,11 @@ public class ReservaController {
 
 
     //La idea sería que usuario solo pueda filtrar dentro de SUS reservas
-    @Operation(summary = "Filtrar mis reservas ", description = "Aplica los filtros deseados a las reservas del usuario.")
+    @Operation(
+            summary = "Filtrar reservas",
+            description = "Permite filtrar reservas por email, estado, fechas, valor y cantidad de pasajes. Todos los filtros son opcionales."
+    )
+    @ApiResponse(responseCode = "200", description = "Resultados obtenidos correctamente")
     @GetMapping("/mis-reservas/filtrar")
     public ResponseEntity<List<Reserva>> filtrarMisReservas(
             @AuthenticationPrincipal User usuarioAutenticado,
