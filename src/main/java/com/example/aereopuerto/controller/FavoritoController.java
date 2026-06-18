@@ -4,6 +4,7 @@ import com.example.aereopuerto.dto.FavoritoDTO;
 import com.example.aereopuerto.service.FavoritoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/favoritos")
 @RequiredArgsConstructor
+@Tag(name = "Favoritos", description = "Operaciones relacionadas con los favoritos")
 public class FavoritoController {
 
     private final FavoritoService favoritoService;

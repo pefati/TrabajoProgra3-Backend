@@ -7,6 +7,7 @@ import com.example.aereopuerto.model.enums.MetodosDePago;
 import com.example.aereopuerto.service.CompraService;
 import com.example.aereopuerto.service.MercadoPagoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +21,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/mercadopago")
 @RequiredArgsConstructor
+@Tag(name = "Mercado Pago", description = "Operaciones relacionadas con Mercado Pago")
 public class MercadoPagoController {
 
     private final MercadoPagoService mpService;

@@ -8,6 +8,7 @@ import com.example.aereopuerto.service.CarritoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/carrito")
 @RequiredArgsConstructor
+@Tag(name = "Carritos", description = "Operaciones relacionadas con los carritos")
 public class CarritoController {
 
     private final CarritoService carritoService;
