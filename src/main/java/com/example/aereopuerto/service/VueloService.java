@@ -25,7 +25,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -247,10 +249,17 @@ public class VueloService {
     }
 
     private List<Vuelo> filtrarConCapacidad(List<Vuelo> vuelos) {
+        if (vuelos.isEmpty()) return vuelos;
+        List<Integer> ids = vuelos.stream().map(Vuelo::getId).toList();
+        List<Object[]> counts = pasajeRepository.countGroupedByVueloIdIn(ids);
+        Map<Integer, Long> vendidosMap = new HashMap<>();
+        for (Object[] row : counts) {
+            vendidosMap.put(((Number) row[0]).intValue(), ((Number) row[1]).longValue());
+        }
         return vuelos.stream()
                 .filter(v -> {
                     int capacidad = v.getAvion().getCapacidadPasajeros();
-                    long vendidos = pasajeRepository.countByVueloId(v.getId());
+                    long vendidos = vendidosMap.getOrDefault(v.getId(), 0L);
                     return vendidos < capacidad;
                 })
                 .toList();
