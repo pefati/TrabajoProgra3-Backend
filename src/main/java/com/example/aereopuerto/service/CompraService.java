@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.example.aereopuerto.service.ReservaService;
+import org.springframework.beans.factory.annotation.Value;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +34,8 @@ public class CompraService {
     private final AsientoRepository asientoRepository;
     private final ReservaService reservaService;
 
+    @Value("${tarifas.impuesto:0.15}")
+    private double tasaImpuesto;
 
     public String confirmarCompra(CompraDTO dto, User usuarioAutenticado) {
         Carrito carrito = obtenerCarrito(usuarioAutenticado.getPersona().getId());
@@ -142,7 +145,7 @@ public class CompraService {
 
         double totalAsistencia = asistencia != null ? asistencia.getPrecio() : 0;
 
-        double impuestos = totalVuelo * 0.15;
+        double impuestos = totalVuelo * tasaImpuesto;
         double total = totalVuelo + totalEquipaje + totalAsistencia + asientoExtra + servicioExtra + impuestos;
 
         Reserva reserva = Reserva.builder()
