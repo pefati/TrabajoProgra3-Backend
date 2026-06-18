@@ -3,6 +3,7 @@ package com.example.aereopuerto.controller;
 import com.example.aereopuerto.dto.FavoritoDTO;
 import com.example.aereopuerto.service.FavoritoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,11 @@ public class FavoritoController {
         return ResponseEntity.ok(favoritoService.getFavoritosByPersonaId(personaId));
     }
 
-    @Operation(summary = "Agregar un vuelo a favoritos. ", description = "Agrega unvuelo a favoritos de la persona.")
+    @Operation(
+            summary = "Agregar vuelo a favoritos",
+            description = "Agrega un vuelo a la lista de favoritos del usuario autenticado"
+    )
+    @ApiResponse(responseCode = "201", description = "Favorito agregado correctamente")
     @PostMapping
     @PreAuthorize("hasAnyRole('EMPLEADO', 'ADMIN')")
     public ResponseEntity<FavoritoDTO> addFavorito(@RequestParam Integer personaId, @RequestParam Integer vueloId) {

@@ -5,6 +5,8 @@ import com.example.aereopuerto.model.Aeropuerto;
 import com.example.aereopuerto.model.Asignacion;
 import com.example.aereopuerto.service.AsignacionService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.apache.el.parser.AstGreaterThan;
@@ -24,33 +26,65 @@ public class AsignacionController {
     @Autowired
     private AsignacionService asignacionService;
 
-    @Operation(summary = "Obtener asignacion por ID", description = "Devuelve los datos de una asignacion.")
+    @Operation(
+            summary = "Obtener asignación por ID",
+            description = "Devuelve una asignación específica según su ID"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Asignación encontrada correctamente"),
+            @ApiResponse(responseCode = "404", description = "Asignación no encontrada")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<Asignacion> obtenerAsignacion(@PathVariable Integer id) {
         return ResponseEntity.ok(asignacionService.obtenerAsignacionPorId(id));
     }
 
-    @Operation(summary = "Obtener todas las asignaciones", description = "Devuelve todas las asignaciones registradas.")
+    @Operation(
+            summary = "Obtener todas las asignaciones",
+            description = "Devuelve todas las asignaciones registradas en el sistema"
+    )
+    @ApiResponse(responseCode = "200", description = "Lista obtenida correctamente")
     @GetMapping
     public ResponseEntity<List<Asignacion>> obtenerTodos() {
         return ResponseEntity.ok(asignacionService.obtenerTodosLasAsignaciones());
     }
 
-    @Operation(summary = "Crear asignacion", description = "Registra una nueva asignacion.")
+    @Operation(
+            summary = "Crear asignación",
+            description = "Registra una nueva asignación de empleado a vuelo"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Asignación creada correctamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos")
+    })
     @PostMapping
     public ResponseEntity<Asignacion> crearAsignacion(@RequestBody Asignacion asignacion) {
         Asignacion nuevo = asignacionService.crearAsignacion(asignacion);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
     }
 
-    @Operation(summary = "Actualizar asignacion", description = "Actualiza la información de una asignacion existente.")
+    @Operation(
+            summary = "Actualizar asignación",
+            description = "Modifica una asignación existente"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Asignación actualizada correctamente"),
+            @ApiResponse(responseCode = "404", description = "Asignación no encontrada")
+    })
     @PutMapping("/{id}")
     public ResponseEntity<Asignacion> actualizarAsignacion(@PathVariable Integer id, @RequestBody Asignacion asignacion) {
         return ResponseEntity.ok(asignacionService.EditarAeropuerto(id, asignacion));
     }
 
 
-    @Operation(summary = "Eliminar asignacion", description = "Elimina una asignacion del sistema.")
+    @Operation(
+            summary = "Eliminar asignación",
+            description = "Elimina una asignación del sistema por su ID"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Asignación eliminada correctamente"),
+            @ApiResponse(responseCode = "404", description = "Asignación no encontrada")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarAsignacion(@PathVariable Integer id) {
         asignacionService.eliminarAsignacion(id);

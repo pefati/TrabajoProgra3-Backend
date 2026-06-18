@@ -6,6 +6,7 @@ import com.example.aereopuerto.dto.ProcesarPagoDTO;
 import com.example.aereopuerto.model.enums.MetodosDePago;
 import com.example.aereopuerto.service.CompraService;
 import com.example.aereopuerto.service.MercadoPagoService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,11 +28,13 @@ public class MercadoPagoController {
     @Value("${mercadopago.public-key:APP_USR-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}")
     private String publicKey;
 
+    @Operation(summary = "Obtener public key de MercadoPago")
     @GetMapping("/public-key")
     public ResponseEntity<Map<String, String>> getPublicKey() {
         return ResponseEntity.ok(Map.of("publicKey", publicKey));
     }
 
+    @Operation(summary = "Crear preferencia de pago")
     @PostMapping("/crear-preferencia")
     public ResponseEntity<Map<String, Object>> crearPreferencia(
             @AuthenticationPrincipal User user,
@@ -56,6 +59,7 @@ public class MercadoPagoController {
         ));
     }
 
+    @Operation(summary = "Procesar pago de MercadoPago")
     @PostMapping("/procesar-pago")
     public ResponseEntity<Map<String, Object>> procesarPago(
             @RequestBody ProcesarPagoDTO dto,

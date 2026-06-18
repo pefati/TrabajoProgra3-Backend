@@ -29,20 +29,29 @@ public class FacturaController {
     @Autowired
     private final FacturaService facturaService;
 
-    @Operation(summary = "Obtener factura por ID", description = "Devuelve los datos de una factura.")
+    @Operation(
+            summary = "Obtener factura por ID",
+            description = "Devuelve los datos de una factura específica"
+    )
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('EMPLEADO', 'ADMIN')")
     public ResponseEntity<Factura> obtenerFactura(@PathVariable Integer id) {
         return ResponseEntity.ok(facturaService.obtenerFacturaPorId(id));
     }
 
-    @Operation(summary = "Obtener mis facturas", description = "Devuelve las facturas del usuario autenticado.")
+    @Operation(
+            summary = "Obtener mis facturas",
+            description = "Devuelve las facturas del usuario autenticado"
+    )
     @GetMapping
     public ResponseEntity<List<Factura>> obtenerMisFacturas(@AuthenticationPrincipal User usuarioAutenticado) {
         return ResponseEntity.ok(facturaService.obtenerFacturasPorPersona(usuarioAutenticado.getPersona()));
     }
 
-    @Operation(summary = "Obtener todas las facturas", description = "Devuelve todas las facturas registradas.")
+    @Operation(
+            summary = "Obtener todas las facturas",
+            description = "Solo empleados y administradores"
+    )
     @GetMapping("/admin")
     @PreAuthorize("hasAnyRole('EMPLEADO', 'ADMIN')")
     public ResponseEntity<List<Factura>> obtenerTodas() {

@@ -3,6 +3,8 @@ package com.example.aereopuerto.auth.controller;
 import com.example.aereopuerto.auth.dto.*;
 import com.example.aereopuerto.auth.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -63,8 +65,15 @@ public class AuthController {
         response.addCookie(cookie);
     }
 
+    @Operation(
+            summary = "Iniciar sesión",
+            description = "Autentica un usuario y devuelve un JWT válido. También setea cookies seguras."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Login exitoso"),
+            @ApiResponse(responseCode = "400", description = "Credenciales inválidas")
+    })
     @PostMapping("/login")
-    @Operation(summary = "Login", description = "Autentica un usuario y devuelve un JWT.")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
         AuthResponse authResponse = authService.login(request);
         if (authResponse.getToken() != null) {
@@ -80,17 +89,31 @@ public class AuthController {
         return ResponseEntity.ok(authService.register(request));
     }
 
+    @Operation(
+            summary = "Obtener perfil",
+            description = "Devuelve los datos del usuario autenticado."
+    )
     @GetMapping("/perfil")
     public ResponseEntity<PerfilResponse> obtenerPerfil() {
         return ResponseEntity.ok(authService.obtenerPerfil());
     }
 
+
+    @Operation(
+            summary = "Listar usuarios",
+            description = "Devuelve todos los usuarios (solo ADMIN)."
+    )
     @GetMapping("/usuarios")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UsuarioResponse>> obtenerUsuarios() {
         return ResponseEntity.ok(authService.obtenerUsuarios());
     }
 
+
+    @Operation(
+            summary = "Obtener usuario por ID",
+            description = "Devuelve un usuario específico (solo ADMIN)."
+    )
     @GetMapping("/usuarios/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UsuarioResponse> obtenerUsuario(
@@ -98,6 +121,10 @@ public class AuthController {
         return ResponseEntity.ok(authService.obtenerUsuario(id));
     }
 
+    @Operation(
+                summary = "Completar perfil",
+            description = "Nos permite completar el perfil."
+    )
     @PutMapping("/completarPerfil")
     public ResponseEntity<AuthResponse> completarPerfil(@Valid @RequestBody CompletarPerfilRequest request, HttpServletResponse response) {
         ResponseEntity<AuthResponse> res = authService.completarPerfil(request);
@@ -108,6 +135,10 @@ public class AuthController {
         return res;
     }
 
+    @Operation(
+            summary = "Actualizar perfil",
+            description = "Nos permite actualizar el perfil."
+    )
     @PutMapping("/perfil")
     public ResponseEntity<AuthResponse> actualizarPerfil(@Valid @RequestBody CompletarPerfilRequest request, HttpServletResponse response) {
         ResponseEntity<AuthResponse> res = authService.actualizarPerfil(request);
@@ -123,6 +154,10 @@ public class AuthController {
         return ResponseEntity.badRequest().body(Map.of("message", exception.getMessage()));
     }
 
+    @Operation(
+            summary = "Verificar email",
+            description = "Verifica el email del usuario mediante token."
+    )
     @GetMapping("/verify")
     public ResponseEntity<AuthResponse> verifyEmail(@RequestParam String token, HttpServletResponse response) {
         AuthResponse authResponse = authService.verifyEmail(token);
@@ -133,6 +168,11 @@ public class AuthController {
         return ResponseEntity.ok(authResponse);
     }
 
+
+    @Operation(
+            summary = "Verificar email",
+            description = "Verifica el email del usuario mediante token."
+    )
     @PostMapping("/verify-2fa")
     public ResponseEntity<AuthResponse> verify2fa(@Valid @RequestBody Verify2FARequest request, HttpServletResponse response) {
         AuthResponse authResponse = authService.verify2fa(request);
@@ -148,6 +188,10 @@ public class AuthController {
         return authService.toggle2fa();
     }
 
+    @Operation(
+            summary = "Cerrar sesión",
+            description = "Elimina cookies de autenticación."
+    )
     @PostMapping("/logout")
     public ResponseEntity<Map<String, String>> logout(HttpServletResponse response) {
         clearTokenCookie(response);

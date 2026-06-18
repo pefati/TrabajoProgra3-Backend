@@ -70,6 +70,11 @@ public class PersonaController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(
+            summary = "Filtrar usuarios",
+            description = "Permite filtrar usuarios por nombre, apellido, documento, sexo y fecha de nacimiento."
+    )
+    @ApiResponse(responseCode = "200", description = "Resultados obtenidos correctamente")
     @GetMapping("/filtrar")
     public ResponseEntity<List<Persona>> buscarPersonas(
             @RequestParam(required = false) String nombre,

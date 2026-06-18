@@ -6,6 +6,8 @@ import com.example.aereopuerto.dto.CarritoItemDTO;
 import com.example.aereopuerto.model.enums.ClasesVuelo;
 import com.example.aereopuerto.service.CarritoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,19 +23,35 @@ public class CarritoController {
     private final CarritoService carritoService;
     private final UserRepository userRepository;
 
+    @Operation(
+            summary = "Obtener mi carrito",
+            description = "Devuelve el carrito del usuario autenticado"
+    )
+    @ApiResponse(responseCode = "200", description = "Carrito obtenido correctamente")
     @GetMapping
     public ResponseEntity<CarritoDTO> getMiCarrito(Authentication authentication) {
         return ResponseEntity.ok(carritoService.getCarritoPorToken(authentication.getName()));
     }
 
-    @Operation(summary = "Obtener carrito por ID de persona", description = "Devuelve los datos de un carrito.")
+    @Operation(
+            summary = "Obtener carrito por persona",
+            description = "Permite a ADMIN o EMPLEADO ver el carrito de una persona"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Carrito encontrado"),
+            @ApiResponse(responseCode = "403", description = "No autorizado")
+    })
     @GetMapping("/{personaId}")
     @PreAuthorize("hasAnyRole('EMPLEADO', 'ADMIN')")
     public ResponseEntity<CarritoDTO> getCarrito(@PathVariable Integer personaId) {
         return ResponseEntity.ok(carritoService.getCarritoByPersonaId(personaId));
     }
 
-    @Operation(summary = "Agregar item al carrito", description = "Agrega un item al carrito de la persona.")
+    @Operation(
+            summary = "Agregar item al carrito",
+            description = "Agrega un vuelo al carrito del usuario autenticado"
+    )
+    @ApiResponse(responseCode = "201", description = "Item agregado correctamente")
     @PostMapping("/items")
     public ResponseEntity<CarritoItemDTO> addItemToCarrito(
             @RequestParam Integer vueloId,
@@ -51,14 +69,21 @@ public class CarritoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(carritoService.addItemPorToken(authentication.getName(), vueloId, cantidad, clase));
     }
 
-    @Operation(summary = "Eliminar vuelo del carrito", description = "Elimina un vuelo del carrito de la persona.")
+    @Operation(
+            summary = "Eliminar item del carrito",
+            description = "Elimina un item del carrito del usuario autenticado"
+    )
     @DeleteMapping("/items/{itemId}")
     public ResponseEntity<Void> removeItemFromCarrito(@PathVariable Integer itemId, Authentication authentication) {
         carritoService.removeItemPorToken(authentication.getName(), itemId);
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Actualizar cantidad de un item", description = "Actualiza la cantidad de pasajes de un item en el carrito.")
+
+    @Operation(
+            summary = "Actualizar cantidad de item",
+            description = "Modifica la cantidad de un item en el carrito"
+    )
     @PatchMapping("/items/{itemId}")
     public ResponseEntity<CarritoItemDTO> updateItemQuantity(
             @PathVariable Integer itemId,
@@ -67,13 +92,20 @@ public class CarritoController {
         return ResponseEntity.ok(carritoService.updateItemQuantityPorToken(authentication.getName(), itemId, cantidad));
     }
 
-    @Operation(summary = "Limpiar todo el carrito", description = "Limpia todo el carrito de una persona")
+    @Operation(
+            summary = "Vaciar carrito",
+            description = "Elimina todos los items del carrito del usuario"
+    )
     @DeleteMapping("/{carritoId}/clear")
     public ResponseEntity<Void> clearCarrito(@PathVariable Integer carritoId, Authentication authentication) {
         carritoService.clearCarritoPorToken(authentication.getName(), carritoId);
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(
+            summary = "Agregar item a carrito de otra persona",
+            description = "Permite a ADMIN o EMPLEADO agregar items al carrito de una persona"
+    )
     @PostMapping("/personas/{personaId}/items")
     @PreAuthorize("hasAnyRole('EMPLEADO', 'ADMIN')")
     public ResponseEntity<CarritoItemDTO> addItemToCarritoPorPersona(
