@@ -138,11 +138,12 @@ public class CompraService {
                 .mapToDouble(i -> i.getVuelo().getPrecioVuelo() * i.getCantidad()).sum();
 
         double totalEquipaje = equipajes.stream()
-                .mapToDouble(e -> e.getPrecio() * totalPasajes).sum();
+                .mapToDouble(Equipaje::getPrecio).sum();
 
-        double totalAsistencia = asistencia != null ? asistencia.getPrecio() * totalPasajes : 0;
+        double totalAsistencia = asistencia != null ? asistencia.getPrecio() : 0;
 
-        double total = totalVuelo + totalEquipaje + totalAsistencia + asientoExtra + servicioExtra;
+        double impuestos = totalVuelo * 0.15;
+        double total = totalVuelo + totalEquipaje + totalAsistencia + asientoExtra + servicioExtra + impuestos;
 
         Reserva reserva = Reserva.builder()
                 .persona(carrito.getPersona())

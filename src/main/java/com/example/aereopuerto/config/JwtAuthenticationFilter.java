@@ -18,10 +18,21 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private static final List<String> SKIP_PATHS = List.of(
+        "/images/", "/css/", "/js/", "/favicon.ico"
+    );
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return SKIP_PATHS.stream().anyMatch(path::startsWith);
+    }
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
