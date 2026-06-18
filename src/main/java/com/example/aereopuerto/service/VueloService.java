@@ -46,8 +46,10 @@ public class VueloService {
                 .orElseThrow(() -> new VueloInvalidoException("Vuelo no encontrado. ID: " + id));
     }
 
-    @CachePut(value = "vuelos", key = "#result.id")
-    @CacheEvict(value = "vuelos", key = "'todos'")
+    @Caching(put = { @CachePut(value = "vuelos", key = "#result.id") }, evict = {
+            @CacheEvict(value = "vuelos", key = "'todos'"),
+            @CacheEvict(value = "vuelos", key = "'disponibles'")
+    })
     public Vuelo crearVuelo(Vuelo vuelo) {
         validarDisponibilidadAvion(
                 vuelo.getAvion().getId(),
@@ -64,8 +66,10 @@ public class VueloService {
         return vueloRepository.save(vuelo);
     }
 
-    @CachePut(value = "vuelos", key = "#result.id")
-    @CacheEvict(value = "vuelos", key = "'todos'")
+    @Caching(put = { @CachePut(value = "vuelos", key = "#result.id") }, evict = {
+            @CacheEvict(value = "vuelos", key = "'todos'"),
+            @CacheEvict(value = "vuelos", key = "'disponibles'")
+    })
     public Vuelo actualizarVuelo(Integer id, VueloDTO vueloDTO) {
 
         Vuelo vuelo = vueloRepository.findById(id)
@@ -180,7 +184,8 @@ public class VueloService {
 
     @Caching(evict = {
             @CacheEvict(value = "vuelos", key = "#id"),
-            @CacheEvict(value = "vuelos", key = "'todos'")
+            @CacheEvict(value = "vuelos", key = "'todos'"),
+            @CacheEvict(value = "vuelos", key = "'disponibles'")
     })
     public void eliminarVuelo(Integer id) {
         System.out.println("Eliminando vuelo " + id);
@@ -192,11 +197,15 @@ public class VueloService {
         return vueloRepository.findAll();
     }
 
+    @Cacheable(value = "vuelos", key = "'disponibles'")
     public List<Vuelo> obtenerVuelosCliente() {
         return vueloRepository.findByEstadoNot(estadoVuelo.CANCELADO);
     }
 
-    @CacheEvict(value = "vuelos", key = "'todos'")
+    @Caching(evict = {
+            @CacheEvict(value = "vuelos", key = "'todos'"),
+            @CacheEvict(value = "vuelos", key = "'disponibles'")
+    })
     public void invalidarListaDeVuelos() {
         System.out.println("Limpiando la cache");
     }
@@ -298,7 +307,9 @@ public class VueloService {
     }
 
     private void validarCiudad(String ciudad, String campo) {
-        if (ciudad == null || ciudad.isBlank()) {
+        if (ciudad == null) return;
+
+        if (ciudad.isBlank()) {
             throw new VueloInvalidoException("El " + campo + " no puede estar vacío.");
         }
 

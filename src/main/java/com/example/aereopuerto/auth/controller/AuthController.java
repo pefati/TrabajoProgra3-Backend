@@ -10,6 +10,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -181,6 +182,26 @@ public class AuthController {
             setEmailCookie(response, authResponse.getEmail());
         }
         return ResponseEntity.ok(authResponse);
+    }
+
+    @Operation(
+            summary = "Solicitar restablecimiento de contraseña",
+            description = "Envía un email con un enlace para restablecer la contraseña."
+    )
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Map<String, String>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        authService.forgotPassword(request);
+        return ResponseEntity.ok(Map.of("message", "Si el email existe, recibirás un enlace para restablecer tu contraseña."));
+    }
+
+    @Operation(
+            summary = "Restablecer contraseña",
+            description = "Restablece la contraseña usando un token válido."
+    )
+    @PostMapping("/reset-password")
+    public ResponseEntity<Map<String, String>> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        authService.resetPassword(request);
+        return ResponseEntity.ok(Map.of("message", "Contraseña restablecida exitosamente."));
     }
 
     @PostMapping("/toggle-2fa")

@@ -30,6 +30,25 @@ public class EmailService {
     }
 
     @Async
+    public void sendPasswordResetEmail(String toEmail, String resetToken) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toEmail);
+        message.setSubject("Restablecer Contraseña - Aerolínea");
+
+        String resetUrl = "https://aerogest.ddns.net/reset-password.html?token=" + resetToken;
+
+        message.setText("Hola,\n\n" +
+                "Recibimos una solicitud para restablecer tu contraseña. " +
+                "Haz clic en el siguiente enlace para crear una nueva contraseña:\n\n" +
+                resetUrl + "\n\n" +
+                "Este enlace expirará en 1 hora.\n\n" +
+                "Si no solicitaste este cambio, ignora este mensaje.\n\n" +
+                "Saludos,\nEl equipo de AeroGest");
+
+        mailSender.send(message);
+    }
+
+    @Async
     public void sendTwoFactorCode(String toEmail, String code) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(toEmail);
