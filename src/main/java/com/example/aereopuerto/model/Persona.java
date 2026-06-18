@@ -45,4 +45,7 @@ public class Persona implements Serializable {
     @Enumerated(EnumType.STRING)
     private Sexo sexo;
 
+    @Transient
+    private String email;
+
 }

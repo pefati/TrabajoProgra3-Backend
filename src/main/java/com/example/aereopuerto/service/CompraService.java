@@ -5,6 +5,7 @@ import com.example.aereopuerto.auth.entity.User;
 import com.example.aereopuerto.dto.CompraDTO;
 import com.example.aereopuerto.model.*;
 import com.example.aereopuerto.model.enums.EstadoReserva;
+import com.example.aereopuerto.model.enums.estadoVuelo;
 import com.example.aereopuerto.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import com.example.aereopuerto.service.ReservaService;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +31,7 @@ public class CompraService {
     private final EquipajeRepository equipajeRepository;
     private final AsistenciaRepository asistenciaRepository;
     private final AsientoRepository asientoRepository;
+    private final ReservaService reservaService;
 
 
     public String confirmarCompra(CompraDTO dto, User usuarioAutenticado) {
@@ -43,11 +47,14 @@ public class CompraService {
             }
         }
         AsistenciaAlViajero asistencia = obtenerAsistencia(dto.getAsistenciaId());
-        Reserva reserva = crearReserva(carrito, equipajes, asistencia);
+        double asientoExtra = dto.getAsientoExtra() != null ? dto.getAsientoExtra() : 0;
+        double servicioExtra = dto.getServicioExtra() != null ? dto.getServicioExtra() : 0;
+        Reserva reserva = crearReserva(carrito, equipajes, asistencia, asientoExtra, servicioExtra);
         List<Pasaje> pasajes = generarPasajes(carrito, reserva, equipajes, asistencia,dto.getAsientosSeleccionados());
         guardarPasajes(pasajes);
         crearFactura(dto, reserva);
         vaciarCarrito(carrito);
+        reservaService.invalidarCachePersona(carrito.getPersona().getId());
         return "AC-" + reserva.getId();
     }
 
@@ -98,6 +105,9 @@ public class CompraService {
 
         for (CarritoItem item : carrito.getItems()) {
             Vuelo vuelo = item.getVuelo();
+            if (vuelo.getEstado() == estadoVuelo.CANCELADO) {
+                throw new VueloInvalidoException("El vuelo " + vuelo.getId() + " está cancelado.");
+            }
             int capacidad = vuelo.getAvion().getCapacidadPasajeros();
             long vendidos = pasajeRepository.countByVueloId(vuelo.getId());
             if (vendidos + item.getCantidad() > capacidad) {
@@ -119,7 +129,7 @@ public class CompraService {
                 .orElseThrow(() -> new AsistenciaInvalidaException("Asistencia no encontrada"));
     }
 
-    private Reserva crearReserva(Carrito carrito, List<Equipaje> equipajes, AsistenciaAlViajero asistencia) {
+    private Reserva crearReserva(Carrito carrito, List<Equipaje> equipajes, AsistenciaAlViajero asistencia, double asientoExtra, double servicioExtra) {
 
         int totalPasajes = carrito.getItems().stream()
                 .mapToInt(CarritoItem::getCantidad).sum();
@@ -132,7 +142,7 @@ public class CompraService {
 
         double totalAsistencia = asistencia != null ? asistencia.getPrecio() * totalPasajes : 0;
 
-        double total = totalVuelo + totalEquipaje + totalAsistencia;
+        double total = totalVuelo + totalEquipaje + totalAsistencia + asientoExtra + servicioExtra;
 
         Reserva reserva = Reserva.builder()
                 .persona(carrito.getPersona())

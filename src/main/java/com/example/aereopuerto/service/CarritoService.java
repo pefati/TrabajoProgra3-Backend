@@ -10,6 +10,7 @@ import com.example.aereopuerto.model.CarritoItem;
 import com.example.aereopuerto.model.Persona;
 import com.example.aereopuerto.model.Vuelo;
 import com.example.aereopuerto.model.enums.ClasesVuelo;
+import com.example.aereopuerto.model.enums.estadoVuelo;
 import com.example.aereopuerto.repository.CarritoItemRepository;
 import com.example.aereopuerto.repository.CarritoRepository;
 import com.example.aereopuerto.repository.PersonaRepository;
@@ -39,6 +40,10 @@ public class CarritoService {
 
         Vuelo vuelo = vueloRepository.findById(vueloId)
                 .orElseThrow(() -> new VueloInvalidoException("Vuelo no encontrado con id: " + vueloId));
+
+        if (vuelo.getEstado() == estadoVuelo.CANCELADO) {
+            throw new VueloInvalidoException("No se puede agregar un vuelo cancelado al carrito.");
+        }
 
         if (cantidad <= 0) {
             throw new CarritoInvalidoException("La cantidad debe ser mayor a 0.");

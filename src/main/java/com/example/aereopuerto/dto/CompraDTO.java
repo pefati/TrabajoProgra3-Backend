@@ -14,5 +14,7 @@ public class CompraDTO {
     private String situacionFiscal;
     private MetodosDePago metodoPago;
     private List<Integer> asientosSeleccionados;
+    private Double asientoExtra;
+    private Double servicioExtra;
 
 }

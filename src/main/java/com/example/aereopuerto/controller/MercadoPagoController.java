@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -89,8 +90,10 @@ public class MercadoPagoController {
                 compraDTO.setAsistenciaId(dto.getAsistenciaId());
                 compraDTO.setCuil(dto.getCuil());
                 compraDTO.setSituacionFiscal(dto.getSituacionFiscal());
-                compraDTO.setMetodoPago(MetodosDePago.MERCADOPAGO);
+                compraDTO.setMetodoPago(mapPaymentMethod(dto.getPaymentMethodId()));
                 compraDTO.setAsientosSeleccionados(dto.getAsientosSeleccionados());
+                compraDTO.setAsientoExtra(dto.getAsientoExtra() != null ? dto.getAsientoExtra() : 0);
+                compraDTO.setServicioExtra(dto.getServicioExtra() != null ? dto.getServicioExtra() : 0);
                 bookingCode = compraService.confirmarCompra(compraDTO, user);
             }
 
@@ -107,6 +110,22 @@ public class MercadoPagoController {
                     "message", "Error interno: " + e.getMessage()
             ));
         }
+    }
+
+    private MetodosDePago mapPaymentMethod(String paymentMethodId) {
+        if (paymentMethodId == null) return MetodosDePago.MERCADOPAGO;
+        String id = paymentMethodId.toLowerCase();
+        Map<String, MetodosDePago> mapping = new HashMap<>();
+        mapping.put("visa", MetodosDePago.TARJETA_CREDITO);
+        mapping.put("master", MetodosDePago.TARJETA_CREDITO);
+        mapping.put("amex", MetodosDePago.TARJETA_CREDITO);
+        mapping.put("naranja", MetodosDePago.TARJETA_CREDITO);
+        mapping.put("cabal", MetodosDePago.TARJETA_CREDITO);
+        mapping.put("debmaster", MetodosDePago.TARJETA_DEBITO);
+        mapping.put("debvisa", MetodosDePago.TARJETA_DEBITO);
+        mapping.put("debcabal", MetodosDePago.TARJETA_DEBITO);
+        mapping.put("maestro", MetodosDePago.TARJETA_DEBITO);
+        return mapping.getOrDefault(id, MetodosDePago.MERCADOPAGO);
     }
 
     private String obtenerMensajeStatus(String status) {

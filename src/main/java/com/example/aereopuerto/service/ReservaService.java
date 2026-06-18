@@ -45,7 +45,14 @@ public class ReservaService {
 
     @Cacheable(value = "reservas", key = "'todos'")
     public List<Reserva> obtenerTodasLasReservas() {
-        return reservaRepository.findAll();
+        List<Reserva> reservas = reservaRepository.findAll();
+        for (Reserva r : reservas) {
+            if (r.getPersona() != null) {
+                userRepository.findByPersonaId(r.getPersona().getId())
+                    .ifPresent(u -> r.getPersona().setEmail(u.getEmail()));
+            }
+        }
+        return reservas;
     }
 
     @Cacheable(value = "reservas", key = "'persona_' + #usuarioAutenticado.persona.id")
@@ -181,6 +188,10 @@ public class ReservaService {
 
     @CacheEvict(value = "reservas", key = "'todos'")
     public void invalidarListaDeReservas() {
+    }
+
+    @CacheEvict(value = "reservas", key = "'persona_' + #personaId")
+    public void invalidarCachePersona(Integer personaId) {
     }
 
     @CacheEvict(value = "reservas", allEntries = true)

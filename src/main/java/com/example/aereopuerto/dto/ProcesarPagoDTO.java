@@ -18,4 +18,6 @@ public class ProcesarPagoDTO {
     private String cuil;
     private String situacionFiscal;
     private List<Integer> asientosSeleccionados;
+    private Double asientoExtra;
+    private Double servicioExtra;
 }

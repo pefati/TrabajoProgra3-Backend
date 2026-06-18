@@ -11,6 +11,7 @@ import com.example.aereopuerto.model.Vuelo;
 import com.example.aereopuerto.model.enums.estadoVuelo;
 import com.example.aereopuerto.repository.AeropuertoRepository;
 import com.example.aereopuerto.repository.AvionRepository;
+import com.example.aereopuerto.repository.PasajeRepository;
 import com.example.aereopuerto.repository.VueloRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ public class VueloService {
     private final VueloRepository vueloRepository;
     private final AeropuertoRepository aeropuertoRepository;
     private final AvionRepository avionRepository;
+    private final PasajeRepository pasajeRepository;
 
     @Cacheable(value = "vuelos", key = "#id")
     public Vuelo obtenerVueloPorId(Integer id) {
@@ -47,7 +49,7 @@ public class VueloService {
         validarDisponibilidadAvion(
                 vuelo.getAvion().getId(),
                 vuelo.getFechaSalida(),
-                vuelo.getFechaLlegada(), // agregás este
+                vuelo.getFechaLlegada(),
                 vuelo.getHoraSalida(),
                 vuelo.getHoraLlegada(),
                 -1
@@ -104,13 +106,11 @@ public class VueloService {
 
     private void validarDatosVuelo(Vuelo vuelo) {
 
-        // Precio mayor a 0
         if (vuelo.getPrecioVuelo() == null || vuelo.getPrecioVuelo() <= 0) {
             throw new VueloInvalidoException(
                     "El precio del vuelo debe ser mayor a 0.");
         }
 
-        // Aeropuertos distintos
         if (vuelo.getAeropuertoOrigen().getId()
                 .equals(vuelo.getAeropuertoDestino().getId())) {
 
@@ -118,13 +118,21 @@ public class VueloService {
                     "El aeropuerto de origen y destino deben ser distintos.");
         }
 
-        // Fecha de llegada igual o posterior a la de salida
+        if (vuelo.getHoraSalida() == null || vuelo.getHoraLlegada() == null) {
+            throw new VueloInvalidoException(
+                    "La hora de salida y llegada son obligatorias.");
+        }
+
+        if (vuelo.getFechaSalida() == null || vuelo.getFechaLlegada() == null) {
+            throw new VueloInvalidoException(
+                    "La fecha de salida y llegada son obligatorias.");
+        }
+
         if (vuelo.getFechaLlegada().isBefore(vuelo.getFechaSalida())) {
             throw new VueloInvalidoException(
                     "La fecha de llegada no puede ser anterior a la fecha de salida.");
         }
 
-        // Si son el mismo día, la hora de llegada debe ser posterior
         if (vuelo.getFechaSalida().equals(vuelo.getFechaLlegada())
                 && !vuelo.getHoraLlegada().isAfter(vuelo.getHoraSalida())) {
 
@@ -200,7 +208,8 @@ public class VueloService {
             String paisDestino) {
 
         Specification<Vuelo> spec = Specification
-                .where(VueloSpecification.porCiudadOrigen(ciudadOrigen))
+                .where(VueloSpecification.noCancelados())
+                .and(VueloSpecification.porCiudadOrigen(ciudadOrigen))
                 .and(VueloSpecification.porCiudadDestino(ciudadDestino))
                 .and(VueloSpecification.porPaisDestino(paisDestino))
                 .and(VueloSpecification.porFechaSalidaDesde(fechaSalida))
@@ -209,7 +218,8 @@ public class VueloService {
                 .and(VueloSpecification.porEscala(escala))
                 .and(VueloSpecification.porEstado(estado));
 
-        return vueloRepository.findAll(spec);
+        List<Vuelo> vuelos = vueloRepository.findAll(spec);
+        return filtrarConCapacidad(vuelos);
     }
 
 
@@ -223,7 +233,8 @@ public class VueloService {
             estadoVuelo estado) {
 
         Specification<Vuelo> spec = Specification
-                .where(VueloSpecification.porOrigenGeneral(origen))
+                .where(VueloSpecification.noCancelados())
+                .and(VueloSpecification.porOrigenGeneral(origen))
                 .and(VueloSpecification.porDestinoGeneral(destino))
                 .and(VueloSpecification.porFechaSalidaDesde(fechaSalida))
                 .and(VueloSpecification.porFechaLlegadaHasta(fechaLlegada))
@@ -231,7 +242,18 @@ public class VueloService {
                 .and(VueloSpecification.porEscala(escala))
                 .and(VueloSpecification.porEstado(estado));
 
-        return vueloRepository.findAll(spec);
+        List<Vuelo> vuelos = vueloRepository.findAll(spec);
+        return filtrarConCapacidad(vuelos);
+    }
+
+    private List<Vuelo> filtrarConCapacidad(List<Vuelo> vuelos) {
+        return vuelos.stream()
+                .filter(v -> {
+                    int capacidad = v.getAvion().getCapacidadPasajeros();
+                    long vendidos = pasajeRepository.countByVueloId(v.getId());
+                    return vendidos < capacidad;
+                })
+                .toList();
     }
 
     public List<Vuelo> buscarVuelosCliente(
