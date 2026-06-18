@@ -75,6 +75,11 @@
             };
         }
 
+        public static Specification<Vuelo> noCancelados() {
+            return (root, query, cb) ->
+                    cb.notEqual(root.get("estado"), estadoVuelo.CANCELADO);
+        }
+
         public static Specification<Vuelo> porDestinoGeneral(String destino) {
             return (root, query, criteriaBuilder) -> {
                 if (destino == null || destino.trim().isEmpty()) return null;

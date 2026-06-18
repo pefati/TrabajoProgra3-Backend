@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,11 +41,19 @@ public class VueloController {
         return ResponseEntity.ok(vuelo);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Obtener todos los vuelos", description = "Devuelve una lista de todos los vuelos programados.")
     @ApiResponse(responseCode = "200", description = "Lista devuelta exitosamente")
     @GetMapping
     public ResponseEntity<List<Vuelo>> obtenerTodos() {
         return ResponseEntity.ok(vueloService.obtenerTodosLosVuelos());
+    }
+
+    @Operation(summary = "Obtener solo los vuelos disponibles", description = "Devuelve una lista de todos los vuelos disponibles.")
+    @ApiResponse(responseCode = "200", description = "Lista devuelta exitosamente")
+    @GetMapping("/disponibles")
+    public ResponseEntity<List<Vuelo>> obtenerVuelosDisponibles() {
+        return ResponseEntity.ok(vueloService.obtenerVuelosCliente());
     }
 
     @Operation(summary = "Crear un nuevo vuelo", description = "Crea un vuelo en MySQL y actualiza automáticamente la caché de Redis.")
@@ -74,6 +83,43 @@ public class VueloController {
         vueloService.invalidarListaDeVuelos();
         vueloService.eliminarVuelo(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(
+            summary = "Filtrar vuelos disponibles",
+            description = "Filtra el listado de vuelos disponibles según los criterios indicados. Todos los parámetros son opcionales y se combinan entre sí."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Vuelos encontrados exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Parámetros de búsqueda inválidos")
+    })
+    @GetMapping("/disponibles/filtrar")
+    public ResponseEntity<List<Vuelo>> buscarVuelosDisponibles(
+
+            @RequestParam(required = false) String origen,
+            @RequestParam(required = false) String destino,
+
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime fechaSalida,
+
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime fechaLlegada,
+
+            @RequestParam(required = false) Double precioMaximo,
+            @RequestParam(required = false) Boolean escala) {
+
+        return ResponseEntity.ok(
+                vueloService.buscarVuelosCliente(
+                        origen,
+                        destino,
+                        fechaSalida,
+                        fechaLlegada,
+                        precioMaximo,
+                        escala
+                )
+        );
     }
 
     @Operation(
