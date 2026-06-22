@@ -94,7 +94,8 @@ public class SecurityConfig {
                                 "/api/carrito/**",
                                 "/api/compras/**",
                                 "/api/asistenciasAlViajero/**",
-                                "/api/auth/perfil"
+                                "/api/auth/perfil",
+                                "/api/equipajes"
                         ).hasAnyRole("USUARIO", "EMPLEADO", "ADMIN", "INCOMPLETO")
 
                         .requestMatchers(
