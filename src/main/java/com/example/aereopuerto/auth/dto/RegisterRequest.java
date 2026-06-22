@@ -1,9 +1,6 @@
 package com.example.aereopuerto.auth.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
@@ -19,6 +16,9 @@ public class RegisterRequest {
    // private String telefono;
 
     @NotBlank(message = "La contraseña es obligatoria")
-    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
+    @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$",
+            message = "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un carácter especial"
+    )
     private String password;
 }
