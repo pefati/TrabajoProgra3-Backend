@@ -104,6 +104,12 @@ public class FacturaController {
                 """, f.getReserva().getPersona().getNombre(), f.getReserva().getPersona().getApellido()) + reservaInfo;
             }
         }
+        String cuotasInfo = "";
+        if (f.getCuotas() != null && f.getCuotas() > 1) {
+            cuotasInfo = String.format("""
+                <tr><td><strong>Cuotas</strong></td><td>%d cuotas de <strong>$%.2f</strong></td></tr>
+            """, f.getCuotas(), (f.getTotalPagado() != null ? f.getTotalPagado() : 0) / f.getCuotas());
+        }
         String html = """
             <!DOCTYPE html>
             <html lang="es">
@@ -135,6 +141,7 @@ public class FacturaController {
                 </div>
                 <table>
                     %s
+                    %s
                     <tr><td><strong>CUIL</strong></td><td>%s</td></tr>
                     <tr><td><strong>Situación fiscal</strong></td><td>%s</td></tr>
                     <tr><td><strong>Método de pago</strong></td><td>%s</td></tr>
@@ -147,6 +154,7 @@ public class FacturaController {
                 f.getFechaEmision() != null ?
                         java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(f.getFechaEmision()) : "—",
                 reservaInfo,
+                cuotasInfo,
                 f.getCUIL() != null ? f.getCUIL() : "—",
                 f.getSituacionFiscal() != null ? f.getSituacionFiscal() : "—",
                 metodoLabel,

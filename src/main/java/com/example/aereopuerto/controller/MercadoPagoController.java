@@ -96,6 +96,7 @@ public class MercadoPagoController {
                 compraDTO.setAsientosSeleccionados(dto.getAsientosSeleccionados());
                 compraDTO.setAsientoExtra(dto.getAsientoExtra() != null ? dto.getAsientoExtra() : 0);
                 compraDTO.setServicioExtra(dto.getServicioExtra() != null ? dto.getServicioExtra() : 0);
+                compraDTO.setCuotas(dto.getInstallments());
                 bookingCode = compraService.confirmarCompra(compraDTO, user);
             }
 

@@ -229,6 +229,8 @@ public class CompraService {
                 .situacionFiscal(dto.getSituacionFiscal())
                 .metodoDePago(dto.getMetodoPago())
                 .fechaEmision(LocalDateTime.now())
+                .cuotas(dto.getCuotas())
+                .totalPagado(reserva.getValor() != null ? reserva.getValor().doubleValue() : 0)
                 .build();
 
         facturaRepository.save(factura);

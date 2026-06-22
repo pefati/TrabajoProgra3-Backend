@@ -16,5 +16,6 @@ public class CompraDTO {
     private List<Integer> asientosSeleccionados;
     private Double asientoExtra;
     private Double servicioExtra;
+    private Integer cuotas;
 
 }

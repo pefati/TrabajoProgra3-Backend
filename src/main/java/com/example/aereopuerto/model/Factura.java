@@ -42,5 +42,10 @@ public class Factura implements Serializable{
     @Enumerated(EnumType.STRING)
     private MetodosDePago metodoDePago;
 
+    @Column(name = "cuotas")
+    private Integer cuotas;
+
+    @Column(name = "total_pagado")
+    private Double totalPagado;
 
 }
