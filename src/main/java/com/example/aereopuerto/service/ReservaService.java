@@ -7,6 +7,7 @@ import com.example.aereopuerto.auth.entity.Role;
 import com.example.aereopuerto.auth.entity.User;
 import com.example.aereopuerto.auth.repository.UserRepository;
 import com.example.aereopuerto.dto.ReservaDTO;
+import com.example.aereopuerto.model.Asiento;
 import com.example.aereopuerto.model.Pasaje;
 import com.example.aereopuerto.model.Persona;
 import com.example.aereopuerto.model.Reserva;
@@ -37,6 +38,7 @@ public class ReservaService {
     private final PasajeRepository pasajeRepository;
     private final UserRepository userRepository;
     private final PoliticaDevolucionService politicaService;
+    private final AsientoService asientoService;
 
     @Cacheable(value = "reservas", key = "#id")
     public Reserva obtenerReservaPorId(Integer id) {
@@ -184,10 +186,6 @@ public class ReservaService {
         return reservaRepository.findAll(spec);
     }
 
-    @CacheEvict(value = "reservas", key = "'todos'")
-    public void invalidarListaDeReservas() {
-    }
-
     @CacheEvict(value = "reservas", key = "'persona_' + #personaId")
     public void invalidarCachePersona(Integer personaId) {
     }
@@ -198,6 +196,14 @@ public class ReservaService {
                 .orElseThrow(() -> new ReservaInvalidaException("Reserva no encontrada"));
         if (reserva.getEstadoReserva() == EstadoReserva.CANCELADA) {
             throw new IllegalArgumentException("No se puede hacer check-in de una reserva cancelada");
+        }
+        List<Pasaje> pasajes = pasajeRepository.findByReservaId(reserva.getId());
+        for (Pasaje p : pasajes) {
+            if (p.getAsiento() == null && p.getVuelo() != null && p.getVuelo().getAvion() != null) {
+                Asiento asiento = asientoService.asignarEconomicoAleatorio(p.getVuelo().getAvion().getId());
+                p.setAsiento(asiento);
+                pasajeRepository.save(p);
+            }
         }
         reserva.setEstadoReserva(EstadoReserva.ACTIVO);
         reservaRepository.save(reserva);

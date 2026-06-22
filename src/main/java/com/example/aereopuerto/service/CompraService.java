@@ -32,6 +32,7 @@ public class CompraService {
     private final EquipajeRepository equipajeRepository;
     private final AsistenciaRepository asistenciaRepository;
     private final AsientoRepository asientoRepository;
+    private final AsientoService asientoService;
     private final ReservaService reservaService;
 
     @Value("${tarifas.impuesto:0.15}")
@@ -170,6 +171,7 @@ public class CompraService {
         List<Pasaje> pasajes = new ArrayList<>();
 
         int indiceAsiento = 0;
+        boolean sinAsientos = asientosSeleccionados == null || asientosSeleccionados.isEmpty();
 
         for (CarritoItem item : carrito.getItems()) {
 
@@ -177,16 +179,25 @@ public class CompraService {
 
                 Asiento asiento = null;
 
-                if (asientosSeleccionados != null
-                        && indiceAsiento < asientosSeleccionados.size()) {
+                if (sinAsientos) {
+                    asiento = asientoService.asignarEconomicoAleatorio(item.getVuelo().getAvion().getId());
+                } else if (indiceAsiento < asientosSeleccionados.size()) {
 
                     asiento = asientoRepository
                             .findById(asientosSeleccionados.get(indiceAsiento))
                             .orElseThrow(() -> new AsientoInvalidoException("Asiento no encontrado"));
 
-                    asiento.setOcupado(true);
+                    if (Boolean.TRUE.equals(asiento.getOcupado())) {
+                        asiento = asientoService.asignarEconomicoAleatorio(item.getVuelo().getAvion().getId());
+                    } else {
+                        asiento.setOcupado(true);
+                    }
 
                     indiceAsiento++;
+                }
+
+                if (asiento != null) {
+                    asientoRepository.save(asiento);
                 }
 
                 Pasaje p = Pasaje.builder()
