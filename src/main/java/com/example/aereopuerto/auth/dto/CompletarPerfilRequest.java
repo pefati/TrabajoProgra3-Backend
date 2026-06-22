@@ -33,5 +33,9 @@ public class CompletarPerfilRequest {
     private LocalDate fechaNacimiento;
 
     @NotBlank(message = "El teléfono es obligatorio.")
+    @Pattern(
+            regexp = "^\\d{10}$",
+            message = "Ingrese un número de teléfono válido."
+    )
     private String telefono;
 }
