@@ -36,4 +36,7 @@ public interface VueloRepository extends JpaRepository<Vuelo, Integer>, JpaSpeci
 
     List<Vuelo> findByEstadoNot(estadoVuelo estado);
 
+    @Query("SELECT v FROM Vuelo v WHERE v.avion.id = :avionId AND v.estado IN :estados")
+    List<Vuelo> findByAvionIdAndEstadoIn(@Param("avionId") Integer avionId, @Param("estados") List<estadoVuelo> estados);
+
 }

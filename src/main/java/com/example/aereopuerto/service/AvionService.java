@@ -4,8 +4,11 @@ import com.example.aereopuerto.Exceptions.AvionInvalidoException;
 import com.example.aereopuerto.Specifications.AvionSpecification;
 import com.example.aereopuerto.dto.AvionDTO;
 import com.example.aereopuerto.model.Avion;
+import com.example.aereopuerto.model.Vuelo;
 import com.example.aereopuerto.model.enums.estadoAvion;
+import com.example.aereopuerto.model.enums.estadoVuelo;
 import com.example.aereopuerto.repository.AvionRepository;
+import com.example.aereopuerto.repository.VueloRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -24,6 +27,7 @@ public class AvionService {
 
     @Autowired
     private final AvionRepository avionRepository;
+    private final VueloRepository vueloRepository;
 
     @Cacheable(value = "aviones", key = "#id")
     public Avion obtenerAvionPorId(Integer id) {
@@ -50,8 +54,23 @@ public class AvionService {
         a.setCapacidadBodega(av.getCapacidadBodega());
         a.setCapacidadPasajeros(av.getCapacidadPasajeros());
         a.setIdentificador(av.getIdentificador());
-        a.setEstado(av.getEstado());
         a.setModelo(av.getModelo());
+
+        if (av.getEstado() == estadoAvion.MANTENIMIENTO || av.getEstado() == estadoAvion.BAJA) {
+            if (a.getEstado() != av.getEstado()) {
+                List<Vuelo> vuelosActivos = vueloRepository.findByAvionIdAndEstadoIn(
+                        id, List.of(estadoVuelo.PROGRAMADO, estadoVuelo.REPROGRAMADO, estadoVuelo.BOARDING));
+                if (!vuelosActivos.isEmpty()) {
+                    String estadoNombre = av.getEstado() == estadoAvion.MANTENIMIENTO ? "mantenimiento" : "baja";
+                    throw new AvionInvalidoException(
+                            "No se puede cambiar el avion a " + estadoNombre +
+                            " porque tiene " + vuelosActivos.size() +
+                            " vuelo(s) activo(s) asignado(s). Reasigne los vuelos a otro avión primero.");
+                }
+            }
+        }
+
+        a.setEstado(av.getEstado());
 
         validarAvion(a);
 
