@@ -22,6 +22,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -149,6 +150,20 @@ public class VueloService {
 
             throw new VueloInvalidoException(
                     "La hora de llegada debe ser posterior a la hora de salida.");
+        }
+
+        LocalDateTime salida = LocalDateTime.of(vuelo.getFechaSalida(), vuelo.getHoraSalida());
+        LocalDateTime llegada = LocalDateTime.of(vuelo.getFechaLlegada(), vuelo.getHoraLlegada());
+        long horasDuracion = Duration.between(salida, llegada).toHours();
+
+        if (Boolean.FALSE.equals(vuelo.getEscala()) && horasDuracion > 18) {
+            throw new VueloInvalidoException(
+                    "Un vuelo directo no puede durar más de 18 horas.");
+        }
+
+        if (Boolean.TRUE.equals(vuelo.getEscala()) && horasDuracion > 36) {
+            throw new VueloInvalidoException(
+                    "La duracion total del vuelo no puede exceder las 40 horas.");
         }
     }
 
