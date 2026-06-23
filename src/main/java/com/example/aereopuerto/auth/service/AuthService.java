@@ -316,15 +316,14 @@ public class AuthService {
     }
 
     public void forgotPassword(ForgotPasswordRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("No existe una cuenta con ese email"));
+        userRepository.findByEmail(request.getEmail()).ifPresent(user -> {
+            String resetToken = UUID.randomUUID().toString();
+            user.setResetToken(resetToken);
+            user.setResetTokenExpiry(LocalDateTime.now().plusHours(1));
+            userRepository.save(user);
 
-        String resetToken = UUID.randomUUID().toString();
-        user.setResetToken(resetToken);
-        user.setResetTokenExpiry(LocalDateTime.now().plusHours(1));
-        userRepository.save(user);
-
-        emailService.sendPasswordResetEmail(user.getEmail(), resetToken);
+            emailService.sendPasswordResetEmail(user.getEmail(), resetToken);
+        });
     }
 
     public void resetPassword(ResetPasswordRequest request) {
