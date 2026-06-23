@@ -8,6 +8,7 @@ import com.example.aereopuerto.dto.VueloDTO;
 import com.example.aereopuerto.model.Aeropuerto;
 import com.example.aereopuerto.model.Avion;
 import com.example.aereopuerto.model.Vuelo;
+import com.example.aereopuerto.model.enums.estadoAvion;
 import com.example.aereopuerto.model.enums.estadoVuelo;
 import com.example.aereopuerto.repository.AeropuertoRepository;
 import com.example.aereopuerto.repository.AvionRepository;
@@ -52,6 +53,7 @@ public class VueloService {
             @CacheEvict(value = "vuelos", key = "'disponibles'")
     })
     public Vuelo crearVuelo(Vuelo vuelo) {
+        validarAvionDisponible(vuelo.getAvion().getId());
         validarDisponibilidadAvion(
                 vuelo.getAvion().getId(),
                 vuelo.getFechaSalida(),
@@ -88,6 +90,7 @@ public class VueloService {
                 .orElseThrow(() -> new AvionInvalidoException(
                         "Avión no encontrado. ID: " + vueloDTO.getAvionId()));
 
+        validarAvionDisponible(avion.getId());
 
         vuelo.setAeropuertoOrigen(origen);
         vuelo.setAeropuertoDestino(destino);
@@ -164,6 +167,16 @@ public class VueloService {
         if (Boolean.TRUE.equals(vuelo.getEscala()) && horasDuracion > 36) {
             throw new VueloInvalidoException(
                     "La duracion total del vuelo no puede exceder las 40 horas.");
+        }
+    }
+
+    private void validarAvionDisponible(Integer avionId) {
+        Avion avion = avionRepository.findById(avionId)
+                .orElseThrow(() -> new AvionInvalidoException("Avion no encontrado."));
+        if (avion.getEstado() == estadoAvion.MANTENIMIENTO || avion.getEstado() == estadoAvion.BAJA) {
+            throw new AvionInvalidoException(
+                    "El avion " + avion.getIdentificador() + " no esta disponible (" + avion.getEstado() + "). " +
+                            "Selecciona un avion en estado DISPONIBLE o ACTIVO.");
         }
     }
 
